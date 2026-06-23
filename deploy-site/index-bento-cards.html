@@ -6464,48 +6464,37 @@ const OTC_BODY_HTML = `
 <!-- ═══════════════════════ ═══════════════════════ -->
 <div class='pm-feature-tab-heading' data-tab-label='广告管理' style='display:flex;align-items:center;gap:8px;margin-bottom:8px'>
  <div style='width:3px;height:14px;background:#4A9EF5;border-radius:2px;flex-shrink:0'></div>
- <span style='font-size:12px;font-weight:600;color:rgba(255,255,255,.8)'>广告管理优化 · 收款方式前置</span>
+ <span style='font-size:12px;font-weight:600;color:rgba(255,255,255,.8)'>广告管理优化 · 商家休息模式</span>
 </div>
-<div class='pm-sd'>收款方式管理从设置三级导航提升至广告管理主页快捷入口，缩短出售链路中的页面折返。新增 Transfer 国际支付方式。添加/修改/删除收款方式均新增 2FA 验证。</div>
+<div class='pm-sd'>广告管理页新增商家营业状态开关：商家可在“营业中”和“未营业”之间切换，并支持自动休息。把经营状态从隐性规则变成可见、可控的入口，避免非在线时继续承接订单。</div>
 
-<div style='display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px'>
- <div>
- <div style='font-size:14px;font-weight:500;color:rgba(255,255,255,.3);margin-bottom:10px'>旧版 · 第一批设计（广告管理）</div>
- <div style='aspect-ratio:9/16;max-height:460px;border-radius:24px;border:1.5px dashed rgba(255,255,255,.1);background:rgba(255,255,255,.015);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px'>
- <svg width='22' height='22' fill='none' stroke='rgba(255,255,255,.18)' stroke-width='1.2' viewBox='0 0 24 24'><rect x='3' y='3' width='18' height='18' rx='2'/><path d='M3 15l5-5 4 4 3-3 6 6'/><circle cx='8.5' cy='8.5' r='1.5'/></svg>
- <span style='font-size:9.5px;color:rgba(255,255,255,.2);text-align:center'>待补充设计稿截图</span>
- <span style='font-size:8px;color:rgba(255,255,255,.12);text-align:center;line-height:1.8'>Figma · 第一批设计<br>广告管理页面</span>
+<div class='pm-ui-compare-grid' style='margin-top:20px'>
+ <div class='pm-ui-shot-card'>
+  <div>营业中 · 广告可正常接单</div>
+  <img class='pm-ui-shot' src='assets/ad-active-mode.png' alt='广告管理营业中状态截图' loading='lazy'>
  </div>
- <div style='margin-top:10px;display:flex;flex-direction:column;gap:5px'>
- <div style='font-size:13px;font-weight:500;color:rgba(255,255,255,.42);padding:4px 10px;border-left:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02);border-radius:0 4px 4px 0'>收款方式深藏设置三级导航</div>
- <div style='font-size:13px;font-weight:500;color:rgba(255,255,255,.42);padding:4px 10px;border-left:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02);border-radius:0 4px 4px 0'>无 Transfer 国际支付方式</div>
- <div style='font-size:13px;font-weight:500;color:rgba(255,255,255,.42);padding:4px 10px;border-left:1.5px solid rgba(255,255,255,.1);background:rgba(255,255,255,.02);border-radius:0 4px 4px 0'>无身份验证步骤</div>
+ <div class='pm-ui-shot-card'>
+  <div>未营业 · 自动休息入口前置</div>
+  <img class='pm-ui-shot' src='assets/ad-rest-mode.png' alt='广告管理未营业自动休息状态截图' loading='lazy'>
  </div>
- </div>
- <div>
- <div style='font-size:14px;font-weight:500;color:rgba(168,158,248,.7);margin-bottom:10px'>新版</div>
- <div style='aspect-ratio:9/16;max-height:460px;border-radius:24px;border:1.5px dashed rgba(255,255,255,.1);background:rgba(255,255,255,.015);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px'>
- <svg width='22' height='22' fill='none' stroke='rgba(255,255,255,.2)' stroke-width='1.2' viewBox='0 0 24 24'><rect x='3' y='3' width='18' height='18' rx='2'/><path d='M3 15l5-5 4 4 3-3 6 6'/><circle cx='8.5' cy='8.5' r='1.5'/></svg>
- <span style='font-size:9.5px;color:rgba(255,255,255,.2);text-align:center'>待补充设计稿截图</span>
- </div>
- <div style='margin-top:10px;display:flex;flex-direction:column;gap:5px'>
- <div style='font-size:13px;font-weight:500;color:rgba(168,158,248,.8);padding:4px 10px;border-left:1.5px solid rgba(168,158,248,.4);background:rgba(124,111,247,.05);border-radius:0 4px 4px 0'>收款方式前置到广告管理主页（路径缩短 3 级）</div>
- <div style='font-size:13px;font-weight:500;color:rgba(168,158,248,.8);padding:4px 10px;border-left:1.5px solid rgba(168,158,248,.4);background:rgba(124,111,247,.05);border-radius:0 4px 4px 0'>新增 Transfer 国际支付方式</div>
- <div style='font-size:13px;font-weight:500;color:rgba(168,158,248,.8);padding:4px 10px;border-left:1.5px solid rgba(168,158,248,.4);background:rgba(124,111,247,.05);border-radius:0 4px 4px 0'>添加 / 修改 / 删除均需 2FA 验证</div>
- <div style='font-size:13px;font-weight:500;color:rgba(168,158,248,.8);padding:4px 10px;border-left:1.5px solid rgba(168,158,248,.4);background:rgba(124,111,247,.05);border-radius:0 4px 4px 0'>广告主页展示今日成交笔数快捷信息</div>
- </div>
- </div>
+</div>
+
+<div class='pm-order-analysis' style='margin-top:18px'>
+ <div class='pm-order-analysis-item'><b>经营状态显性化</b><span>旧版广告管理只展示单条广告开关，商家整体是否营业不够明确；新版在列表顶部加入“营业中 / 未营业”状态，让商家先判断当前是否接单。</span></div>
+ <div class='pm-order-analysis-item'><b>休息模式前置</b><span>“自动休息”从隐藏规则变为页面顶部的直接入口，商家可以在非服务时间快速暂停承接订单，减少无人响应带来的交易风险。</span></div>
+ <div class='pm-order-analysis-item'><b>广告开关关系更清楚</b><span>整体营业状态与单条广告开关同时呈现：顶部控制商家接单状态，卡片内控制具体广告上下架，层级更容易理解。</span></div>
+ <div class='pm-order-analysis-item'><b>异常状态更可控</b><span>当商家未营业时，页面仍保留广告列表与余额不足提示，方便商家在休息前后检查广告状态和资金限制。</span></div>
 </div>
 
 <!-- ── 结果指标 ── -->
 <div style='margin-top:20px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px'>
  <div style='background:rgba(124,111,247,.06);border:1px solid rgba(124,111,247,.15);border-radius:8px;padding:12px 14px'>
- <div style='font-size:18px;font-weight:700;color:#A89EF8'>+23%</div>
- <div style='font-size:12px;font-weight:500;color:rgba(255,255,255,.38);margin-top:3px'>商家收款方式绑定率↑（首页入口直达）</div>
+ <div style='font-size:18px;font-weight:700;color:#A89EF8'>1 个总开关</div>
+ <div style='font-size:12px;font-weight:500;color:rgba(255,255,255,.38);margin-top:3px'>营业 / 休息状态集中管理</div>
  </div>
  <div style='background:rgba(124,111,247,.06);border:1px solid rgba(124,111,247,.15);border-radius:8px;padding:12px 14px'>
- <div style='font-size:18px;font-weight:700;color:#A89EF8'>−3 级</div>
- <div style='font-size:12px;font-weight:500;color:rgba(255,255,255,.38);margin-top:3px'>导航路径缩短（设置页→主页直达）</div>
+ <div style='font-size:18px;font-weight:700;color:#A89EF8'>自动休息</div>
+ <div style='font-size:12px;font-weight:500;color:rgba(255,255,255,.38);margin-top:3px'>非营业时段减少无效接单</div>
  </div>
 </div>
 

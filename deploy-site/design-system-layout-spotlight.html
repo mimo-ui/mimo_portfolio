@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CoinW Foundations 2.0 Spotlight Interaction</title>
+  <style>
+    :root {
+      --ink: #f6f7f8;
+      --muted: #a8acb3;
+      --paper: #181a1f;
+      --paper-2: #202329;
+      --canvas: #000000;
+      --line: rgba(255, 255, 255, .13);
+      --soft: #24272d;
+      --purple: #5028f8;
+      --blue: #0848f8;
+      --green: #10a838;
+      --lime: #ccff3f;
+      --electric: #48f09a;
+      --dark: #090a0c;
+      --shadow: 0 28px 70px rgba(0, 0, 0, .42);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      background: var(--canvas);
+    }
+
+    .board {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      min-height: 720px;
+      isolation: isolate;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at var(--spot-x, 54%) var(--spot-y, 38%), rgba(204, 255, 63, .08), transparent 28vw),
+        #000;
+    }
+
+    .board::before {
+      content: "";
+      position: absolute;
+      top: -18vh;
+      left: -6vw;
+      width: 9vw;
+      height: 58vh;
+      min-width: 86px;
+      background: #2b2d36;
+      transform: rotate(-14deg);
+      transform-origin: bottom center;
+      z-index: 0;
+    }
+
+    .page {
+      position: absolute;
+      --rotate: -13.4deg;
+      --mx: 0px;
+      --my: 0px;
+      --lift: 0px;
+      --scale: 1;
+      --glow: rgba(204, 255, 63, 0);
+      --line-glow: rgba(255, 255, 255, .09);
+      width: 42vw;
+      min-width: 420px;
+      min-height: 360px;
+      background: var(--paper);
+      border: 1px solid var(--line-glow);
+      box-shadow:
+        var(--shadow),
+        0 0 0 1px var(--glow),
+        0 0 42px rgba(204, 255, 63, 0);
+      transform: translate3d(var(--mx), calc(var(--my) + var(--lift)), 0) rotate(var(--rotate)) scale(var(--scale));
+      transform-origin: center;
+      overflow: hidden;
+      will-change: transform, box-shadow, border-color;
+      animation: page-enter .85s cubic-bezier(.2, .75, .18, 1) both;
+      transition:
+        border-color .55s cubic-bezier(.16, 1, .3, 1),
+        box-shadow .55s cubic-bezier(.16, 1, .3, 1),
+        filter .55s cubic-bezier(.16, 1, .3, 1),
+        transform .55s cubic-bezier(.16, 1, .3, 1),
+        opacity .55s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .page:hover {
+      --lift: -2px;
+      --scale: 1.002;
+      --glow: rgba(204, 255, 63, .1);
+      --line-glow: rgba(204, 255, 63, .18);
+      filter: brightness(1.06) saturate(1.05);
+    }
+
+    .page.is-hovered {
+      z-index: 18;
+    }
+
+    .page.is-active {
+      --lift: -3px;
+      --scale: 1.004;
+      --glow: rgba(204, 255, 63, .14);
+      --line-glow: rgba(204, 255, 63, .24);
+      filter: brightness(1.07) saturate(1.06);
+      z-index: 20;
+    }
+
+    .board.is-spotlighting .page:not(.is-hovered):not(.is-active) {
+      opacity: .46;
+      filter: brightness(.56) saturate(.72);
+    }
+
+    .board.is-spotlighting .page.is-hovered {
+      opacity: 1;
+    }
+
+    .page:focus-visible {
+      outline: 2px solid var(--lime);
+      outline-offset: 6px;
+    }
+
+    .page::selection {
+      background: rgba(204, 255, 63, .28);
+    }
+
+    .page::before,
+    .page::after {
+      content: "";
+      position: absolute;
+      left: 32px;
+      right: 32px;
+      height: 1px;
+      background: var(--line);
+      opacity: .9;
+    }
+
+    .page::before {
+      top: 58px;
+    }
+
+    .page::after {
+      bottom: 48px;
+    }
+
+    .page-header,
+    .page-footer {
+      position: absolute;
+      left: 32px;
+      right: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0;
+      color: rgba(246, 247, 248, .88);
+    }
+
+    .page-header {
+      top: 24px;
+    }
+
+    .page-footer {
+      bottom: 20px;
+    }
+
+    .brand-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-mini span {
+      width: 16px;
+      height: 16px;
+      border: 3px solid currentColor;
+      transform: rotate(28deg);
+      display: inline-block;
+      transition: transform .5s cubic-bezier(.16, 1, .3, 1), border-color .5s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .page:hover .brand-mini span,
+    .page.is-active .brand-mini span {
+      border-color: rgba(204, 255, 63, .86);
+      transform: rotate(56deg);
+    }
+
+    .page-content {
+      position: relative;
+      z-index: 1;
+      padding: 86px 56px 76px;
+      min-height: inherit;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    h1 {
+      max-width: 720px;
+      font-size: clamp(72px, 9vw, 158px);
+      line-height: .88;
+      letter-spacing: 0;
+      font-weight: 780;
+    }
+
+    h2 {
+      font-size: clamp(34px, 3.2vw, 64px);
+      line-height: .96;
+      letter-spacing: 0;
+      font-weight: 760;
+    }
+
+    h3 {
+      font-size: 18px;
+      line-height: 1.1;
+      font-weight: 760;
+    }
+
+    p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .hero {
+      top: 17.6vh;
+      left: 35.8vw;
+      width: 45.2vw;
+      min-width: 660px;
+      min-height: 456px;
+      background:
+        radial-gradient(circle at 18px 18px, rgba(204, 255, 63, .23) 1.6px, transparent 1.8px) 0 0 / 34px 34px,
+        linear-gradient(135deg, #22252b 0%, #17191e 100%);
+      --rotate: -13.2deg;
+      z-index: 9;
+      animation-delay: .08s;
+    }
+
+    .hero .page-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 126px 62px 82px;
+    }
+
+    .hero p {
+      position: absolute;
+      top: 86px;
+      left: 62px;
+      right: 130px;
+      color: rgba(246, 247, 248, .64);
+      max-width: 720px;
+      font-size: 12px;
+      }
+
+    .hero h1 {
+      font-size: clamp(72px, 5.1vw, 112px);
+      line-height: .88;
+      font-weight: 760;
+    }
+
+    .button {
+      position: absolute;
+      right: 64px;
+      bottom: 126px;
+      padding: 12px 20px;
+      background: var(--lime);
+      color: #080808;
+      border: 0;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 760;
+      cursor: pointer;
+      transition: transform .42s cubic-bezier(.16, 1, .3, 1), box-shadow .42s cubic-bezier(.16, 1, .3, 1), background .42s ease;
+    }
+
+    .button:hover {
+      background: #d8ff5d;
+      box-shadow: 0 0 22px rgba(204, 255, 63, .2);
+      transform: translateY(-1px);
+    }
+
+    .type-card {
+      top: 31.6vh;
+      left: -8.6vw;
+      width: 39.8vw;
+      min-width: 620px;
+      min-height: 350px;
+      --rotate: -13.6deg;
+      z-index: 4;
+      animation-delay: .18s;
+    }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin-top: 38px;
+    }
+
+    .type-sample {
+      min-height: 210px;
+      padding: 26px;
+      background: var(--paper-2);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .type-sample strong {
+      font-size: 36px;
+      line-height: 1;
+      letter-spacing: 0;
+      font-weight: 740;
+    }
+
+    .type-sample small {
+      color: rgba(246, 247, 248, .74);
+      font-size: 13px;
+      line-height: 1.2;
+      font-weight: 650;
+    }
+
+    .chips {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .chip {
+      background: var(--lime);
+      color: #080808;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 13px;
+      line-height: 1;
+      font-weight: 700;
+      transition: transform .45s cubic-bezier(.16, 1, .3, 1), background .45s ease;
+    }
+
+    .page:hover .chip {
+      transform: translateX(2px);
+    }
+
+    .colors {
+      right: -12.2vw;
+      top: 43.8vh;
+      width: 47.2vw;
+      min-width: 720px;
+      min-height: 338px;
+      --rotate: -13.4deg;
+      z-index: 5;
+      animation-delay: .26s;
+    }
+
+    .swatch-lines {
+      display: grid;
+      gap: 14px;
+      margin-top: 38px;
+    }
+
+    .swatch-line {
+      height: 44px;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      overflow: hidden;
+    }
+
+    .swatch-line span {
+      cursor: crosshair;
+      transition: transform .48s cubic-bezier(.16, 1, .3, 1), filter .48s ease;
+    }
+
+    .colors:hover .swatch-line span {
+      filter: saturate(1.08);
+      transform: scaleY(1.025);
+    }
+
+    .swatch-line span:nth-child(1) { background: #000; }
+    .swatch-line span:nth-child(2) { background: #181818; }
+    .swatch-line span:nth-child(3) { background: #383838; }
+    .swatch-line span:nth-child(4) { background: #585858; }
+    .swatch-line span:nth-child(5) { background: #747474; }
+    .swatch-line span:nth-child(6) { background: #909090; }
+    .swatch-line span:nth-child(7) { background: #b8b8b8; }
+    .swatch-line span:nth-child(8) { background: #f0f0f0; }
+    .swatch-line.purple span:nth-child(1) { background: #5028f8; }
+    .swatch-line.purple span:nth-child(2) { background: #6650ff; }
+    .swatch-line.purple span:nth-child(3) { background: #8178ff; }
+    .swatch-line.purple span:nth-child(4) { background: #9f9dff; }
+    .swatch-line.purple span:nth-child(5) { background: #bcbbff; }
+    .swatch-line.purple span:nth-child(6) { background: #d0d0ff; }
+    .swatch-line.purple span:nth-child(7) { background: #e2e1ff; }
+    .swatch-line.purple span:nth-child(8) { background: #f0efff; }
+    .swatch-line.accent span:nth-child(1) { background: #0848f8; }
+    .swatch-line.accent span:nth-child(2) { background: #10a838; }
+    .swatch-line.accent span:nth-child(3) { background: #48f09a; }
+    .swatch-line.accent span:nth-child(4) { background: #ccff3f; }
+    .swatch-line.accent span:nth-child(5) { background: #f89018; }
+    .swatch-line.accent span:nth-child(6) { background: #d8d8d8; }
+    .swatch-line.accent span:nth-child(7) { background: #f0f0f0; }
+    .swatch-line.accent span:nth-child(8) { background: #fff; }
+
+    .icons {
+      top: 2.4vh;
+      right: -13.8vw;
+      width: 30.2vw;
+      min-width: 510px;
+      min-height: 322px;
+      --rotate: -13.2deg;
+      z-index: 3;
+      animation-delay: .34s;
+    }
+
+    .icons img {
+      width: 100%;
+      margin-top: 26px;
+      border: 1px solid var(--line);
+      background: #101217;
+    }
+
+    .brand {
+      top: -20.5vh;
+      left: 8.8vw;
+      width: 41.4vw;
+      min-width: 650px;
+      min-height: 382px;
+      --rotate: -13.6deg;
+      z-index: 2;
+      animation-delay: .04s;
+    }
+
+    .mark-construction {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 26px;
+      align-items: center;
+      margin-top: 24px;
+    }
+
+    .mark-frame {
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+      background:
+        linear-gradient(rgba(255, 255, 255, .08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, .08) 1px, transparent 1px),
+        #101217;
+      background-size: 24px 24px;
+    }
+
+    .mark-frame img {
+      width: min(220px, 74%);
+      aspect-ratio: 1;
+      object-fit: contain;
+      mix-blend-mode: screen;
+    }
+
+    .rules {
+      left: 53vw;
+      top: -24.5vh;
+      width: 39vw;
+      min-width: 600px;
+      min-height: 346px;
+      --rotate: -13.4deg;
+      z-index: 1;
+      animation-delay: .12s;
+    }
+
+    .layout-wire {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 30px;
+    }
+
+    .wire-card {
+      min-height: 150px;
+      border: 1px dashed rgba(255, 255, 255, .26);
+      padding: 22px;
+      background:
+        linear-gradient(rgba(204, 255, 63, .08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(204, 255, 63, .08) 1px, transparent 1px),
+        var(--paper-2);
+      background-size: 22px 22px;
+    }
+
+    .wire-card strong {
+      display: block;
+      max-width: 190px;
+      font-size: 29px;
+      line-height: .98;
+      letter-spacing: 0;
+      font-weight: 760;
+    }
+
+    .dark-page {
+      left: 20.6vw;
+      top: 61.4vh;
+      width: 45.5vw;
+      min-width: 720px;
+      min-height: 405px;
+      background: #111318;
+      color: #fff;
+      border-color: rgba(255, 255, 255, .14);
+      --rotate: -13.5deg;
+      z-index: 7;
+      animation-delay: .3s;
+    }
+
+    .dark-page::before,
+    .dark-page::after {
+      background: rgba(255, 255, 255, .18);
+    }
+
+    .dark-page p,
+    .dark-page .page-header,
+    .dark-page .page-footer {
+      color: rgba(255, 255, 255, .72);
+    }
+
+    .merch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 34px;
+    }
+
+    .merch {
+      min-height: 210px;
+      background: #151515;
+      border: 1px solid rgba(255, 255, 255, .08);
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      color: #fff;
+      overflow: hidden;
+      transition: transform .48s cubic-bezier(.16, 1, .3, 1), background .48s ease;
+    }
+
+    .dark-page:hover .merch {
+      background: #1c1f25;
+    }
+
+    .dark-page:hover .merch:nth-child(2) {
+      transform: translateY(-4px);
+    }
+
+    .merch img {
+      max-width: 100%;
+      max-height: 190px;
+      object-fit: contain;
+    }
+
+    .mini-poster {
+      width: 128px;
+      aspect-ratio: 3 / 4;
+      background: var(--electric);
+      padding: 16px;
+      color: #080808;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-weight: 780;
+    }
+
+    .mini-poster b {
+      font-size: 25px;
+      line-height: .95;
+      letter-spacing: 0;
+    }
+
+    .app-page {
+      right: -2.4vw;
+      top: 82vh;
+      width: 25vw;
+      min-width: 390px;
+      min-height: 570px;
+      --rotate: -13.4deg;
+      z-index: 6;
+      animation-delay: .38s;
+    }
+
+    .app-page .page-content {
+      padding: 72px 34px 72px;
+    }
+
+    .phone-shot {
+      width: 100%;
+      max-height: 500px;
+      object-fit: contain;
+      object-position: top;
+      border: 1px solid var(--line);
+      background: #101217;
+    }
+
+    .accent-cards {
+      left: -11.6vw;
+      top: 72.8vh;
+      width: 32vw;
+      min-width: 500px;
+      min-height: 360px;
+      --rotate: -13.4deg;
+      z-index: 1;
+      animation-delay: .22s;
+    }
+
+    .accent-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 32px;
+    }
+
+    .accent-tile {
+      min-height: 220px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      color: #080808;
+      font-size: 15px;
+      font-weight: 720;
+      transition: transform .48s cubic-bezier(.16, 1, .3, 1), filter .48s ease;
+    }
+
+    .accent-cards:hover .accent-tile {
+      filter: saturate(1.06);
+    }
+
+    .accent-cards:hover .accent-tile:nth-child(2) {
+      transform: translateY(-4px);
+    }
+
+    .accent-tile strong {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 26px;
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .accent-tile:nth-child(1) {
+      background: #8587ff;
+      color: #fff;
+    }
+    .accent-tile:nth-child(2) { background: var(--electric); }
+    .accent-tile:nth-child(3) { background: var(--lime); }
+
+    .index-page {
+      top: 91vh;
+      left: 49.4vw;
+      width: 43vw;
+      min-width: 660px;
+      min-height: 320px;
+      --rotate: -13.4deg;
+      z-index: 2;
+      animation-delay: .44s;
+    }
+
+    .overview-img {
+      width: 100%;
+      margin-top: 30px;
+      height: 190px;
+      object-fit: cover;
+      object-position: center;
+      background: #000;
+    }
+
+    .color-tooltip {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 100;
+      display: grid;
+      grid-template-columns: 14px auto;
+      gap: 9px;
+      align-items: center;
+      padding: 9px 12px;
+      background: rgba(8, 9, 11, .86);
+      border: 1px solid rgba(255, 255, 255, .16);
+      border-radius: 999px;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, .36), 0 0 24px rgba(204, 255, 63, .12);
+      color: #f6f7f8;
+      font-size: 12px;
+      font-weight: 760;
+      line-height: 1;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(var(--tip-x, 0), var(--tip-y, 0), 0) translate(14px, -42px) scale(.96);
+      transition: opacity .16s ease, transform .16s cubic-bezier(.16, 1, .3, 1);
+      white-space: nowrap;
+      backdrop-filter: blur(14px);
+    }
+
+    .color-tooltip.is-visible {
+      opacity: 1;
+      transform: translate3d(var(--tip-x, 0), var(--tip-y, 0), 0) translate(14px, -42px) scale(1);
+    }
+
+    .color-tooltip span {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: var(--tip-color, #fff);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .3);
+    }
+
+    @keyframes page-enter {
+      from {
+        opacity: .88;
+        transform: translate3d(calc(var(--mx) - 22px), calc(var(--my) + 34px), 0) rotate(calc(var(--rotate) - 2deg)) scale(.985);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate3d(var(--mx), var(--my), 0) rotate(var(--rotate)) scale(1);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .page,
+      .button,
+      .chip,
+      .swatch-line span,
+      .merch,
+      .accent-tile,
+      .brand-mini span {
+        animation: none;
+        transition: none;
+      }
+    }
+
+    @media (max-width: 980px) {
+      body {
+        background: var(--canvas);
+      }
+
+      .board {
+        min-height: 0;
+        padding: 24px;
+        display: grid;
+        gap: 22px;
+      }
+
+      .page {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        min-height: auto;
+        transform: none;
+        animation: none;
+      }
+
+      .page-content {
+        padding: 84px 28px 72px;
+      }
+
+      .hero .page-content {
+        padding-top: 150px;
+      }
+
+      .hero p,
+      .button {
+        left: 28px;
+        right: 28px;
+      }
+
+      .button {
+        width: fit-content;
+      }
+
+      h1 {
+        font-size: clamp(60px, 16vw, 110px);
+      }
+
+      .type-grid,
+      .layout-wire,
+      .merch-grid,
+      .accent-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .colors,
+      .icons,
+      .brand,
+      .rules,
+      .dark-page,
+      .app-page,
+      .accent-cards,
+      .index-page {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="board" aria-label="CoinW Foundations 2.0 design system layout">
+    <section class="page brand" tabindex="0" data-depth="7">
+      <div class="page-header">
+        <span class="brand-mini"><span></span>CoinW</span>
+        <span>Brand Mark</span>
+      </div>
+      <div class="page-content">
+        <h2>Symbol Construction</h2>
+        <div class="mark-construction">
+          <div class="mark-frame">
+            <img src="assets/design-system/dark-brand-mark.png" alt="CoinW dark geometric brand mark">
+          </div>
+          <p>Geometric construction, dark surface, and three-dimensional depth form the recognizable brand expression for campaign and system assets.</p>
+        </div>
+      </div>
+      <div class="page-footer">
+        <span>Brand Guidelines</span>
+        <span>Page 09</span>
+      </div>
+    </section>
+
+    <section class="page rules" tabindex="0" data-depth="4">
+      <div class="page-header">
+        <span class="brand-mini"><span></span>CoinW</span>
+        <span>Section 3.1</span>
+      </div>
+      <div class="page-content">
+        <h2>Responsive Rules</h2>
+        <p>Design handoff uses a 375px mobile reference. Wider screens should clarify whether content expands, remains centered, or lets only navigation bars stretch.</p>
+        <div class="layout-wire">
+          <div class="wire-card"><strong>Center content on wide mobile.</strong></div>
+          <div class="wire-card"><strong>Bars can stretch full width.</strong></div>
+        </div>
+      </div>
+      <div class="page-footer">
+        <span>Documentation</span>
+        <span>Page 18</span>
+      </div>
+    </section>
+
+    <section class="page icons" tabindex="0" data-depth="5">
+      <div class="page-header">
+        <span class="brand-mini"><span></span>CoinW</span>
+        <span>Icon Library</span>
+      </div>
+      <div class="page-content">
+        <h2>24px Icon Template</h2>
+        <p>Shortcut icons use compact black forms with a primary purple accent layer, designed for product tiles and fast scanning.</p>
+        <img src="assets/design-system/shortcut-icons.png" alt="CoinW shortcut icon library">
+      </div>
+      <div class="page-footer">
+        <span>Libraries</span>
+        <span>Page 24</span>
+      </div>
+    </section>
+
+    <section class="page hero" tabindex="0" data-depth="12">
+      <div class="page-header">
+        <span class="brand-mini"><span></span>CoinW</span>
+        <span>Section 3.2</span>
+      </div>
+      <div class="page-content">
+        <p>The foundation system balances clarity, product utility, and bold crypto energy. It keeps app surfaces calm while allowing brand moments to become vivid and memorable.</p>
+        <h1>CoinW<br>Foundations</h1>
+        <button class="button" type="button">Design System</button>
+      </div>
+      <div class="page-footer">
+        <span>Brand Guidelines</span>
+        <span>2026</span>
+        <span>Page 01</span>
+      </div>
+    </section>
+
+    <section class="page type-card" tabindex="0" data-depth="8">
+      <div class="page-header">
+        <span>Type Weights</span>
+        <span>Section 3.3</span>
+      </div>
+      <div class="page-content">
+        <p>Typography supports financial data, shortcut labels, and localized text. Keep shortcut labels at 14px and allow two-line wrapping for accessibility.</p>
+        <div class="type-grid">
+          <div class="type-sample">
+            <strong>Balance<br>Display</strong>
+            <small>ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz<br>0123456789</small>
+          </div>
+          <div class="type-sample">
+            <strong>Product<br>Label</strong>
+            <div class="chips">
+              <span class="chip">14px label</span>
+              <span class="chip">two-line safe</span>
+              <span class="chip">top aligned</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="page-footer">
+        <span>Styleguide</span>
+        <span>Page 22</span>
+      </div>
+    </section>
+
+    <section class="page colors" tabindex="0" data-depth="9">
+      <div class="page-header">
+        <span class="brand-mini"><span></span>CoinW</span>
+        <span>Color Shades</span>
+      </div>
+      <div class="page-content">
+        <h2>Core Palette</h2>
+        <p>Neutral surfaces carry product information. Purple defines primary action and icon accents, while blue, green, lime, and orange support brand and market states.</p>
+        <div class="swatch-lines">
+          <div class="swatch-line"><span data-color="#000000"></span><span data-color="#181818"></span><span data-color="#383838"></span><span data-color="#585858"></span><span data-color="#747474"></span><span data-color="#909090"></span><span data-color="#B8B8B8"></span><span data-color="#F0F0F0"></span></div>
+          <div class="swatch-line purple"><span data-color="#5028F8"></span><span data-color="#6650FF"></span><span data-color="#8178FF"></span><span data-color="#9F9DFF"></span><span data-color="#BCBBFF"></span><span data-color="#D0D0FF"></span><span data-color="#E2E1FF"></span><span data-color="#F0EFFF"></span></div>
+          <div class="swatch-line accent"><span data-color="#0848F8"></span><span data-color="#10A838"></span><span data-color="#48F09A"></span><span data-color="#CCFF3F"></span><span data-color="#F89018"></span><span data-color="#D8D8D8"></span><span data-color="#F0F0F0"></span><span data-color="#FFFFFF"></span></div>
+        </div>
+      </div>
+      <div class="page-footer">
+        <span>Brand Guidelines</span>
+        <span>Page 29</span>
+      </div>
+    </section>
+
+    <section class="page accent-cards" tabindex="0" data-depth="6">
+      <div class="page-header">
+        <span>Accent Colors</span>
+        <span>Section 4.1</span>
+      </div>
+      <div class="page-content">
+        <p>Accent colors should stay purposeful: market movement, interactive emphasis, and high-energy brand moments.</p>
+        <div class="accent-grid">
+          <div class="accent-tile"><strong>Purple</strong>#5028F8</div>
+          <div class="accent-tile"><strong>Green</strong>#48F09A</div>
+          <div class="accent-tile"><strong>Lime</strong>#CCFF3F</div>
+        </div>
+      </div>
+      <div class="page-footer">
+        <span>Color</span>
+        <span>Page 31</span>
+      </div>
+    </section>
+
+    <section class="page dark-page" tabindex="0" data-depth="10">
+      <div class="page-header">
+        <span class="brand-mini"><span></span>CoinW</span>
+        <span>Asset Examples</span>
+      </div>
+      <div class="page-content">
+        <h2>Brand Assets</h2>
+        <p>Marketing and campaign materials can shift into a darker, more dimensional expression while preserving the system's geometry and accent colors.</p>
+        <div class="merch-grid">
+          <div class="merch"><img src="assets/design-system/blue-brand-mark.png" alt="Blue CoinW brand asset"></div>
+          <div class="merch"><div class="mini-poster"><span>CoinW</span><b>One system that connects everything.</b></div></div>
+          <div class="merch"><img src="assets/design-system/dark-brand-mark.png" alt="Dark CoinW brand asset"></div>
+        </div>
+      </div>
+      <div class="page-footer">
+        <span>Brand Guidelines</span>
+        <span>Page 49</span>
+      </div>
+    </section>
+
+    <section class="page app-page" tabindex="0" data-depth="7">
+      <div class="page-header">
+        <span>Mobile App</span>
+        <span>375 Reference</span>
+      </div>
+      <div class="page-content">
+        <h2>Home System</h2>
+        <p>Balance, CTAs, top products, markets, and bottom navigation establish the app's core rhythm.</p>
+        <img class="phone-shot" src="assets/design-system/mobile-home.png" alt="CoinW mobile home screen design">
+      </div>
+      <div class="page-footer">
+        <span>Templates</span>
+        <span>Page 37</span>
+      </div>
+    </section>
+
+    <section class="page index-page" tabindex="0" data-depth="5">
+      <div class="page-header">
+        <span class="brand-mini"><span></span>CoinW</span>
+        <span>Figma Map</span>
+      </div>
+      <div class="page-content">
+        <h2>System Index</h2>
+        <p>Styleguide, libraries, templates, documentation, index, and archive areas are visible in the exported Foundations 2.0 file.</p>
+        <img class="overview-img" src="assets/design-system/figma-overview.png" alt="Figma file overview thumbnail">
+      </div>
+      <div class="page-footer">
+        <span>Index</span>
+        <span>Page 52</span>
+      </div>
+    </section>
+  </main>
+  <div class="color-tooltip" aria-hidden="true"><span></span><strong>#000000</strong></div>
+  <script>
+    const board = document.querySelector(".board");
+    const pages = [...document.querySelectorAll(".page")];
+    const colorTooltip = document.querySelector(".color-tooltip");
+    const colorTooltipSwatch = colorTooltip.querySelector("span");
+    const colorTooltipText = colorTooltip.querySelector("strong");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let activeTimer;
+
+    pages.forEach((page) => {
+      page.addEventListener("click", () => {
+        pages.forEach((item) => item.classList.remove("is-active"));
+        page.classList.add("is-active");
+        window.clearTimeout(activeTimer);
+        activeTimer = window.setTimeout(() => {
+          page.classList.remove("is-active");
+        }, 1300);
+      });
+
+      page.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          page.click();
+        }
+      });
+
+      page.addEventListener("pointerenter", () => {
+        if (reduceMotion.matches) return;
+        board.classList.add("is-spotlighting");
+        page.classList.add("is-hovered");
+      });
+
+      page.addEventListener("pointerleave", () => {
+        page.classList.remove("is-hovered");
+        if (!pages.some((item) => item.classList.contains("is-hovered"))) {
+          board.classList.remove("is-spotlighting");
+        }
+      });
+    });
+
+    document.querySelectorAll(".swatch-line span[data-color]").forEach((swatch) => {
+      swatch.addEventListener("pointerenter", (event) => {
+        const color = swatch.dataset.color;
+        colorTooltipText.textContent = color;
+        colorTooltipSwatch.style.setProperty("--tip-color", color);
+        colorTooltip.style.setProperty("--tip-x", `${event.clientX}px`);
+        colorTooltip.style.setProperty("--tip-y", `${event.clientY}px`);
+        colorTooltip.classList.add("is-visible");
+      });
+
+      swatch.addEventListener("pointermove", (event) => {
+        colorTooltip.style.setProperty("--tip-x", `${event.clientX}px`);
+        colorTooltip.style.setProperty("--tip-y", `${event.clientY}px`);
+      });
+
+      swatch.addEventListener("pointerleave", () => {
+        colorTooltip.classList.remove("is-visible");
+      });
+    });
+
+    board.addEventListener("pointermove", (event) => {
+      if (reduceMotion.matches) return;
+
+      const rect = board.getBoundingClientRect();
+      const x = (event.clientX - rect.left) / rect.width - .5;
+      const y = (event.clientY - rect.top) / rect.height - .5;
+
+      board.style.setProperty("--spot-x", `${(x + .5) * 100}%`);
+      board.style.setProperty("--spot-y", `${(y + .5) * 100}%`);
+
+      pages.forEach((page) => {
+        const depth = Number(page.dataset.depth || 6);
+        page.style.setProperty("--mx", `${x * depth}px`);
+        page.style.setProperty("--my", `${y * depth * .7}px`);
+      });
+    });
+
+    board.addEventListener("pointerleave", () => {
+      pages.forEach((page) => {
+        page.style.setProperty("--mx", "0px");
+        page.style.setProperty("--my", "0px");
+      });
+    });
+  </script>
+</body>
+</html>
