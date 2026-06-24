@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mimo Jiang — UI Designer</title>
+  <link rel="icon" type="image/svg+xml" href="assets/mimio-favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
 
   <!-- HarmonyOS Sans SC -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -266,12 +269,32 @@
       will-change: transform;
     }
 
-    canvas#ghost {
-      position: fixed; top: 0; left: 0;
-      display: block; width: 100%; height: 100vh;
-      z-index: 10000; pointer-events: none;
-      opacity: 1;
-      transition: opacity 0.4s ease;
+    canvas#ghost { display: none; }
+
+    #smooth-cursor {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 50px;
+      height: 54px;
+      z-index: 999999;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate3d(-50%, -50%, 0) rotate(0deg) scale(1);
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+      transition: opacity 0.15s ease;
+    }
+    #smooth-cursor svg {
+      display: block;
+      width: 50px;
+      height: 54px;
+      transform: scale(.5);
+      transform-origin: 50% 50%;
+    }
+    body.standard-cursor #smooth-cursor,
+    body.standard-cursor #ghost-dot {
+      opacity: 0 !important;
     }
 
     /* minimal dot cursor */
@@ -1579,6 +1602,32 @@ body.standard-cursor #ghost-dot {
   background: #000;
   display: block;
 }
+.component-system-section {
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
+.component-embed-shell {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  height: var(--component-embed-height, 820px);
+  margin: 0 auto;
+  overflow: visible;
+  background: transparent;
+}
+.component-embed-frame {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: var(--component-frame-width, 1120px);
+  height: var(--component-frame-height, 820px);
+  border: 0;
+  transform: translateX(-50%) scale(var(--component-frame-scale, 1));
+  transform-origin: top center;
+  background: transparent;
+  display: block;
+}
 
 @media (max-width: 768px) {
   #landing-lightbox > div:nth-of-type(2) {
@@ -1602,6 +1651,10 @@ body.standard-cursor #ghost-dot {
     min-height: 0 !important;
   }
   .design-system-section {
+    padding-top: 56px !important;
+    padding-bottom: 56px !important;
+  }
+  .component-system-section {
     padding-top: 56px !important;
     padding-bottom: 56px !important;
   }
@@ -1945,7 +1998,7 @@ body.standard-cursor #ghost-dot {
 #footer-marquee + #contact {
   position: relative;
   z-index: 1;
-  min-height: 720px;
+  min-height: 560px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1959,24 +2012,6 @@ body.standard-cursor #ghost-dot {
   margin-left: auto;
   margin-right: auto;
 }
-#footer-spline-bg {
-  position: absolute !important;
-  inset: 0 !important;
-  z-index: 0 !important;
-  overflow: hidden !important;
-  clip-path: inset(0) !important;
-  contain: strict;
-}
-#footer-spline-bg spline-viewer {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  max-height: 100% !important;
-  overflow: hidden !important;
-  clip-path: inset(0) !important;
-}
-
 /* Skip layout/paint work for below-the-fold sections until needed. */
 #about,
 #stats,
@@ -2043,6 +2078,55 @@ body.standard-cursor #ghost-dot {
 
     .accent-gradient {
       background: linear-gradient(90deg, var(--design-lime), var(--design-blue));
+    }
+
+    #ls-word {
+      min-width: 7.5em;
+      text-align: center;
+      font-weight: 500 !important;
+      letter-spacing: -0.035em;
+      font-synthesis: none;
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
+      will-change: opacity, transform;
+    }
+    #ls-count {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 0.04em;
+      font-variant-numeric: tabular-nums;
+      line-height: 0.9;
+    }
+    #ls-count .ls-percent {
+      font-size: 0.42em;
+      font-weight: 700;
+      opacity: 0.72;
+      transform: translateY(-0.08em);
+    }
+    #ls-bar {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(90deg, var(--design-lime), var(--design-blue));
+      box-shadow:
+        0 0 10px rgba(204,255,0,.34),
+        0 0 22px rgba(20,209,255,.18) !important;
+    }
+    #ls-bar::after {
+      content: "";
+      position: absolute;
+      top: -6px;
+      bottom: -6px;
+      left: -28%;
+      width: 34%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.88), transparent);
+      filter: blur(6px);
+      opacity: .72;
+      animation: loading-bar-shine 1.15s ease-in-out infinite;
+    }
+    @keyframes loading-bar-shine {
+      0% { transform: translateX(0); opacity: 0; }
+      18% { opacity: .72; }
+      100% { transform: translateX(390%); opacity: 0; }
     }
 
     .hero-nav-link:hover {
@@ -2165,6 +2249,75 @@ body.standard-cursor #ghost-dot {
     .stat-item:hover .text-6xl,
     .stat-item:hover [data-i18n^="stat-"] {
       color: #ccff00 !important;
+    }
+
+    #about .about-r {
+      display: flex;
+      flex-direction: column;
+    }
+    #about .about-education-block {
+      width: 100%;
+      margin-bottom: 32px !important;
+    }
+    #about .about-section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    #about .about-section-title::before {
+      content: "";
+      width: 32px;
+      height: 1px;
+      flex: 0 0 32px;
+      background: hsl(var(--stroke));
+    }
+    #about .about-section-title span {
+      font-size: 12px;
+      line-height: 1;
+      color: hsl(var(--muted));
+      text-transform: uppercase;
+      letter-spacing: .3em;
+    }
+    #about .about-experience-block {
+      width: 100%;
+    }
+
+    #stats .stats-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      gap: 0 !important;
+      max-width: 1120px;
+      margin-inline: auto;
+      background: transparent !important;
+      border-radius: 0 !important;
+      overflow: visible !important;
+    }
+    #stats .stat-item {
+      width: 100%;
+      min-width: 0;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #stats .stat-item > div:first-child {
+      width: 100%;
+      text-align: center;
+      line-height: .95;
+    }
+    #stats .stat-item [data-i18n^="stat-"] {
+      width: 100%;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      #stats .stats-grid {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+      }
     }
 
     #contact > .absolute .bg-black\/50 {
@@ -2967,20 +3120,93 @@ body.standard-cursor #ghost-dot {
     }
 
     @media (max-width: 640px) {
+      #works {
+        padding-top: 48px !important;
+        padding-bottom: 48px !important;
+      }
       #works #holo-track .pcard,
       #works .pcard,
       #works #holo-track .pcard.otc,
       #works #holo-track .pcard.copy,
       #works #holo-track .pcard.community,
       #works #holo-track .pcard.landing {
-        height: clamp(430px, 112vw, 470px) !important;
+        height: auto !important;
+        min-height: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        padding: 18px 16px !important;
+        border: 1px solid rgba(255,255,255,.12) !important;
+        box-shadow:
+          0 18px 46px rgba(0,0,0,.38),
+          inset 0 0 0 1px rgba(255,255,255,.035) !important;
+        clip-path: inset(0 round 24px) !important;
+        -webkit-clip-path: inset(0 round 24px) !important;
+        overflow: hidden !important;
+      }
+      #works .pcard::before {
+        display: block !important;
+        inset: 0 !important;
+        border: 1px solid rgba(255,255,255,.08) !important;
+        border-radius: inherit !important;
+        -webkit-mask: none !important;
+        mask: none !important;
+        opacity: 1 !important;
+      }
+      #works .pcard::after {
+        display: none !important;
+      }
+      #works .pcard-header,
+      #works #holo-track .pcard.otc .pcard-header,
+      #works #holo-track .pcard.copy .pcard-header,
+      #works #holo-track .pcard.community .pcard-header,
+      #works #holo-track .pcard.landing .pcard-header {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        padding: 0 !important;
+        flex: 0 0 auto !important;
+      }
+      #works .pcard-banner,
+      #works #holo-track .pcard.otc .pcard-banner,
+      #works #holo-track .pcard.copy .pcard-banner,
+      #works #holo-track .pcard.community .pcard-banner,
+      #works #holo-track .pcard.landing .pcard-banner {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 16 / 9 !important;
+        margin-top: 16px !important;
+        flex: 0 0 auto !important;
       }
       #works .pcard-body,
       #works #holo-track .pcard.otc .pcard-body,
       #works #holo-track .pcard.copy .pcard-body,
       #works #holo-track .pcard.community .pcard-body,
       #works #holo-track .pcard.landing .pcard-body {
-        top: clamp(224px, 58vw, 246px) !important;
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        padding: 0 !important;
+        margin-top: 20px !important;
+        flex: 0 0 auto !important;
+      }
+      #works .pcard.copy .pcard-banner video,
+      #works #holo-track .pcard.copy .pcard-banner video {
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain !important;
+        object-position: center !important;
+        transform: none !important;
+        background: #08090b !important;
       }
       #works .pcard .pcard-footer,
       #works #holo-track .pcard.otc .pcard-footer,
@@ -2991,6 +3217,48 @@ body.standard-cursor #ghost-dot {
       }
       #works .pcard .pcard-btn {
         display: none !important;
+      }
+    }
+
+    /* Final section rhythm: keep modules connected without oversized gaps. */
+    #design-system,
+    #component-system,
+    #works,
+    #about,
+    #journal {
+      padding-top: 64px !important;
+      padding-bottom: 64px !important;
+    }
+    #stats {
+      padding-top: 56px !important;
+      padding-bottom: 56px !important;
+    }
+    #footer-marquee {
+      padding-top: 0 !important;
+      padding-bottom: 32px !important;
+    }
+    #contact {
+      padding-top: 0 !important;
+      padding-bottom: 48px !important;
+    }
+
+    @media (max-width: 768px) {
+      #design-system,
+      #component-system,
+      #works,
+      #about,
+      #journal,
+      #stats {
+        padding-top: 48px !important;
+        padding-bottom: 48px !important;
+      }
+      #footer-marquee {
+        padding-top: 0 !important;
+        padding-bottom: 28px !important;
+      }
+      #contact {
+        padding-top: 0 !important;
+        padding-bottom: 40px !important;
       }
     }
 
@@ -3005,6 +3273,26 @@ body.standard-cursor #ghost-dot {
 
 <canvas id="ghost"></canvas>
 <div id="ghost-dot"></div>
+<div id="smooth-cursor" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" width="50" height="54" viewBox="0 0 50 54" fill="none">
+    <g filter="url(#smooth-cursor-shadow)">
+      <path d="M42.6817 41.1495L27.5103 6.79925C26.7269 5.02557 24.2082 5.02558 23.3927 6.79925L7.59814 41.1495C6.75833 42.9759 8.52712 44.8902 10.4125 44.1954L24.3757 39.0496C24.8829 38.8627 25.4385 38.8627 25.9422 39.0496L39.8121 44.1954C41.6849 44.8902 43.4884 42.9759 42.6817 41.1495Z" fill="black"/>
+      <path d="M43.7146 40.6933L28.5431 6.34306C27.3556 3.65428 23.5772 3.69516 22.3668 6.32755L6.57226 40.6778C5.3134 43.4156 7.97238 46.298 10.803 45.2549L24.7662 40.109C25.0221 40.0147 25.2999 40.0156 25.5494 40.1082L39.4193 45.254C42.2261 46.2953 44.9254 43.4347 43.7146 40.6933Z" stroke="white" stroke-width="2.25825"/>
+    </g>
+    <defs>
+      <filter id="smooth-cursor-shadow" x="0.602397" y="0.952444" width="49.0584" height="52.428" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+        <feOffset dy="2.25825"/>
+        <feGaussianBlur stdDeviation="2.25825"/>
+        <feComposite in2="hardAlpha" operator="out"/>
+        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0"/>
+        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+      </filter>
+    </defs>
+  </svg>
+</div>
 
 <!-- ═══════════════════════════════════════════ LOADING ════ -->
 <div id="loading" class="fixed inset-0 z-[9999] bg-bg flex flex-col select-none">
@@ -3019,7 +3307,7 @@ body.standard-cursor #ghost-dot {
   <!-- centre cycling word -->
   <div class="flex-1 flex items-center justify-center">
     <p id="ls-word"
-       class="text-5xl md:text-7xl font-light text-text-primary/80
+       class="text-5xl md:text-7xl text-text-primary/80
               transition-all duration-300 ease-out">
       Design
     </p>
@@ -3033,7 +3321,7 @@ body.standard-cursor #ghost-dot {
         0%
       </span>
     </div>
-    <div class="h-[3px] bg-white/5 rounded-full overflow-hidden">
+    <div class="h-[3px] bg-white/5 rounded-full overflow-hidden" style="box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)">
       <div id="ls-bar"
            class="h-full accent-gradient rounded-full origin-left"
            style="transform:scaleX(0);
@@ -3061,7 +3349,10 @@ body.standard-cursor #ghost-dot {
               mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
               padding-bottom: calc(1.25rem + 24px)">
     <!-- logo -->
-    <span class="text-white text-base font-bold tracking-[0.25em] uppercase select-none">MIMO</span>
+    <a href="#page" class="inline-flex items-center gap-2 text-white text-base font-bold tracking-[0.25em] uppercase select-none">
+      <img src="assets/mimio-favicon.svg" alt="Mimio" width="32" height="32" class="h-8 w-8 rounded-xl" style="width:32px;height:32px" />
+      <span>MIMIO</span>
+    </a>
 
     <!-- desktop links -->
     <div class="hidden md:flex items-center gap-8">
@@ -3195,6 +3486,82 @@ body.standard-cursor #ghost-dot {
             const hovered = shell.matches(':hover');
             if (!hovered) leave();
           });
+        })();
+      </script>
+    </div>
+  </section>
+
+  <!-- ── COINW INPUT / BUTTON COMPONENTS ─────────────────────── -->
+  <section id="component-system" class="component-system-section bg-bg py-16 md:py-24 border-t border-stroke">
+    <div class="relative max-w-[1360px] mx-auto px-6 md:px-10 lg:px-16">
+      <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 md:mb-14">
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-8 h-px bg-stroke"></div>
+            <span class="text-xs text-muted uppercase tracking-[.3em]">Components</span>
+          </div>
+          <h2 class="text-4xl md:text-5xl font-bold text-text-primary mb-3">
+            Input / Button Components
+          </h2>
+          <p class="text-sm text-muted max-w-xl leading-relaxed">
+            CoinW 交易产品中的输入框与按钮组件状态预览，保留原始组件颜色与交互。
+          </p>
+        </div>
+      </div>
+
+      <div class="component-embed-shell" data-frame-width="1120" data-frame-height="820">
+        <iframe
+          class="component-embed-frame"
+          src="coinw-input-button-components.html"
+          title="CoinW Input and Button Components"
+          loading="lazy">
+        </iframe>
+      </div>
+
+      <script>
+        (function syncComponentEmbedScale(){
+          const shell = document.currentScript && document.currentScript.previousElementSibling;
+          if (!shell || !shell.classList.contains('component-embed-shell')) return;
+          const frameWidth = Number(shell.dataset.frameWidth) || 1120;
+          const frameHeight = Number(shell.dataset.frameHeight) || 820;
+
+          function resize(){
+            const available = shell.clientWidth || frameWidth;
+            const isMobile = available < 640;
+            const targetWidth = isMobile ? available : frameWidth;
+            const targetHeight = isMobile ? 1360 : frameHeight;
+            const scale = isMobile ? 1 : Math.min(1, available / frameWidth);
+            shell.style.setProperty('--component-frame-width', targetWidth + 'px');
+            shell.style.setProperty('--component-frame-height', targetHeight + 'px');
+            shell.style.setProperty('--component-frame-scale', scale);
+            shell.style.setProperty('--component-embed-height', Math.ceil(targetHeight * scale) + 'px');
+          }
+
+          resize();
+          window.addEventListener('resize', resize, { passive: true });
+        })();
+
+        (function bindComponentCursorMode(){
+          const section = document.getElementById('component-system');
+          const shell = section && section.querySelector('.component-embed-shell');
+          if (!section || !shell) return;
+          let active = false;
+          function enter() {
+            if (active) return;
+            active = true;
+            document.body.classList.add('standard-cursor');
+            if (window.setGhostMode) window.setGhostMode('hidden');
+          }
+          function leave() {
+            if (!active) return;
+            active = false;
+            document.body.classList.remove('standard-cursor');
+            if (window.setGhostMode) window.setGhostMode('full');
+          }
+          shell.addEventListener('pointerenter', enter);
+          shell.addEventListener('mouseenter', enter);
+          shell.addEventListener('pointerleave', leave);
+          shell.addEventListener('mouseleave', leave);
         })();
       </script>
     </div>
@@ -3374,12 +3741,27 @@ body.standard-cursor #ghost-dot {
           </div>
         </div>
 
-        <!-- right: experience -->
+        <!-- right: education + experience -->
         <div class="about-r opacity-0 translate-y-8">
-          <div class="flex items-center gap-3 mb-6">
-            <div class="w-8 h-px bg-stroke"></div>
-            <span class="text-xs text-muted uppercase tracking-[.3em]" data-i18n="exp-label">Experience</span>
+          <!-- education -->
+          <div class="about-education-block">
+            <div class="about-section-title">
+              <span>毕业院校</span>
+            </div>
+            <div class="flex items-start justify-between">
+              <div>
+                <h4 class="text-sm font-semibold text-text-primary">湖南城市学院</h4>
+                <p class="text-xs text-muted mt-0.5">平面设计 · 本科</p>
+              </div>
+              <span class="text-[11px] text-muted">2009 — 2013</span>
+            </div>
           </div>
+
+          <!-- experience -->
+          <div class="about-experience-block">
+            <div class="about-section-title">
+              <span class="text-xs text-muted uppercase tracking-[.3em]" data-i18n="exp-label">Experience</span>
+            </div>
 
           <div class="experience-scroll-shell">
           <div class="experience-scroll">
@@ -3471,15 +3853,6 @@ body.standard-cursor #ghost-dot {
           </div>
           </div>
           </div>
-
-          <!-- education -->
-          <div class="mt-10 pt-8 border-t border-stroke flex items-start justify-between">
-            <div>
-              <p class="text-[10px] text-muted uppercase tracking-[.24em] mb-3">毕业院校</p>
-              <h4 class="text-sm font-semibold text-text-primary">湖南城市学院</h4>
-              <p class="text-xs text-muted mt-0.5">平面设计 · 本科</p>
-            </div>
-            <span class="text-[11px] text-muted">2009 — 2013</span>
           </div>
         </div>
 
@@ -3490,7 +3863,7 @@ body.standard-cursor #ghost-dot {
   <!-- ── STATS ───────────────────────────────────────────────── -->
   <section id="stats" class="bg-bg py-16 md:py-20 border-t border-stroke">
     <div class="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-stroke rounded-2xl overflow-hidden">
+      <div class="stats-grid grid grid-cols-1 md:grid-cols-3 gap-px bg-stroke rounded-2xl overflow-hidden">
 
         <div class="stat-item bg-bg p-8 md:p-12 opacity-0">
           <div class="text-5xl md:text-6xl font-bold text-text-primary mb-3">4+</div>
@@ -3607,18 +3980,6 @@ body.standard-cursor #ghost-dot {
   <section id="contact" class="relative bg-bg pt-0 pb-8 md:pb-12 overflow-hidden
                                 border-t border-stroke">
 
-    <!-- footer background Spline scene -->
-    <div id="footer-spline-bg" class="absolute inset-0 pointer-events-none" style="z-index:0">
-      <spline-viewer
-        id="footer-spline-viewer"
-        data-material-revision="2026-06-23-color-01"
-        data-url="https://prod.spline.design/Mxcq6JjMfpU45vt6/scene.splinecode?v=20260623-color-01"
-        class="absolute inset-0 w-full h-full"
-        style="width:100%;height:100%;display:block;pointer-events:none;opacity:.3">
-      </spline-viewer>
-      <div class="absolute inset-0" style="background:rgba(0,0,0,.22)"></div>
-    </div>
-
     <div class="relative max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16">
 
       <!-- CTA -->
@@ -3637,27 +3998,6 @@ body.standard-cursor #ghost-dot {
 
     </div>
   </section>
-
-  <script>
-    (function lazyLoadFooterSpline() {
-      var viewer = document.getElementById('footer-spline-viewer');
-      if (!viewer) return;
-      var load = function () {
-        if (!viewer.getAttribute('url')) viewer.setAttribute('url', viewer.dataset.url);
-      };
-      if (!('IntersectionObserver' in window)) {
-        load();
-        return;
-      }
-      var observer = new IntersectionObserver(function (entries) {
-        if (entries.some(function (entry) { return entry.isIntersecting; })) {
-          load();
-          observer.disconnect();
-        }
-      }, { rootMargin: '600px 0px' });
-      observer.observe(viewer);
-    })();
-  </script>
 
 </div><!-- #page -->
 
@@ -3812,7 +4152,7 @@ body.standard-cursor #ghost-dot {
   function tick(now){
     const pct=Math.min(1,(now-t0)/dur);
     const n=Math.floor(pct*100);
-    countEl.textContent = n + '%';
+    countEl.innerHTML = n + '<span class="ls-percent">%</span>';
     barEl.style.transform=`scaleX(${pct})`;
     if(pct<1){ requestAnimationFrame(tick); return; }
     clearInterval(wTimer);
@@ -6949,6 +7289,154 @@ document.addEventListener('keydown', e => {
 <!-- ── Ghost cursor ──────────────────────────────────────────── -->
 <script type="module">
 
+(() => {
+  const cursorEl = document.getElementById('smooth-cursor');
+  const dotEl = document.getElementById('ghost-dot');
+  const mediaQuery = window.matchMedia('(any-hover: hover) and (any-pointer: fine)');
+  const interactiveSelector = 'a, button, [role="button"], input, select, textarea, label, [href], .proj-card, .pcard';
+
+  const spring = {
+    damping: 45,
+    stiffness: 400,
+    mass: 1,
+    restDelta: 0.001
+  };
+
+  const state = {
+    enabled: false,
+    visible: false,
+    mode: 'full',
+    targetX: 0,
+    targetY: 0,
+    x: 0,
+    y: 0,
+    vx: 0,
+    vy: 0,
+    rotation: 0,
+    rotationTarget: 0,
+    scale: 1,
+    scaleTarget: 1,
+    previousAngle: 0,
+    accumulatedRotation: 0,
+    lastX: 0,
+    lastY: 0,
+    lastTime: Date.now(),
+    raf: 0,
+    scaleTimer: null
+  };
+
+  function isTrackablePointer(event) {
+    return event.pointerType !== 'touch';
+  }
+
+  function shouldShowFullCursor() {
+    return state.enabled && state.mode === 'full' && state.visible && !document.body.classList.contains('standard-cursor');
+  }
+
+  function setCursorOpacity() {
+    const showFull = shouldShowFullCursor();
+    cursorEl.style.opacity = showFull ? '1' : '0';
+    dotEl.style.opacity = state.enabled && state.mode === 'minimal' ? '1' : '0';
+  }
+
+  function updateEnabled() {
+    state.enabled = mediaQuery.matches;
+    if (!state.enabled) {
+      state.visible = false;
+      cursorEl.style.opacity = '0';
+      dotEl.style.opacity = '0';
+      document.body.style.cursor = '';
+    } else {
+      document.body.style.cursor = 'none';
+      setCursorOpacity();
+    }
+  }
+
+  function normalizeAngleDiff(diff) {
+    if (diff > 180) return diff - 360;
+    if (diff < -180) return diff + 360;
+    return diff;
+  }
+
+  function setScale(value, delay = 150) {
+    state.scaleTarget = value;
+    if (state.scaleTimer) clearTimeout(state.scaleTimer);
+    if (delay > 0) {
+      state.scaleTimer = setTimeout(() => {
+        state.scaleTarget = 1;
+      }, delay);
+    }
+  }
+
+  function onPointerMove(event) {
+    if (!isTrackablePointer(event) || !state.enabled) return;
+
+    const currentTime = Date.now();
+    const deltaTime = Math.max(1, currentTime - state.lastTime);
+    const currentX = event.clientX;
+    const currentY = event.clientY;
+    const nextVx = (currentX - state.lastX) / deltaTime;
+    const nextVy = (currentY - state.lastY) / deltaTime;
+    const speed = Math.sqrt(nextVx * nextVx + nextVy * nextVy);
+
+    state.visible = true;
+    state.targetX = currentX;
+    state.targetY = currentY;
+    state.vx = nextVx;
+    state.vy = nextVy;
+    state.lastX = currentX;
+    state.lastY = currentY;
+    state.lastTime = currentTime;
+
+    dotEl.style.left = currentX + 'px';
+    dotEl.style.top = currentY + 'px';
+
+    if (speed > 0.1) {
+      const currentAngle = Math.atan2(state.vy, state.vx) * (180 / Math.PI) + 90;
+      const angleDiff = normalizeAngleDiff(currentAngle - state.previousAngle);
+      state.accumulatedRotation += angleDiff;
+      state.rotationTarget = state.accumulatedRotation;
+      state.previousAngle = currentAngle;
+      setScale(0.95);
+    }
+
+    setCursorOpacity();
+  }
+
+  function animate() {
+    state.raf = requestAnimationFrame(animate);
+    if (!state.enabled) return;
+
+    const stiffness = spring.stiffness / 1000;
+    const damping = spring.damping / 100;
+    state.x += (state.targetX - state.x) * stiffness;
+    state.y += (state.targetY - state.y) * stiffness;
+    state.rotation += (state.rotationTarget - state.rotation) * 0.18;
+    state.scale += (state.scaleTarget - state.scale) * (1 - damping * 0.35);
+
+    cursorEl.style.transform =
+      `translate3d(${state.x}px, ${state.y}px, 0) translate(-50%, -50%) rotate(${state.rotation.toFixed(2)}deg) scale(${state.scale.toFixed(3)})`;
+  }
+
+  document.addEventListener('pointermove', onPointerMove, { passive: true });
+  document.addEventListener('mousedown', event => {
+    if (!event.target.closest(interactiveSelector) && state.mode === 'full') {
+      cursorEl.style.opacity = '0';
+    }
+  });
+  document.addEventListener('mouseup', () => setCursorOpacity());
+
+  mediaQuery.addEventListener('change', updateEnabled);
+  updateEnabled();
+  animate();
+
+  window.setGhostMode = function(mode) {
+    state.mode = mode === 'minimal' || mode === 'hidden' ? mode : 'full';
+    setCursorOpacity();
+  };
+})();
+
+if (false) {
 const canvasEl = document.querySelector("#ghost");
 const mouseThreshold = .4;
 const dpr = Math.min(window.devicePixelRatio, 1.25);
@@ -7257,6 +7745,7 @@ window.setGhostMode = function(mode) {
     }
   }
 };
+}
 
 // ── Mobile Menu ─────────────────────────────────────────────────
 window.toggleMobileMenu = function(){
@@ -7417,7 +7906,7 @@ function _splitH1() {
     '<span class="wa" style="display:inline-block;opacity:0;transform:translateY(18px)">Mimo\'s</span>' +
     '<br>' +
     '<span class="wa" style="display:inline-block;opacity:0;transform:translateY(18px)">Portfolio</span>' +
-    '<span class="wa" style="display:inline-block;color:#5ed29c;opacity:0;transform:translateY(18px)">.</span>';
+    '<span class="wa" style="display:inline-block;color:var(--design-lime);opacity:0;transform:translateY(18px)">.</span>';
 }
 
 function _animateSpans(spans, baseDelay) {
