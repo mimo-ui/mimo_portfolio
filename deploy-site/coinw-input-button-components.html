@@ -693,7 +693,7 @@
   <main class="page">
     <header class="title">
       <h1>Input / Button</h1>
-      <p class="source">Interactive component states based on the Figma Input and Button components.</p>
+      <p class="source">基于 Figma Input / Button 组件的交互状态预览。</p>
     </header>
 
     <nav class="mobile-switch" aria-label="Component type">
@@ -1171,6 +1171,30 @@
     });
 
     syncControl("inputMode", state.inputMode);
+
+    const COMPONENT_COPY = {
+      zh: {
+        source: "基于 Figma Input / Button 组件的交互状态预览。",
+      },
+      en: {
+        source: "Interactive component states based on the Figma Input and Button components.",
+      },
+    };
+
+    function applyComponentLanguage(lang) {
+      const safeLang = lang === "en" ? "en" : "zh";
+      const source = document.querySelector(".source");
+      if (source) source.textContent = COMPONENT_COPY[safeLang].source;
+      document.documentElement.lang = safeLang === "zh" ? "zh-CN" : "en";
+    }
+
+    applyComponentLanguage(new URLSearchParams(window.location.search).get("lang") || localStorage.getItem("portfolio-lang") || "zh");
+    window.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "portfolio-lang") {
+        applyComponentLanguage(event.data.lang);
+      }
+    });
+
     render();
     syncPanels();
     window.addEventListener("resize", requestFrameResize, { passive: true });

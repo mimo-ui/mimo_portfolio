@@ -740,11 +740,13 @@
   align-items: center;
   justify-content: center;
 }
-.pcard-banner img {
+.pcard-banner img,
+.pcard-banner video {
   width: 100%; height: 100%;
   object-fit: cover;
   border-radius: inherit;
   display: block;
+  background: #050506;
 }
 .pcard-banner-ph {
   display: flex; flex-direction: column;
@@ -1472,11 +1474,24 @@ body.standard-cursor #ghost-dot {
   align-items: stretch !important;
   background: #090a0c !important;
 }
+#proj-modal:not(.open) {
+  background: rgba(9,10,12,0) !important;
+  backdrop-filter: blur(0) !important;
+  -webkit-backdrop-filter: blur(0) !important;
+}
+#proj-modal.open.closing {
+  background: rgba(9,10,12,0) !important;
+  backdrop-filter: blur(0) !important;
+  -webkit-backdrop-filter: blur(0) !important;
+  pointer-events: none !important;
+  transition: background .18s ease, backdrop-filter .18s ease !important;
+}
 #proj-modal-card {
   width: 100% !important;
   max-width: none !important;
   height: 100vh !important;
   height: 100dvh !important;
+  overscroll-behavior: contain !important;
   border: 0 !important;
   border-radius: 0 !important;
   background: #0f1013 !important;
@@ -1492,7 +1507,7 @@ body.standard-cursor #ghost-dot {
 #proj-modal.open.closing #proj-modal-card {
   transform: translate3d(0, 100%, 0) scale(.985) !important;
   transition-timing-function: cubic-bezier(.7,0,.84,0) !important;
-  transition-duration: .42s !important;
+  transition-duration: .26s !important;
 }
 #proj-modal-body {
   --pm2: #15161a !important;
@@ -1503,6 +1518,18 @@ body.standard-cursor #ghost-dot {
   --pmT: #f5f5f5 !important;
   --pmT2: #a6a8ad !important;
   --pmT3: #666a73 !important;
+}
+html.project-modal-locked,
+body.project-modal-locked {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+#proj-modal {
+  overscroll-behavior: none !important;
+  touch-action: none;
+}
+#proj-modal-card {
+  touch-action: pan-y;
 }
 #proj-modal-close {
   position: absolute !important;
@@ -1683,7 +1710,7 @@ body.standard-cursor #ghost-dot {
 #proj-modal.open.closing .modal-sticky-hd {
   transform: translate3d(0, 100vh, 0) !important;
   transition-timing-function: cubic-bezier(.7,0,.84,0) !important;
-  transition-duration: .42s !important;
+  transition-duration: .26s !important;
 }
 .modal-sticky-hd.scrolled {
   padding-top: 12px !important;
@@ -2190,8 +2217,14 @@ body.standard-cursor #ghost-dot {
       width: 100%;
       height: 100%;
       z-index: 0;
+      pointer-events: none;
       filter: contrast(0.92) brightness(0.94);
       image-rendering: auto;
+    }
+
+    #page > nav {
+      z-index: 10050 !important;
+      pointer-events: auto !important;
     }
 
     #hero .gen-btn {
@@ -3273,6 +3306,246 @@ body.standard-cursor #ghost-dot {
       #works .pcard-banner img { transition: none !important; transform: none !important; }
     }
   </style>
+  <style id="journal-hero-tone-fix">
+    #journal {
+      background:
+        radial-gradient(circle at 50% 18%, rgba(204,255,0,.035), transparent 30rem),
+        radial-gradient(circle at 72% 66%, rgba(120,150,255,.035), transparent 22rem),
+        #000 !important;
+      border-top-color: rgba(255,255,255,.045) !important;
+    }
+
+    #journal .journal-hd {
+      margin-bottom: 40px !important;
+    }
+
+    #journal .journal-bento {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
+        rgba(2,3,3,.78) !important;
+      border: 1px solid rgba(255,255,255,.045);
+      box-shadow:
+        0 34px 120px rgba(0,0,0,.58),
+        inset 0 1px 0 rgba(255,255,255,.045) !important;
+      backdrop-filter: blur(14px);
+    }
+
+    #journal .journal-bento article {
+      border-color: rgba(255,255,255,.075) !important;
+      background: rgba(8,10,10,.78) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    #journal .journal-bento > article:first-child {
+      background:
+        radial-gradient(circle at 84% 16%, rgba(204,255,0,.09), transparent 4.4rem),
+        linear-gradient(145deg, rgba(7,14,11,.96), rgba(2,4,4,.96)) !important;
+      border-color: transparent !important;
+    }
+
+    #journal .journal-bento > article:first-child h3 {
+      letter-spacing: -.075em !important;
+      text-shadow: 0 0 26px rgba(255,255,255,.06);
+    }
+
+    #journal .journal-bento > article:first-child p {
+      color: rgba(255,255,255,.72) !important;
+    }
+
+    #journal .journal-bento > article:first-child button {
+      max-width: 100% !important;
+      border-color: rgba(204,255,0,.22) !important;
+      background: rgba(204,255,0,.055) !important;
+    }
+
+    #journal .journal-bento > article:first-child button:hover {
+      border-color: rgba(204,255,0,.5) !important;
+      background: rgba(204,255,0,.1) !important;
+    }
+
+    #journal .journal-bento > div > article:nth-child(1) {
+      background: rgba(9,10,10,.74) !important;
+    }
+
+    #journal .journal-bento > div > article:nth-child(1) span {
+      color: rgba(255,255,255,.64) !important;
+      font-size: clamp(16px, 1.9vw, 22px) !important;
+      letter-spacing: -.045em !important;
+    }
+
+    #journal .journal-bento > div > article:nth-child(1) svg {
+      color: rgba(255,255,255,.15) !important;
+      filter: drop-shadow(0 0 18px rgba(204,255,0,.08));
+    }
+
+    #journal .journal-bento > div:not(.ai-system-grid) > article:nth-child(1) > div:last-child {
+      background: rgba(204,255,0,.22) !important;
+    }
+
+    #journal .journal-bento > div > article:nth-child(2) {
+      background:
+        radial-gradient(circle at 50% 56%, rgba(204,255,0,.055), transparent 13rem),
+        rgba(10,11,13,.72) !important;
+    }
+
+    #journal .journal-bento > div > article:nth-child(2) .text-\[\#ccff00\] {
+      color: rgba(204,255,0,.88) !important;
+      text-shadow: 0 0 22px rgba(204,255,0,.12);
+    }
+
+    #journal .journal-bento > div > article:nth-child(3) {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(204,255,0,.09), transparent 7rem),
+        rgba(9,16,7,.46) !important;
+      border-color: rgba(204,255,0,.18) !important;
+    }
+
+    #journal .journal-bento > div > article:nth-child(3) span {
+      color: rgba(204,255,0,.88) !important;
+      text-shadow: 0 0 18px rgba(204,255,0,.13);
+    }
+
+    #journal .journal-bento > div > article:nth-child(4) {
+      background: rgba(7,8,8,.72) !important;
+    }
+
+    #journal .journal-bento > div > article:nth-child(4) > div:first-child {
+      color: rgba(255,255,255,.7) !important;
+      background:
+        linear-gradient(90deg, transparent, rgba(204,255,0,.045), transparent) !important;
+    }
+
+    #journal .journal-bento > div > article:nth-child(4) > div:first-child span {
+      background: rgba(204,255,0,.9) !important;
+      box-shadow: 0 0 22px rgba(204,255,0,.16);
+    }
+
+    #journal .journal-bento > div > article:nth-child(4) > div:nth-child(2) {
+      background-color: rgba(255,255,255,.018) !important;
+      background-image:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px) !important;
+      background-size: 24px 24px !important;
+      opacity: .72;
+    }
+
+    #journal .ai-system-grid article {
+      border-color: rgba(255,255,255,.07) !important;
+      background: rgba(5,7,7,.72) !important;
+    }
+
+    #journal .ai-system-grid .ai-orbit {
+      min-height: 212px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012)),
+        rgba(3,5,5,.9) !important;
+      border-color: rgba(255,255,255,.075) !important;
+    }
+
+    #journal .ai-system-grid .ai-orbit span,
+    #journal .ai-system-grid .ai-orbit h3,
+    #journal .ai-system-grid .ai-orbit div {
+      color: inherit;
+    }
+
+    #journal .ai-system-grid .ai-orbit > div:last-child {
+      background: transparent !important;
+    }
+
+    #journal .ai-system-grid article:nth-child(2),
+    #journal .ai-system-grid article:nth-child(3) {
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.026), rgba(255,255,255,.008)),
+        rgba(4,6,6,.72) !important;
+      border-color: rgba(255,255,255,.075) !important;
+    }
+
+    #journal .ai-system-grid article:nth-child(4) > div:first-child {
+      background: transparent !important;
+      color: inherit !important;
+    }
+
+    #journal .ai-system-grid article:nth-child(4) {
+      background:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(255,255,255,.018), rgba(255,255,255,.006)),
+        rgba(4,6,6,.72) !important;
+      background-size: 28px 28px, 28px 28px, auto, auto !important;
+      border-color: rgba(255,255,255,.075) !important;
+    }
+
+    /* Clean version: remove all glow/color wash from About AI module. */
+    #journal {
+      background: #000 !important;
+    }
+
+    #journal .journal-bento {
+      background: rgba(0,0,0,.72) !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+    }
+
+    #journal .journal-bento article {
+      box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+    }
+
+    #journal .journal-bento > article:first-child {
+      background: transparent !important;
+      border-color: transparent !important;
+    }
+
+    #journal .journal-bento > article:first-child > .absolute.inset-0,
+    #journal .journal-bento > article:first-child > .absolute.-left-12 {
+      display: none !important;
+    }
+
+    #journal .journal-bento > article:first-child h3 {
+      text-shadow: none !important;
+    }
+
+    #journal .ai-system-grid .ai-orbit,
+    #journal .ai-system-grid article:nth-child(2),
+    #journal .ai-system-grid article:nth-child(3) {
+      background: rgba(0,0,0,.62) !important;
+      box-shadow: none !important;
+      filter: none !important;
+    }
+
+    #journal .ai-system-grid .ai-orbit > .absolute.inset-0 {
+      background:
+        linear-gradient(rgba(255,255,255,.032) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.032) 1px, transparent 1px) !important;
+      background-size: 42px 42px, 42px 42px !important;
+      opacity: .58 !important;
+    }
+
+    #journal .ai-system-grid .ai-orbit svg {
+      filter: none !important;
+    }
+
+    #journal .ai-system-grid article:nth-child(4) {
+      background:
+        linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px) !important;
+      background-size: 28px 28px, 28px 28px !important;
+      box-shadow: none !important;
+      filter: none !important;
+    }
+
+    @media (max-width: 767px) {
+      #journal .journal-bento {
+        border-radius: 24px !important;
+        padding: 12px !important;
+      }
+
+      #journal .journal-bento > article:first-child h3 {
+        font-size: 54px !important;
+      }
+    }
+  </style>
 </head>
 
 <body class="bg-bg text-text-primary">
@@ -3363,17 +3636,17 @@ body.standard-cursor #ghost-dot {
     <!-- desktop links -->
     <div class="hidden md:flex items-center gap-5 lg:gap-7">
       <a href="#hero" class="hero-nav-link text-[11px] uppercase tracking-widest font-semibold"
-         style="color:rgba(255,255,255,0.55)" data-i18n="nav-hero">Hero</a>
+         style="color:rgba(255,255,255,0.55)" data-i18n="nav-hero">首页</a>
       <a href="#design-system" class="hero-nav-link text-[11px] uppercase tracking-widest font-semibold"
-         style="color:rgba(255,255,255,0.55)" data-i18n="nav-foundation">Foundation</a>
+         style="color:rgba(255,255,255,0.55)" data-i18n="nav-foundation">设计系统</a>
       <a href="#component-system" class="hero-nav-link text-[11px] uppercase tracking-widest font-semibold"
-         style="color:rgba(255,255,255,0.55)" data-i18n="nav-components">Components</a>
+         style="color:rgba(255,255,255,0.55)" data-i18n="nav-components">组件系统</a>
       <a href="#works" class="hero-nav-link text-[11px] uppercase tracking-widest font-semibold"
          style="color:rgba(255,255,255,0.55)" data-i18n="nav-featured">精选项目</a>
       <a href="#about" class="hero-nav-link text-[11px] uppercase tracking-widest font-semibold"
          style="color:rgba(255,255,255,0.55)" data-i18n="nav-aboutme">关于我</a>
       <a href="#journal" class="hero-nav-link text-[11px] uppercase tracking-widest font-semibold"
-         style="color:rgba(255,255,255,0.55)" data-i18n="nav-other">Other</a>
+         style="color:rgba(255,255,255,0.55)" data-i18n="nav-other">其他</a>
     </div>
 
     <!-- right side -->
@@ -3387,7 +3660,7 @@ body.standard-cursor #ghost-dot {
                      backdrop-filter:blur(8px)" data-i18n="nav-sayhi">
         Say Hi
       </button>
-      <button id="lang-toggle" onclick="toggleLang()" title="Switch language">EN</button>
+      <button id="lang-toggle" onclick="toggleLang(event)" title="Switch language">EN</button>
       <!-- hamburger (mobile) -->
       <button id="nav-hamburger" onclick="toggleMobileMenu()"
               class="md:hidden flex flex-col justify-center gap-[5px] w-8 h-8"
@@ -3414,7 +3687,7 @@ body.standard-cursor #ghost-dot {
           <span style="display:block">Mimo‘s</span>
           <span style="display:block">Portfolio<span style="color:#ccff00">.</span></span>
         </h1>
-        <p class="hero-copy-desc" style="max-width:720px;font-size:16px;font-weight:400;line-height:1.75;margin:24px auto 0;color:rgba(255,255,255,.5)">
+        <p id="hero-desc" class="hero-copy-desc" data-i18n="hero-desc" style="max-width:720px;font-size:16px;font-weight:400;line-height:1.75;margin:24px auto 0;color:rgba(255,255,255,.5)">
           专注 Web3 产品的端到端 UI/UX 设计——从复杂交易流程到 0→1 冷启动。调研驱动，像素精准，快速交付。
         </p>
       </div>
@@ -3435,7 +3708,7 @@ body.standard-cursor #ghost-dot {
             CoinW Foundations<br class="hidden sm:block"> 2.0
           </h2>
         </div>
-        <p class="max-w-[460px] text-sm text-muted leading-relaxed">
+        <p class="max-w-[460px] text-sm text-muted leading-relaxed" data-i18n="ds-desc">
           完整嵌入 Design System spotlight 文件，保留原始交互与动效；外层仅按网页宽度等比缩放展示。
         </p>
       </div>
@@ -3508,12 +3781,12 @@ body.standard-cursor #ghost-dot {
         <div>
           <div class="flex items-center gap-3 mb-4">
             <div class="w-8 h-px bg-stroke"></div>
-            <span class="text-xs text-muted uppercase tracking-[.3em]">Components</span>
+            <span class="text-xs text-muted uppercase tracking-[.3em]" data-i18n="components-label">组件系统</span>
           </div>
-          <h2 class="text-4xl md:text-5xl font-bold text-text-primary mb-3">
+          <h2 class="text-4xl md:text-5xl font-bold text-text-primary mb-3" data-i18n="components-title">
             Input / Button Components
           </h2>
-          <p class="text-sm text-muted max-w-xl leading-relaxed">
+          <p class="text-sm text-muted max-w-xl leading-relaxed" data-i18n="components-desc">
             CoinW 交易产品中的输入框与按钮组件状态预览，保留原始组件颜色与交互。
           </p>
         </div>
@@ -3595,7 +3868,7 @@ body.standard-cursor #ghost-dot {
         <div>
           <div class="flex items-center gap-3 mb-4">
             <div class="w-8 h-px bg-stroke"></div>
-            <span class="text-xs text-muted uppercase tracking-[.3em]" data-i18n="works-label">Selected Work</span>
+            <span class="text-xs text-muted uppercase tracking-[.3em]" data-i18n="works-label">精选作品</span>
           </div>
           <h2 class="text-4xl md:text-5xl font-bold text-text-primary mb-3" data-i18n="works-title">
             Featured projects
@@ -3617,23 +3890,24 @@ body.standard-cursor #ghost-dot {
               </div>
               <div class="pcard-banner">
                 <video
-                  src="assets/otc-banner-muted.mp4"
+                  data-src="assets/otc-banner-muted.mp4"
+                  poster="assets/card-posters/otc-poster.jpg"
                   type="video/mp4"
                   aria-label="OTC 项目视频预览"
                   muted
                   loop
                   playsinline
-                  preload="metadata">
+                  preload="none">
                 </video>
                 <div class="pcard-banner-ph">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
-                  <span>设计稿主视觉</span>
+                  <span data-i18n="card-visual-placeholder">设计稿主视觉</span>
                 </div>
               </div>
               <div class="pcard-body">
                 <h3 data-i18n="card-otc-title">OTC 场外交易系统</h3>
                 <p class="pcard-sub" data-i18n="card-otc-sub">信任机制 · 流程优化 · 跨平台</p>
-                <div class="pcard-tags"><span class="pcard-tag">信任设计</span><span class="pcard-tag">流程重构</span><span class="pcard-tag">跨平台</span></div>
+                <div class="pcard-tags"><span class="pcard-tag" data-i18n="card-otc-tag1">信任设计</span><span class="pcard-tag" data-i18n="card-otc-tag2">流程重构</span><span class="pcard-tag" data-i18n="card-otc-tag3">跨平台</span></div>
               </div>
                             <div class="pcard-footer">
                 <a class="pcard-btn" data-i18n="card-view">查看案例 →</a>
@@ -3646,23 +3920,24 @@ body.standard-cursor #ghost-dot {
               </div>
               <div class="pcard-banner">
                 <video
-                  src="assets/copy-trading-banner.mp4"
+                  data-src="assets/copy-trading-banner.mp4"
+                  poster="assets/card-posters/copy-poster.jpg"
                   type="video/mp4"
                   aria-label="跟单交易系统视频预览"
                   muted
                   loop
                   playsinline
-                  preload="metadata">
+                  preload="none">
                 </video>
                 <div class="pcard-banner-ph">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
-                  <span>设计稿主视觉</span>
+                  <span data-i18n="card-visual-placeholder">设计稿主视觉</span>
                 </div>
               </div>
               <div class="pcard-body">
                 <h3 data-i18n="card-copy-title">跟单交易系统</h3>
                 <p class="pcard-sub" data-i18n="card-copy-sub">0→1 设计 · 数据层级 · 社交跟单</p>
-                <div class="pcard-tags"><span class="pcard-tag">0→1</span><span class="pcard-tag">数据可视化</span><span class="pcard-tag">社交</span></div>
+                <div class="pcard-tags"><span class="pcard-tag" data-i18n="card-copy-tag1">0→1</span><span class="pcard-tag" data-i18n="card-copy-tag2">数据可视化</span><span class="pcard-tag" data-i18n="card-copy-tag3">社交</span></div>
               </div>
                             <div class="pcard-footer">
                 <a class="pcard-btn" data-i18n="card-view">查看案例 →</a>
@@ -3675,23 +3950,24 @@ body.standard-cursor #ghost-dot {
               </div>
               <div class="pcard-banner">
                 <video
-                  src="assets/community-banner.mp4"
+                  data-src="assets/community-banner.mp4"
+                  poster="assets/card-posters/community-poster.jpg"
                   type="video/mp4"
                   aria-label="社区功能改版视频预览"
                   muted
                   loop
                   playsinline
-                  preload="metadata">
+                  preload="none">
                 </video>
                 <div class="pcard-banner-ph">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
-                  <span>设计稿主视觉</span>
+                  <span data-i18n="card-visual-placeholder">设计稿主视觉</span>
                 </div>
               </div>
               <div class="pcard-body">
-                <h3>社区功能改版</h3>
-                <p class="pcard-sub">V1→V3 迭代 · 内容生态 · 留存</p>
-                <div class="pcard-tags"><span class="pcard-tag">迭代设计</span><span class="pcard-tag">内容生态</span><span class="pcard-tag">留存</span></div>
+                <h3 data-i18n="card-community-title">社区功能改版</h3>
+                <p class="pcard-sub" data-i18n="card-community-sub">V1→V3 迭代 · 内容生态 · 留存</p>
+                <div class="pcard-tags"><span class="pcard-tag" data-i18n="card-community-tag1">迭代设计</span><span class="pcard-tag" data-i18n="card-community-tag2">内容生态</span><span class="pcard-tag" data-i18n="card-community-tag3">留存</span></div>
               </div>
                             <div class="pcard-footer">
                 <a class="pcard-btn" data-i18n="card-view">查看案例 →</a>
@@ -3703,16 +3979,16 @@ body.standard-cursor #ghost-dot {
                 <span class="pcard-badge" data-i18n="card-landing-badge">落地页</span>
               </div>
               <div class="pcard-banner">
-                <img src="assets/thumbnails/landing-pages.png" alt="落地页矩阵预览" loading="lazy" />
+                <img src="assets/thumbnails/landing-pages.png" alt="落地页矩阵预览" loading="lazy" decoding="async" fetchpriority="low" />
                 <div class="pcard-banner-ph">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
-                  <span>设计稿主视觉</span>
+                  <span data-i18n="card-visual-placeholder">设计稿主视觉</span>
                 </div>
               </div>
               <div class="pcard-body">
-                <h3>落地页矩阵</h3>
-                <p class="pcard-sub">A/B 测试 · 4层框架 · 转化优化</p>
-                <div class="pcard-tags"><span class="pcard-tag">A/B测试</span><span class="pcard-tag">转化优化</span><span class="pcard-tag">多语言</span></div>
+                <h3 data-i18n="card-landing-title">落地页矩阵</h3>
+                <p class="pcard-sub" data-i18n="card-landing-sub">A/B 测试 · 4层框架 · 转化优化</p>
+                <div class="pcard-tags"><span class="pcard-tag" data-i18n="card-landing-tag1">A/B测试</span><span class="pcard-tag" data-i18n="card-landing-tag2">转化优化</span><span class="pcard-tag" data-i18n="card-landing-tag3">多语言</span></div>
               </div>
                             <div class="pcard-footer">
                 <a class="pcard-btn" data-i18n="card-view">查看案例 →</a>
@@ -3734,18 +4010,18 @@ body.standard-cursor #ghost-dot {
         <div class="about-l opacity-0 translate-y-8">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-8 h-px bg-stroke"></div>
-            <span class="text-xs text-muted uppercase tracking-[.3em]" data-i18n="about-label">About</span>
+            <span class="text-xs text-muted uppercase tracking-[.3em]" data-i18n="about-label">关于我</span>
           </div>
           <h2 class="text-3xl md:text-4xl font-semibold text-text-primary mb-6 leading-snug" data-i18n-html="about-h2">
-            Designing at the intersection<br>
-            of Web3 &amp; craft
+            在 Web3 与设计工艺<br>
+            的交汇处创作
           </h2>
-          <p class="text-sm text-muted leading-relaxed mb-4">
+          <p class="text-sm text-muted leading-relaxed mb-4" data-i18n="about-p1">
             湖南城市学院平面设计本科，深耕数字设计 10 年，其中 Web3 行业 4 年。
             擅长将复杂链上逻辑转化为直观界面，在快节奏 Web3 团队中兼顾品牌一致性
             与用户体验。
           </p>
-          <p class="text-sm text-muted leading-relaxed mb-8">
+          <p class="text-sm text-muted leading-relaxed mb-8" data-i18n="about-p2">
             曾参与加密交易所、DeFi 协议与 NFT 平台从 0 到 1 的产品设计，覆盖
             PC 端与移动端双平台，建立过 200+ 组件的设计系统。
           </p>
@@ -3765,12 +4041,12 @@ body.standard-cursor #ghost-dot {
           <!-- education -->
           <div class="about-education-block">
             <div class="about-section-title">
-              <span>毕业院校</span>
+              <span data-i18n="edu-label">毕业院校</span>
             </div>
             <div class="flex items-start justify-between">
               <div>
-                <h4 class="text-sm font-semibold text-text-primary">湖南城市学院</h4>
-                <p class="text-xs text-muted mt-0.5">平面设计 · 本科</p>
+                  <h4 class="text-sm font-semibold text-text-primary" data-i18n="edu-school">湖南城市学院</h4>
+                <p class="text-xs text-muted mt-0.5" data-i18n="edu-degree">平面设计 · 本科</p>
               </div>
               <span class="text-[11px] text-muted">2009 — 2013</span>
             </div>
@@ -3779,7 +4055,7 @@ body.standard-cursor #ghost-dot {
           <!-- experience -->
           <div class="about-experience-block">
             <div class="about-section-title">
-              <span class="text-xs text-muted uppercase tracking-[.3em]" data-i18n="exp-label">Experience</span>
+              <span class="text-xs text-muted uppercase tracking-[.3em]" data-i18n="exp-label">工作经历</span>
             </div>
 
           <div class="experience-scroll-shell">
@@ -3791,20 +4067,20 @@ body.standard-cursor #ghost-dot {
               <div class="experience-node absolute -left-[5px] top-[6px] w-2 h-2 rounded-full accent-gradient"></div>
               <div class="flex items-start justify-between mb-1.5">
                 <div>
-                  <h4 class="text-sm font-semibold text-text-primary">UI Designer</h4>
+                  <h4 class="text-sm font-semibold text-text-primary" data-i18n="exp1-role">UI 设计师</h4>
                   <p class="text-xs text-muted">CoinW · Legend Tech</p>
                 </div>
                 <span class="text-[11px] text-muted shrink-0 ml-4">2025.07 — 至今</span>
               </div>
               <ul class="text-xs text-muted leading-relaxed space-y-1 list-none">
-                <li>→ 主导落地页、OTC、跟单系统、社区四大模块全链路设计</li>
-                <li>→ 设计目标：提升注册转化率 &amp; 降低新用户激活门槛</li>
-                <li>→ 设计方法：竞品拆解 → 用户旅程图 → 线框 → 高保真 → 可用性测试</li>
-                <li>→ 跟单系统上线后新用户激活率 +38%，OTC 交易完成率 +21%</li>
+                <li data-i18n="exp1-li1">→ 主导落地页、OTC、跟单系统、社区四大模块全链路设计</li>
+                <li data-i18n="exp1-li2">→ 设计目标：提升注册转化率 &amp; 降低新用户激活门槛</li>
+                <li data-i18n="exp1-li3">→ 设计方法：竞品拆解 → 用户旅程图 → 线框 → 高保真 → 可用性测试</li>
+                <li data-i18n="exp1-li4">→ 跟单系统上线后新用户激活率 +38%，OTC 交易完成率 +21%</li>
               </ul>
               <div class="flex flex-wrap gap-2 mt-3">
                 <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1">Figma</span>
-                <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1">Design System</span>
+                <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1" data-i18n="skill-design-system">设计系统</span>
                 <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1">Web3 UX</span>
                 <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1">A/B Test</span>
               </div>
@@ -3815,20 +4091,20 @@ body.standard-cursor #ghost-dot {
               <div class="experience-node experience-node-muted absolute -left-[5px] top-[6px] w-2 h-2 rounded-full"></div>
               <div class="flex items-start justify-between mb-1.5">
                 <div>
-                  <h4 class="text-sm font-semibold text-text-primary">Senior Product Designer</h4>
-                  <p class="text-xs text-muted">Web3 Protocol（DEX / 多链钱包）</p>
+                  <h4 class="text-sm font-semibold text-text-primary" data-i18n="exp2-role">高级产品设计师</h4>
+                  <p class="text-xs text-muted" data-i18n="exp2-company">Web3 协议（DEX / 多链钱包）</p>
                 </div>
                 <span class="text-[11px] text-muted shrink-0 ml-4">2023.07 — 2025.06</span>
               </div>
               <ul class="text-xs text-muted leading-relaxed space-y-1">
-                <li>→ 负责 DEX 交易界面与多链钱包 UX，覆盖桌面端与 App 双端</li>
-                <li>→ 设计方法：信息架构梳理 → 交互规范制定 → 工程协同交付</li>
-                <li>→ 从零搭建 200+ 组件设计系统，设计效率提升 40%</li>
+                <li data-i18n="exp2-li1">→ 负责 DEX 交易界面与多链钱包 UX，覆盖桌面端与 App 双端</li>
+                <li data-i18n="exp2-li2">→ 设计方法：信息架构梳理 → 交互规范制定 → 工程协同交付</li>
+                <li data-i18n="exp2-li3">→ 从零搭建 200+ 组件设计系统，设计效率提升 40%</li>
               </ul>
               <div class="flex flex-wrap gap-2 mt-3">
                 <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1">DeFi</span>
                 <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1">Multi-chain</span>
-                <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1">Component Lib</span>
+                <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1" data-i18n="skill-component-lib">组件库</span>
               </div>
             </div>
 
@@ -3837,20 +4113,20 @@ body.standard-cursor #ghost-dot {
               <div class="experience-node experience-node-muted absolute -left-[5px] top-[6px] w-2 h-2 rounded-full"></div>
               <div class="flex items-start justify-between mb-1.5">
                 <div>
-                  <h4 class="text-sm font-semibold text-text-primary">UI / UX Designer</h4>
-                  <p class="text-xs text-muted">Blockchain Startup（NFT Market + Wallet）</p>
+                  <h4 class="text-sm font-semibold text-text-primary" data-i18n="exp3-role">UI / UX 设计师</h4>
+                  <p class="text-xs text-muted" data-i18n="exp3-company">区块链创业公司（NFT 市场 + 钱包）</p>
                 </div>
                 <span class="text-[11px] text-muted shrink-0 ml-4">2021.07 — 2023.06</span>
               </div>
               <ul class="text-xs text-muted leading-relaxed space-y-1">
-                <li>→ 入门 Web3，主导 NFT 市场与钱包连接全流程设计</li>
-                <li>→ 设计目标：降低 Web3 新手的认知门槛</li>
-                <li>→ 输出品牌视觉体系 + Web &amp; App 双端界面规范</li>
+                <li data-i18n="exp3-li1">→ 入门 Web3，主导 NFT 市场与钱包连接全流程设计</li>
+                <li data-i18n="exp3-li2">→ 设计目标：降低 Web3 新手的认知门槛</li>
+                <li data-i18n="exp3-li3">→ 输出品牌视觉体系 + Web &amp; App 双端界面规范</li>
               </ul>
               <div class="flex flex-wrap gap-2 mt-3">
                 <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1">NFT</span>
-                <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1">Brand</span>
-                <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1">Mobile</span>
+                <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1" data-i18n="skill-brand">品牌</span>
+                <span class="text-[10px] text-muted border border-stroke rounded-full px-2.5 py-1" data-i18n="skill-mobile">移动端</span>
               </div>
             </div>
 
@@ -3859,12 +4135,12 @@ body.standard-cursor #ghost-dot {
               <div class="experience-node experience-node-muted absolute -left-[5px] top-[6px] w-2 h-2 rounded-full"></div>
               <div class="flex items-start justify-between mb-1">
                 <div>
-                  <h4 class="text-sm font-semibold text-text-primary">Visual / UI Designer</h4>
-                  <p class="text-xs text-muted">数字营销 &amp; 互联网行业</p>
+                  <h4 class="text-sm font-semibold text-text-primary" data-i18n="exp4-role">视觉 / UI 设计师</h4>
+                  <p class="text-xs text-muted" data-i18n="exp4-company">数字营销 &amp; 互联网行业</p>
                 </div>
                 <span class="text-[11px] text-muted shrink-0 ml-4">2014 — 2021</span>
               </div>
-              <p class="text-xs text-muted leading-relaxed">
+              <p class="text-xs text-muted leading-relaxed" data-i18n="exp4-desc">
                 平面设计转型交互设计，积累跨行业视觉叙事能力。
               </p>
             </div>
@@ -3886,15 +4162,15 @@ body.standard-cursor #ghost-dot {
 
         <div class="stat-item bg-bg p-8 md:p-12 opacity-0">
           <div class="text-5xl md:text-6xl font-bold text-text-primary mb-3">4+</div>
-          <div class="text-xs text-muted uppercase tracking-[.2em]" data-i18n="stat-1">Years in Web3</div>
+          <div class="text-xs text-muted uppercase tracking-[.2em]" data-i18n="stat-1">Web3 从业年限</div>
         </div>
         <div class="stat-item bg-bg p-8 md:p-12 opacity-0">
           <div class="text-5xl md:text-6xl font-bold text-text-primary mb-3">50+</div>
-          <div class="text-xs text-muted uppercase tracking-[.2em]" data-i18n="stat-2">Projects Delivered</div>
+          <div class="text-xs text-muted uppercase tracking-[.2em]" data-i18n="stat-2">交付项目数</div>
         </div>
         <div class="stat-item bg-bg p-8 md:p-12 opacity-0">
           <div class="text-5xl md:text-6xl font-bold text-text-primary mb-3">10+</div>
-          <div class="text-xs text-muted uppercase tracking-[.2em]" data-i18n="stat-3">Years of Experience</div>
+          <div class="text-xs text-muted uppercase tracking-[.2em]" data-i18n="stat-3">设计经验年限</div>
         </div>
 
       </div>
@@ -3912,7 +4188,7 @@ body.standard-cursor #ghost-dot {
             About AI
           </h2>
         </div>
-        <span class="hidden md:inline-flex items-center gap-2 mt-4 text-xs uppercase tracking-[.22em] text-muted">
+        <span class="hidden md:inline-flex items-center gap-2 mt-4 text-xs uppercase tracking-[.22em] text-muted" data-i18n="journal-kicker">
           Web3 / UX / Systems
         </span>
       </div>
@@ -3926,92 +4202,78 @@ body.standard-cursor #ghost-dot {
                  linear-gradient(135deg, rgba(255,255,255,.055), transparent 50%);"></div>
           <div class="relative z-10 flex h-full flex-col justify-between">
             <div>
-              <div class="text-[10px] font-bold uppercase tracking-[.26em] text-[#ccff00]/80">AI assisted</div>
-              <h3 class="mt-5 text-[44px] font-bold leading-[.84] tracking-[-.08em]">
+              <div class="text-[10px] font-bold uppercase tracking-[.26em] text-[#ccff00]/80" data-i18n="journal-ai-assisted">AI 辅助</div>
+              <h3 class="mt-5 text-[44px] font-bold leading-[.84] tracking-[-.08em]" data-i18n-html="journal-ai-title">
                 ABOUT<br>AI
               </h3>
             </div>
             <div class="relative z-20 space-y-3">
-              <p class="max-w-[200px] text-xs font-medium leading-[1.85] text-white/68">
+              <p class="max-w-[200px] text-xs font-medium leading-[1.85] text-white/68" data-i18n="journal-ai-desc">
                 用 AI 辅助研究、拆解复杂信息，并把想法转成可落地的产品界面。
               </p>
               <button type="button" onclick="openGestureEgg(event)"
                       class="group flex w-full max-w-[220px] items-center justify-between gap-3 rounded-2xl border border-[#ccff00]/25 bg-[#ccff00]/[.075] px-4 py-3 text-left transition-all hover:border-[#ccff00]/55 hover:bg-[#ccff00]/[.12]"
                       aria-label="打开 Gesture Filter Lab 彩蛋">
                 <span class="min-w-0">
-                  <span class="block text-[11px] font-bold uppercase tracking-[.14em] text-[#ccff00]">Gesture Lab</span>
-                  <span class="mt-0.5 block text-[10px] font-medium leading-snug text-white/48">手势适配交互 · 新网页打开</span>
+                  <span class="block text-[11px] font-bold uppercase tracking-[.14em] text-[#ccff00]" data-i18n="gesture-card-title">手势实验室</span>
+                  <span class="mt-0.5 block text-[10px] font-medium leading-snug text-white/48" data-i18n="gesture-card-sub">手势适配交互 · 新网页打开</span>
                 </span>
                 <span class="grid h-7 w-7 flex-shrink-0 place-items-center rounded-full bg-white/8 text-sm text-white/80 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:bg-[#ccff00] group-hover:text-black">↗</span>
               </button>
             </div>
           </div>
           <div class="absolute -left-12 bottom-5 z-0 h-28 w-28 rounded-full border-[18px] border-white/[.055]"></div>
-          <div class="absolute right-4 top-5 h-14 w-14 rounded-full border border-[#ccff00]/35 bg-[#ccff00]/5"></div>
         </article>
 
-        <div class="grid grid-cols-6 gap-3 md:gap-4">
-          <article class="relative col-span-6 min-h-[66px] overflow-hidden rounded-xl border border-white/10 bg-white/[.045] px-5 py-3 text-white">
-            <div class="relative z-10 flex h-full items-center justify-between gap-5">
-              <span class="text-xl md:text-2xl font-bold uppercase tracking-[-.06em] text-white/80">Choose</span>
-              <span class="text-xl md:text-2xl font-bold uppercase tracking-[-.06em] text-white/80">Clarity</span>
-            </div>
-            <svg class="absolute left-[42%] top-[-20px] h-28 w-40 text-white/18" viewBox="0 0 160 112" fill="none" aria-hidden="true">
-              <circle cx="82" cy="56" r="10" fill="currentColor"/>
-              <path d="M82 56 L14 10 M82 56 L32 0 M82 56 L62 -12 M82 56 L96 -12 M82 56 L132 4 M82 56 L154 24 M82 56 L18 72 M82 56 L36 102 M82 56 L74 112 M82 56 L124 104 M82 56 L154 82" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            <div class="absolute bottom-3 left-5 text-[10px] tracking-[.35em] text-white/18">↙↙↙</div>
-            <div class="absolute right-[21%] top-0 h-full w-px bg-[#ccff00]/45"></div>
-          </article>
-
-          <article class="relative col-span-6 md:col-span-4 min-h-[128px] overflow-hidden rounded-xl border border-white/10 bg-[#0f1013] p-4 text-white">
-            <div class="absolute left-4 top-3 rounded-full border border-white/10 bg-white/[.035] px-2 py-1 text-[8px] font-bold lowercase tracking-[.08em] text-white/36">@mimoslab</div>
-            <div class="absolute right-6 top-3 rotate-[-7deg] text-sm font-bold uppercase tracking-[.08em] text-white/46">Love</div>
-            <div class="absolute inset-x-0 bottom-0 h-1/2"
-                 style="background:linear-gradient(180deg, transparent, rgba(204,255,0,.045));"></div>
-            <div class="relative z-10 mt-8 flex items-center justify-center gap-0">
-              <span class="relative grid h-20 w-20 rotate-[-9deg] place-items-center rounded-t-[45px] bg-white/8 text-[34px]">
-                <span class="absolute -top-4 left-2 h-8 w-5 rounded-t-full bg-white/8"></span>
-                <span class="absolute -top-5 left-7 h-9 w-5 rounded-t-full bg-white/8"></span>
-                <span class="absolute -top-4 right-2 h-8 w-5 rounded-t-full bg-white/8"></span>
-                <span class="text-white/54">♥</span>
-              </span>
-              <span class="relative -ml-5 grid h-20 w-20 rotate-[5deg] place-items-center rounded-t-[45px] bg-white/8 text-[34px]">
-                <span class="absolute -top-4 left-2 h-8 w-5 rounded-t-full bg-white/8"></span>
-                <span class="absolute -top-5 left-7 h-9 w-5 rounded-t-full bg-white/8"></span>
-                <span class="absolute -top-4 right-2 h-8 w-5 rounded-t-full bg-white/8"></span>
-                <span class="text-[#ccff00]">♥</span>
-              </span>
-              <span class="ml-3 h-6 w-6 rounded-full border border-white/18"></span>
-            </div>
-            <div class="absolute bottom-4 right-5 text-2xl text-[#ccff00]/70">✧</div>
-          </article>
-
-          <article class="relative col-span-6 md:col-span-2 min-h-[128px] overflow-hidden rounded-xl border border-[#ccff00]/20 bg-[#ccff00]/10 p-4 text-white">
-            <div class="absolute inset-0 opacity-35"
+        <div class="ai-system-grid grid grid-cols-6 gap-3 md:gap-4">
+          <article class="ai-orbit relative col-span-6 min-h-[212px] overflow-hidden rounded-[22px] border border-white/10 bg-[#050707] p-5 text-white">
+            <div class="absolute inset-0 opacity-65"
                  style="background:
-                   radial-gradient(circle at 35% 35%, transparent 0 26px, rgba(204,255,0,.52) 27px 28px, transparent 29px),
-                   radial-gradient(circle at 88% 10%, transparent 0 30px, rgba(255,255,255,.24) 31px 32px, transparent 33px);"></div>
-            <div class="relative z-10 grid h-full place-items-center">
-              <span class="text-xl font-bold uppercase tracking-[-.04em] text-[#ccff00]">Hope</span>
+                   radial-gradient(circle at 50% 48%, rgba(255,255,255,.05), transparent 13rem),
+                   linear-gradient(rgba(255,255,255,.032) 1px, transparent 1px),
+                   linear-gradient(90deg, rgba(255,255,255,.032) 1px, transparent 1px);
+                   background-size:auto, 42px 42px, 42px 42px;"></div>
+            <svg class="absolute inset-0 h-full w-full text-white/18" viewBox="0 0 720 212" fill="none" aria-hidden="true">
+              <path d="M72 112 C168 38 256 178 356 104 C456 30 540 172 648 84" stroke="currentColor" stroke-width="1.4" stroke-dasharray="6 10"/>
+              <path d="M84 150 C204 118 278 50 388 92 C500 136 566 70 642 132" stroke="rgba(255,255,255,.16)" stroke-width="1"/>
+              <circle cx="356" cy="104" r="42" stroke="rgba(255,255,255,.10)"/>
+              <circle cx="356" cy="104" r="7" fill="rgba(255,255,255,.42)"/>
+              <circle cx="72" cy="112" r="4" fill="rgba(255,255,255,.7)"/>
+              <circle cx="648" cy="84" r="4" fill="rgba(255,255,255,.7)"/>
+            </svg>
+            <div class="relative z-10 flex h-full flex-col justify-between">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <div class="text-[10px] font-bold uppercase tracking-[.28em] text-[#ccff00]/80" data-i18n="journal-workflow-label">AI 工作流</div>
+                  <h3 class="mt-3 max-w-[420px] text-3xl md:text-5xl font-semibold leading-[.98] tracking-[-.07em] text-white" data-i18n-html="journal-workflow-title">
+                    From fuzzy input<br class="hidden md:block"> to clear interface
+                  </h3>
+                </div>
+              </div>
             </div>
-            <div class="absolute bottom-4 right-4 rounded-full border border-white/10 bg-black/20 px-2 py-1 text-[8px] font-bold lowercase tracking-[.08em] text-white/45">mimo</div>
           </article>
 
-          <article class="relative col-span-6 min-h-[132px] overflow-hidden rounded-xl border border-white/10 bg-white/[.035] text-white">
-            <div class="flex h-[54px] items-center justify-center px-4 text-center text-[18px] md:text-[24px] font-bold uppercase tracking-[-.06em] text-white/78">
-              Try-your-best&nbsp;to&nbsp;<span class="rounded-full bg-[#ccff00] px-2 text-black">Focus</span>&nbsp;on&nbsp;the&nbsp;good
+          <article class="relative col-span-6 md:col-span-3 min-h-[118px] overflow-hidden rounded-[20px] border border-white/10 bg-white/[.025] p-4 text-white">
+            <div class="relative z-10 flex h-full flex-col justify-between">
+              <span class="text-[10px] font-bold uppercase tracking-[.22em] text-white/36" data-i18n="journal-signal-label">01 / 信号</span>
+              <p class="max-w-[260px] text-sm font-semibold leading-[1.55] text-white/72" data-i18n="journal-signal-desc">把用户反馈、链上规则和业务目标压缩成可判断的设计信号。</p>
             </div>
-            <div class="h-[78px]"
-                 style="background-color:rgba(255,255,255,.035);background-image:
-                   linear-gradient(45deg,rgba(255,255,255,.12) 25%,transparent 25%),
-                   linear-gradient(-45deg,rgba(255,255,255,.12) 25%,transparent 25%),
-                   linear-gradient(45deg,transparent 75%,rgba(255,255,255,.12) 75%),
-                   linear-gradient(-45deg,transparent 75%,rgba(255,255,255,.12) 75%);
-                   background-size:32px 32px;
-                   background-position:0 0,0 16px,16px -16px,-16px 0;"></div>
-            <div class="absolute left-4 top-12 text-[10px] tracking-[.35em] text-white/18">↙↙↙</div>
-            <div class="absolute right-4 top-12 text-[10px] tracking-[.35em] text-white/18">↘↘↘</div>
+          </article>
+
+          <article class="relative col-span-6 md:col-span-3 min-h-[118px] overflow-hidden rounded-[20px] border border-white/10 bg-white/[.025] p-4 text-white">
+            <div class="relative z-10 flex h-full flex-col justify-between">
+              <span class="text-[10px] font-bold uppercase tracking-[.22em] text-white/36" data-i18n="journal-structure-label">02 / 结构</span>
+              <p class="max-w-[270px] text-sm font-semibold leading-[1.55] text-white/72" data-i18n="journal-structure-desc">用 AI 快速拆解路径，再由设计判断筛掉噪音，留下可落地的结构。</p>
+            </div>
+          </article>
+
+          <article class="relative col-span-6 min-h-[96px] overflow-hidden rounded-[20px] border border-[#ccff00]/15 bg-[#ccff00]/[.035] p-4 text-white">
+            <div class="relative z-10 flex h-full flex-col justify-center gap-2 md:flex-row md:items-center md:justify-between">
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-[.24em] text-[#ccff00]/85" data-i18n="journal-human-label">人工判断</div>
+                <p class="mt-1 text-sm font-semibold leading-[1.5] text-white/72" data-i18n="journal-human-desc">AI 负责加速，最终体验由人的判断、取舍和审美完成。</p>
+              </div>
+            </div>
           </article>
         </div>
       </div>
@@ -4023,16 +4285,16 @@ body.standard-cursor #ghost-dot {
   <section id="footer-marquee" class="bg-bg overflow-hidden pb-12">
     <div class="overflow-hidden border-y border-stroke py-6">
       <div class="flex whitespace-nowrap animate-marquee" style="will-change:transform">
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16">BUILDING THE FUTURE •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16">BUILDING THE FUTURE •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16">BUILDING THE FUTURE •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16">BUILDING THE FUTURE •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16">BUILDING THE FUTURE •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16">BUILDING THE FUTURE •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16">BUILDING THE FUTURE •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16">BUILDING THE FUTURE •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16">BUILDING THE FUTURE •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16">BUILDING THE FUTURE •&nbsp;</span>
+        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
+        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
+        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
+        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
+        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
+        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
+        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
+        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
+        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
+        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
       </div>
     </div>
   </section>
@@ -4081,21 +4343,21 @@ body.standard-cursor #ghost-dot {
           style="background:rgba(255,255,255,0.1)">✕</button>
   <div class="flex flex-col items-center justify-center h-full gap-7">
     <a href="#hero" onclick="toggleMobileMenu()"
-       class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-hero">Hero</a>
+       class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-hero">首页</a>
     <a href="#design-system" onclick="toggleMobileMenu()"
-       class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-foundation">Foundation</a>
+       class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-foundation">设计系统</a>
     <a href="#component-system" onclick="toggleMobileMenu()"
-       class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-components">Components</a>
+       class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-components">组件系统</a>
     <a href="#works" onclick="toggleMobileMenu()"
        class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-featured">精选项目</a>
     <a href="#about" onclick="toggleMobileMenu()"
        class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-aboutme">关于我</a>
     <a href="#journal" onclick="toggleMobileMenu()"
-       class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-other">Other</a>
+       class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-other">其他</a>
     <button onclick="openContact();toggleMobileMenu();"
             class="mt-4 px-8 py-3 rounded-full font-bold uppercase text-sm"
             style="background:#5ed29c; color:#070b0a">
-      Say Hi
+      <span data-i18n="nav-sayhi">打个招呼</span>
     </button>
   </div>
 </div>
@@ -4119,7 +4381,7 @@ body.standard-cursor #ghost-dot {
                    transition-all text-lg leading-none">✕</button>
 
     <!-- title -->
-    <p class="text-xs text-muted uppercase tracking-[.3em] mb-6">Get in Touch</p>
+    <p class="text-xs text-muted uppercase tracking-[.3em] mb-6" data-i18n="contact-title">联系我</p>
 
     <!-- ── Telegram ── -->
     <a href="https://t.me/Mimomo1" target="_blank" rel="noopener"
@@ -4176,7 +4438,7 @@ body.standard-cursor #ghost-dot {
         <span class="text-xs text-muted uppercase tracking-widest mb-0.5">WeChat</span>
         <span class="wechat-id text-sm text-text-primary font-medium group-hover:text-primary transition-colors">Mimimomo_0</span>
       </div>
-      <span class="ml-auto text-xs text-muted group-hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100">Copy</span>
+      <span class="ml-auto text-xs text-muted group-hover:text-text-primary transition-colors opacity-0 group-hover:opacity-100" data-i18n="contact-copy">复制</span>
     </button>
 
   </div>
@@ -4186,26 +4448,27 @@ body.standard-cursor #ghost-dot {
 <div id="gesture-egg-modal"
      class="fixed inset-0 z-[99999] flex items-center justify-center p-4"
      style="display:none!important">
-  <div class="absolute inset-0 bg-black/65 backdrop-blur-sm"
+  <div class="absolute inset-0 bg-black/80 backdrop-blur-md"
        onclick="closeGestureEgg()"></div>
-  <div class="gesture-egg-card relative w-full max-w-[380px] overflow-hidden rounded-[28px] border border-white/10 bg-[#111116] p-6 text-white shadow-[0_28px_90px_rgba(0,0,0,0.72)]">
-    <div class="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full border border-[#ccff00]/25 bg-[#ccff00]/[.04]"></div>
+  <div class="gesture-egg-card relative w-full max-w-[400px] overflow-hidden rounded-[28px] border border-white/[.075] bg-black/90 p-6 text-white shadow-[0_32px_120px_rgba(0,0,0,0.9)]">
+    <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,.055),transparent_34%),linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008))]"></div>
+    <div class="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[#ccff00]/35 to-transparent"></div>
     <button onclick="closeGestureEgg()"
-            class="absolute right-4 top-4 grid h-8 w-8 place-items-center rounded-full bg-white/8 text-white/56 transition-colors hover:bg-white/14 hover:text-white"
+            class="absolute right-4 top-4 z-10 grid h-8 w-8 place-items-center rounded-full bg-white/[.055] text-white/50 transition-colors hover:bg-white/10 hover:text-white"
             aria-label="关闭">✕</button>
-    <p class="mb-4 text-[10px] font-bold uppercase tracking-[.28em] text-[#ccff00]/80">Little Easter Egg</p>
-    <h3 class="mb-3 text-[28px] font-bold leading-none tracking-[-.06em]">Gesture Filter Lab</h3>
-    <p class="mb-5 text-sm leading-relaxed text-white/58">
+    <p class="relative z-10 mb-4 text-[10px] font-bold uppercase tracking-[.28em] text-[#ccff00]/75" data-i18n="gesture-modal-kicker">小彩蛋</p>
+    <h3 class="relative z-10 mb-3 text-[28px] font-bold leading-none tracking-[-.06em]" data-i18n="gesture-modal-title">手势滤镜实验室</h3>
+    <p class="relative z-10 mb-5 text-sm leading-relaxed text-white/58" data-i18n="gesture-modal-desc">
       一个用 vibe coding 做的小实验：用摄像头识别手势，把滤镜模块和贴纸变成可被手掌触发的互动界面。
     </p>
-    <div class="mb-6 rounded-2xl border border-white/8 bg-white/[.045] px-4 py-3 text-xs leading-relaxed text-white/48">
+    <div class="relative z-10 mb-6 rounded-2xl border border-white/[.075] bg-white/[.025] px-4 py-3 text-xs leading-relaxed text-white/46" data-i18n="gesture-modal-note">
       这是嵌入的网页内容。点击确认后会打开新网页进行体验，页面可能会请求摄像头权限，用于手势识别。
     </div>
-    <div class="flex gap-3">
+    <div class="relative z-10 flex gap-3">
       <button onclick="closeGestureEgg()"
-              class="flex-1 rounded-full border border-white/10 px-4 py-3 text-sm font-bold text-white/58 transition-colors hover:bg-white/8 hover:text-white">先不打开</button>
+              class="flex-1 rounded-full border border-white/[.085] bg-white/[.018] px-4 py-3 text-sm font-bold text-white/52 transition-colors hover:bg-white/[.055] hover:text-white" data-i18n="gesture-modal-cancel">先不打开</button>
       <button onclick="goGestureEgg()"
-              class="flex-1 rounded-full bg-[#ccff00] px-4 py-3 text-sm font-bold text-black transition-transform hover:-translate-y-0.5">打开新网页 ↗</button>
+              class="flex-1 rounded-full border border-[#ccff00]/35 bg-[#ccff00]/10 px-4 py-3 text-sm font-bold text-[#ccff00] transition-all hover:-translate-y-0.5 hover:bg-[#ccff00] hover:text-black" data-i18n="gesture-modal-open">打开新网页 ↗</button>
     </div>
   </div>
 </div>
@@ -4801,6 +5064,207 @@ const PROJECT_DATA = {
   },
 };
 
+const PROJECT_ZH_OVERRIDES = {
+  otc: {
+    title: 'OTC P2P 重构 1.0',
+    eyebrow: '2025 · CoinW · P2P 重构',
+    role: '主导 UI 设计师',
+    platform: 'App · iOS 与 Android',
+    tags: ['P2P 重构','聚合面板','流程优化','组件系统','App 设计'],
+  },
+  copy: {
+    eyebrow: '2025 · CoinW · 跟单交易',
+    role: '主导 UI 设计师',
+    platform: 'PC 与移动端',
+    tags: ['跟单交易','数据层级','原型设计','Web3 交易','0→1 产品'],
+  },
+  community: {
+    eyebrow: '2024 · CoinW · 社区改版',
+    role: '主导 UI 设计师',
+    platform: 'Web 与 App',
+    tags: ['社区增长','内容结构','任务系统','移动端','视觉改版'],
+  },
+  landing: {
+    eyebrow: '2024 · CoinW · 落地页矩阵',
+    role: '主导 UI 设计师',
+    platform: 'Web 多语言',
+    tags: ['A/B 测试','转化优化','多语言','营销设计','4 层框架'],
+  },
+  ubx: {
+    eyebrow: '2023 · UBX · 品牌系统',
+    role: '品牌与 UI 设计师',
+    platform: '品牌与产品界面',
+    tags: ['品牌系统','Web3 视觉','交易界面','设计系统'],
+  },
+  nft: {
+    eyebrow: '2022 · NFT · 市场与钱包',
+    role: 'UI / UX 设计师',
+    platform: 'Web 与移动端',
+    tags: ['NFT','钱包','移动端','品牌'],
+  },
+  early: {
+    eyebrow: '2014 — 2021 · 数字营销与互联网行业',
+    role: '视觉 / UI 设计师',
+    platform: '平面与 Web',
+    tags: ['平面设计','品牌 VI','印刷设计','Web UI','职业起点'],
+  },
+};
+
+const PROJECT_EN_OVERRIDES = {
+  otc: {
+    title: 'OTC P2P Redesign 1.0',
+    eyebrow: '2025 · CoinW · P2P Reconstruction',
+    role: 'Lead UI Designer',
+    duration: 'First Batch Design Delivery',
+    platform: 'App · iOS & Android',
+    overview: 'A systematic redesign of CoinW P2P trading, covering the main marketplace, buy/sell flow, order detail, completion page, and reusable transaction components.',
+    challenge: 'The legacy flow had too many jumps, scattered payment information, and weak trust cues around payment confirmation and release. The redesign focused on reducing friction while keeping risk-control signals visible.',
+    process: [
+      { step: '01  Diagnose', desc: 'Mapped user paths and support issues to locate the highest-friction moments across quote browsing, order placement, payment, and release.' },
+      { step: '02  Aggregate', desc: 'Merged price comparison, merchant quotes, and order entry into a more direct decision surface.' },
+      { step: '03  Rebuild Payment', desc: 'Moved payment-account management into the order path so selling users could configure receiving accounts without leaving the flow.' },
+      { step: '04  Merchant Mode', desc: 'Added merchant operating-state controls and rest mode to reduce accidental orders, timeouts, and disputes.' },
+      { step: '05  Systemize', desc: 'Extracted repeatable status chips, payment tags, price badges, and order-state components into the design system.' },
+    ],
+    highlights: [
+      { title: 'Aggregated order panel', desc: 'Reduced comparison and order-entry steps by keeping quotes, reference price, and action entry in one place.' },
+      { title: 'Payment flow clarity', desc: 'Clarified when to pay, confirm, release, or contact support through stronger hierarchy and status language.' },
+      { title: 'Merchant rest mode', desc: 'Let merchants pause exposure quickly instead of closing ads one by one, lowering timeout and cancellation risk.' },
+    ],
+    results: ['Order completion rate +21%','New merchant publish success +31%','Buyer-side completion +12%','Timeout complaint rate -18%'],
+    insight: 'For P2P trading, trust is created less by decoration and more by sequencing: the right information must appear exactly when the user needs to decide.',
+    tags: ['P2P Redesign','Aggregated Panel','Flow Optimization','Component System','App Design'],
+  },
+  copy: {
+    title: 'Copy Trading System',
+    eyebrow: '2025 · CoinW · Copy Trading',
+    role: 'Lead UI Designer',
+    duration: '5 months',
+    platform: 'PC & Mobile',
+    overview: 'Designed CoinW copy trading from 0 to 1, covering trader ranking, follow settings, real-time PnL visualization, and social trust signals.',
+    challenge: 'Copy trading users need professional data, but many new users cannot quickly read trading metrics. The key was to build an information hierarchy that feels expert without becoming intimidating.',
+    process: [
+      { step: '01  User Segments', desc: 'Separated conservative followers, active followers, and strategy observers, then mapped different decision criteria for each group.' },
+      { step: '02  Data Priority', desc: 'Ranked 30+ trading metrics and defined a first-screen decision set: 30-day return, max drawdown, and follower count.' },
+      { step: '03  Visualization', desc: 'Designed PnL views that make risk and performance easier to scan for both new and advanced users.' },
+      { step: '04  Follow Setup', desc: 'Grouped 12 parameters into basic and advanced settings, with advanced options folded by default.' },
+      { step: '05  Social Layer', desc: 'Added trader profile cues, style tags, and community interactions to support trust before following.' },
+    ],
+    highlights: [
+      { title: 'Trader ranking', desc: 'Multi-dimensional filters and card comparison help users evaluate returns, risk, and popularity faster.' },
+      { title: 'One-step follow setup', desc: 'Simplified the follow decision while keeping capital and risk controls visible.' },
+      { title: 'Readable PnL', desc: 'Turned dense trading data into layered visuals that support quick scanning and deeper review.' },
+    ],
+    results: ['New-user activation +38%','7-day retention +27%','Data readability score 4.6/5','30-day DAU exceeded 10k'],
+    insight: 'Readable data is not about hiding complexity. It is about layering complexity so the right user can enter at the right depth.',
+    images: [
+      { label: 'KOL Profile · Copy Lead' },
+      { label: 'KOL Profile · Q&A' },
+      { label: 'KOL Profile · Q&A 2' },
+      { label: 'Statistics' },
+    ],
+    stats: [
+      { value: '+38%', color: '#4A9EF5', label: 'New-user activation', sub: '30 days after launch vs. baseline' },
+      { value: '+27%', color: '#3ECF8E', label: '7-day retention', sub: 'First-week retention of copy users' },
+      { value: '4.6/5', color: '#C9AAF0', label: 'Data readability score', sub: 'Internal user survey' },
+      { value: '10k+', color: '#F5A623', label: 'Monthly DAU', sub: '30-day average daily active users' },
+    ],
+    statsNote: '* Based on the first 4 weeks after launch, compared with the same historical period',
+    tags: ['Copy Trading','Data Hierarchy','Prototyping','Web3 Trading','0→1 Product'],
+  },
+  community: {
+    title: 'Community Redesign',
+    eyebrow: '2024 · CoinW · Community Redesign',
+    role: 'Lead UI Designer',
+    duration: '3-month iteration',
+    platform: 'Web & App',
+    overview: 'Redesigned the community module from V1 to V3, improving content structure, task entry, creator interaction, and retention loops.',
+    challenge: 'The old community experience mixed content, tasks, and trading signals without a clear hierarchy. Users lacked a stable reason to return after the first visit.',
+    process: [
+      { step: '01  Content Audit', desc: 'Reviewed existing community traffic and identified where content browsing, tasks, and product education were competing.' },
+      { step: '02  Structure', desc: 'Reorganized entries so users could distinguish content discovery, community tasks, and product updates.' },
+      { step: '03  Retention Loop', desc: 'Connected tasks, rewards, and content modules into a more repeatable return path.' },
+      { step: '04  Visual Refresh', desc: 'Updated the visual system to feel lighter, clearer, and more consistent with product pages.' },
+    ],
+    highlights: [
+      { title: 'Clearer module hierarchy', desc: 'Reduced entry confusion and made key community actions easier to recognize.' },
+      { title: 'Task-driven retention', desc: 'Turned scattered engagement tasks into a more visible loop.' },
+      { title: 'Cross-device consistency', desc: 'Aligned web and app patterns so users can move between devices with less relearning.' },
+    ],
+    results: ['Content click-through improved','Task participation increased','Returning-user paths became clearer'],
+    insight: 'A community feature does not create retention by itself; it needs a visible loop that gives users a reason to come back.',
+    images: [
+      { label: 'Badge Management' },
+      { label: 'Badge Wall' },
+      { label: 'Badge Detail' },
+      { label: 'Share Card' },
+    ],
+    stats: [
+      { value: '+52%', color: '#5ed29c', label: 'Community DAU', sub: '30 days after redesign launch' },
+      { value: '3.2x', color: '#4A9EF5', label: 'Content posts', sub: 'Average monthly post growth' },
+      { value: '+19%', color: '#C9AAF0', label: '30-day retention', sub: 'Calendar-month retention lift' },
+      { value: '4.5', color: '#F5A623', label: 'App Store rating', sub: 'Improved from 3.8 to 4.5' },
+    ],
+    statsNote: '* Based on six weeks after the V3 launch, compared with the V1 baseline',
+    tags: ['Community Growth','Content Structure','Task System','Mobile','Visual Redesign'],
+  },
+  landing: {
+    title: 'Landing Page Matrix',
+    eyebrow: '2024 · CoinW · Landing Matrix',
+    role: 'Lead UI Designer',
+    duration: 'Ongoing iteration',
+    platform: 'Multilingual Web',
+    overview: 'Built a landing page matrix for acquisition, campaign promotion, product education, and multilingual conversion experiments.',
+    challenge: 'Different campaigns needed fast iteration while still maintaining brand consistency, responsive layout quality, and measurable conversion structure.',
+    process: [
+      { step: '01  Page Framework', desc: 'Defined a repeatable hero, value, proof, action, and FAQ structure for campaign pages.' },
+      { step: '02  A/B Testing', desc: 'Compared visual hierarchy, CTA placement, and content density across landing variations.' },
+      { step: '03  Localization', desc: 'Created layout rules that keep Chinese and English versions visually consistent.' },
+      { step: '04  Template System', desc: 'Converted common sections into reusable page blocks for faster delivery.' },
+    ],
+    highlights: [
+      { title: 'Reusable landing framework', desc: 'Reduced one-off page production while keeping each campaign distinct.' },
+      { title: 'Conversion-oriented hierarchy', desc: 'Made the offer, proof, and CTA easier to scan from the first screen.' },
+      { title: 'Multilingual layout control', desc: 'Prevented text overflow and hierarchy collapse across languages.' },
+    ],
+    results: ['Landing production became faster','A/B variants easier to compare','Multilingual consistency improved'],
+    insight: 'A landing page matrix is not a set of pretty pages; it is a reusable conversion system.',
+    tags: ['A/B Testing','Conversion','Multilingual','Marketing Design','4-layer Framework'],
+  },
+  ubx: {
+    title: 'UBX Brand & Product System',
+    eyebrow: '2023 · UBX · Brand System',
+    role: 'Brand & UI Designer',
+    platform: 'Brand & Product UI',
+    tags: ['Brand System','Web3 Visuals','Trading UI','Design System'],
+  },
+  nft: {
+    title: 'NFT Marketplace & Wallet',
+    eyebrow: '2022 · NFT · Marketplace & Wallet',
+    role: 'UI / UX Designer',
+    platform: 'Web & Mobile',
+    tags: ['NFT','Wallet','Mobile','Brand'],
+  },
+  early: {
+    title: 'Early Visual & UI Work',
+    eyebrow: '2014 — 2021 · Digital Marketing & Internet',
+    role: 'Visual / UI Designer',
+    platform: 'Print & Web',
+    tags: ['Graphic Design','Brand VI','Print Design','Web UI','Career Start'],
+  },
+};
+
+function getProjectDisplayData(key) {
+  const data = PROJECT_DATA[key];
+  if (!data) return data;
+  const overrides = _lang === 'en' ? (PROJECT_EN_OVERRIDES[key] || {}) : (PROJECT_ZH_OVERRIDES[key] || {});
+  const merged = { ...data, ...overrides };
+  if (Array.isArray(data.images) && Array.isArray(overrides.images)) {
+    merged.images = data.images.map((img, i) => ({ ...img, ...(overrides.images[i] || {}) }));
+  }
+  return merged;
+}
+
 // ── Project Modal ───────────────────────────────────────────────
 /* ── OTC P2P Rich Modal Body ── */
 const OTC_BODY_HTML = `
@@ -4842,7 +5306,7 @@ const OTC_BODY_HTML = `
   <button onclick='(function(btn){const body=btn.parentElement.querySelector(".lofi-body");const arrow=btn.querySelector(".lofi-arrow");const open=body.style.maxHeight&&body.style.maxHeight!=="0px";body.style.maxHeight=open?"0px":body.scrollHeight+"px";body.style.opacity=open?"0":"1";arrow.style.transform=open?"rotate(0deg)":"rotate(180deg)"})(this)'
     style='width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(255,255,255,.03);border:none;cursor:pointer;text-align:left'>
     <div style='display:flex;align-items:center;gap:10px'>
-      <span style='font-size:16px;color:#ffffff;font-weight:600'>低保真线框探索</span><span style='font-size:13px;color:rgba(255,255,255,.35);font-weight:400'>（Lo-fi Wireframes）</span>
+      <span style='font-size:16px;color:#ffffff;font-weight:600'>低保真线框探索</span><span style='font-size:13px;color:rgba(255,255,255,.35);font-weight:400'>（低保真线框）</span>
     </div>
     <svg class='lofi-arrow' style='transition:transform .3s ease;flex-shrink:0' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='#ffffff' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>
   </button>
@@ -5749,7 +6213,7 @@ const OTC_BODY_HTML = `
 
 <!-- ═══════════════════════ DESIGN INSIGHT ═══════════════════════ -->
 <div class='pm-ins'>
- <div class='pm-ins-l'>Design Insight</div>
+ <div class='pm-ins-l'>设计洞察</div>
  <div class='pm-ins-t'>五期需求的本质是一次「信任体系重建」。订单详情合并减少了用户在关键付款时刻的页面跳转焦虑；神盾认证贯穿全程持续强化可信感；置顶 + 折扣为平台商业化提供支撑。每一步改动都在回答同一个问题：<span style='color:rgba(255,255,255,.7);font-weight:500'>「用户在此刻最担心什么？」</span></div>
 </div>
 
@@ -5757,7 +6221,7 @@ const OTC_BODY_HTML = `
 
 <!-- ═══════════════════════ 设计理念对比 ═══════════════════════ -->
 <div style='margin-bottom:16px'>
-  <div class='pm-ey'>Design Philosophy</div>
+  <div class='pm-ey'>设计理念</div>
   <div class='pm-st'>设计理念转变</div>
 </div>
 <div style='display:grid;grid-template-columns:1fr 1fr;gap:14px'>
@@ -5814,6 +6278,290 @@ const OTC_BODY_HTML = `
 </div>
 `;
 
+function getOtcBodyHtml() {
+  if (_lang !== 'en') return OTC_BODY_HTML;
+  const replacements = [
+    ['P2P 重构 1.0 · 五期需求总览', 'P2P Redesign 1.0 · Five-phase Scope'],
+    ['旧版 vs 新版 · P2P 交易链路全面升级', 'Legacy vs New · Full P2P Trading Flow Upgrade'],
+    ['下单交易链路优化', 'Order Flow Optimization'],
+    ['订单详情两步合并为一步，收款账号前置，操作语义全面重构', 'Merged two order-detail steps into one, brought payment accounts forward, and rebuilt action semantics.'],
+    ['置顶与优惠广告 · 增长工具', 'Pinned & Discount Ads · Growth Tools'],
+    ['顶部 banner、限时置顶、新手推荐和优惠价合并承接交易转化', 'Combined top banners, limited-time pinning, new-user recommendations, and discount pricing to support conversion.'],
+    ['商家休息模式 · 状态管理', 'Merchant Rest Mode · Status Control'],
+    ['营业状态一键切换，减少误接单、超时和取消风险', 'One-tap operating status switch to reduce accidental orders, timeouts, and cancellations.'],
+    ['订单完成率<br>（买家侧）', 'Order Completion<br>Buyer Side'],
+    ['新商家<br>发布成功率', 'New Merchant<br>Publish Success'],
+    ['商家收款<br>绑定率', 'Merchant Payment<br>Binding Rate'],
+    ['用户投诉率<br>（放币超时）', 'Complaint Rate<br>Release Timeout'],
+    ['* 数据基于上线后 4 周统计，相较上期同期', '* Based on four weeks after launch, compared with the previous period'],
+    ['低保真线框探索', 'Lo-fi Wireframe Exploration'],
+    ['（低保真线框）', '(Lo-fi Wireframes)'],
+    ['旧版 · 第一批设计', 'Legacy · First Batch'],
+    ['新版 · 重构系列', 'New · Redesign Series'],
+    ['以「倒计时催单」为核心', 'Centered on Countdown Urgency'],
+    ['以「信任构建」为核心', 'Centered on Trust Building'],
+    ['强视觉倒计时提醒用户尽快付款，制造紧迫感驱动操作', 'Strong countdown cues pushed users to pay quickly through urgency.'],
+    ['流程分步、信息分层展示，用户需跨页完成付款', 'The flow was split across pages, forcing users to complete payment through multiple jumps.'],
+    ['申诉功能前置突出，体现平台保障能力', 'Appeal entry was prominent to signal platform protection.'],
+    ['神盾商家认证体系贯穿全程，持续强化交易可信感', 'Merchant verification runs through the full path to strengthen transaction trust.'],
+    ['合并支付步骤，减少跳转；弱化倒计时，改为主动催币与资产引导', 'Merged payment steps, reduced jumps, and replaced countdown pressure with clearer asset guidance.'],
+    ['置顶与优惠广告为平台商业化提供增长支撑', 'Pinned and discount ads create a clearer growth lever for platform monetization.'],
+    ['OTC · P2P重构 1.0 · 低保真页面 Flow', 'OTC · P2P Redesign 1.0 · Lo-fi Page Flow'],
+    ['下单交易链路', 'Order Flow'],
+    ['BUY 买币流程', 'BUY Flow'],
+    ['SELL 卖币流程', 'SELL Flow'],
+    ['买入', 'Buy'],
+    ['卖出', 'Sell'],
+    ['平台采用T+2提币限制，保障资金安全', 'The platform uses a T+2 withdrawal limit to protect funds.'],
+    ['不满足要求', 'Not eligible'],
+    ['订单历史', 'Orders'],
+    ['广告', 'Ads'],
+    ['我的', 'Profile'],
+    ['① P2P买币列表', '① P2P Buy List'],
+    ['① P2P卖币列表', '① P2P Sell List'],
+    ['按金额', 'By amount'],
+    ['按数量', 'By quantity'],
+    ['金额', 'Amount'],
+    ['限额 1,000.00 – 3,000.00 CNY', 'Limit 1,000.00 – 3,000.00 CNY'],
+    ['限额 1,000.00 – 3,000.00 USDT', 'Limit 1,000.00 – 3,000.00 USDT'],
+    ['您将收到 0.00 USDT', 'You will receive 0.00 USDT'],
+    ['付款金额 0.00 CNY', 'Payment amount 0.00 CNY'],
+    ['出售数量', 'Sell amount'],
+    ['付款方式', 'Payment method'],
+    ['收款方式', 'Receiving method'],
+    ['付款期限', 'Payment time limit'],
+    ['商家信息', 'Merchant info'],
+    ['买家信息', 'Buyer info'],
+    ['商家名字 ›', 'Merchant name ›'],
+    ['交易提醒', 'Trading reminder'],
+    ['如您同意CoinW P2P条款即接受服务声明', 'By agreeing to CoinW P2P terms, you accept the service statement.'],
+    ['0手续费购买 USDT', 'Buy USDT with zero fees'],
+    ['② Buy Page（填写金额）', '② Buy Page · Enter Amount'],
+    ['② 出售页', '② Sell Page'],
+    ['注册时间 2022/08/25', 'Registered on 2022/08/25'],
+    ['商家认证', 'Merchant verified'],
+    ['绑定邮箱', 'Email verified'],
+    ['绑定手机', 'Phone verified'],
+    ['详情', 'Details'],
+    ['近30日完成率', '30-day completion rate'],
+    ['购买完成率', 'Buy completion rate'],
+    ['出售完成率', 'Sell completion rate'],
+    ['总成单数', 'Total completed orders'],
+    ['平均付款时间', 'Avg. payment time'],
+    ['平均放币时间', 'Avg. release time'],
+    ['商家保证金', 'Merchant deposit'],
+    ['5分钟', '5 min'],
+    ['③ 商家信息/详情', '③ Merchant Info / Detail'],
+    ['身份验证', 'Identity Verification'],
+    ['验证身份', 'Verify identity'],
+    ['请输入谷歌验证码完成验证', 'Enter Google Authenticator code to verify.'],
+    ['或使用其他验证方式', 'Or use another verification method'],
+    ['通行密钥 (Passkey)', 'Passkey'],
+    ['确认', 'Confirm'],
+    ['③ 身份验证', '③ Identity Verification'],
+    ['谷歌验证 / 通行密钥', 'Google Authenticator / Passkey'],
+    ['验证步骤', 'Verification step'],
+    ['等待上传付款凭证', 'Waiting for payment proof'],
+    ['请在 29:59 内完成付款', 'Complete payment within 29:59'],
+    ['⏱ 剩余时间 29:59', '⏱ Time left 29:59'],
+    ['购买 USDT', 'Buy USDT'],
+    ['出售 USDT', 'Sell USDT'],
+    ['单价', 'Unit price'],
+    ['订单金额', 'Order amount'],
+    ['账号', 'Account'],
+    ['开户银行', 'Bank'],
+    ['中国银行', 'Bank of China'],
+    ['卖家姓名', 'Seller name'],
+    ['买家姓名', 'Buyer name'],
+    ['李总', 'Li'],
+    ['聊天', 'Chat'],
+    ['我已付款', 'I have paid'],
+    ['确认出售', 'Confirm sell'],
+    ['④ Order Detail（倒计时）', '④ Order Detail · Countdown'],
+    ['④ Order Detail（等待付款）', '④ Order Detail · Waiting for Payment'],
+    ['等待买家付款', 'Waiting for buyer payment'],
+    ['买家在 60:00 内未完成付款，订单将自动取消', 'If the buyer does not pay within 60:00, the order will be cancelled automatically.'],
+    ['收款账户', 'Receiving account'],
+    ['卖家昵称', 'Seller nickname'],
+    ['买家昵称', 'Buyer nickname'],
+    ['提醒买家付款', 'Remind buyer to pay'],
+    ['交易已完成', 'Trade completed'],
+    ['数字货币已转入您的账户，可转至资金账户以开始交易', 'Crypto has been credited to your account. Transfer it to Funding to start trading.'],
+    ['数量', 'Amount'],
+    ['需要帮助？', 'Need help?'],
+    ['查看资产', 'View assets'],
+    ['⑤ 交易已完成', '⑤ Trade Completed'],
+    ['卖币成功', 'Sell completed'],
+    ['交易已完成，款项将按收款方式到账，请注意查收', 'The trade is completed. Funds will arrive through your receiving method.'],
+    ['收款金额', 'Received amount'],
+    ['再次出售', 'Sell again'],
+    ['⑤ 卖币成功', '⑤ Sell Completed'],
+    ['终态', 'End state'],
+    ['↳ 拦截分支（不满足广告要求）', '↳ Blocked branch · Ad requirements not met'],
+    ['拦截', 'Blocked'],
+    ['不满足广告要求', 'Ad requirements not met'],
+    ['您当前不满足此广告的交易条件，请选择其他广告或完成相应要求后再试', 'You do not meet this ad’s trading requirements. Choose another ad or complete the required conditions first.'],
+    ['返回广告列表', 'Back to ad list'],
+    ['拦截弹窗', 'Blocked modal'],
+    ['下单交易链路重构 · 最大变更', 'Order Flow Redesign · Biggest Change'],
+    ['主界面 / 购买页 / 订单详情 / 交易完成全面重设计，核心变化：订单详情从两步合并为一步，收款账号前置，主 CTA 语义从「去支付」改为「提醒放币」。', 'The main page, buy page, order detail, and completion page were redesigned end to end. The key shift: Order Detail was merged from two steps into one, payment account information was moved forward, and the primary CTA changed from “Pay” to “Remind to release”.'],
+    ['主界面 / Buy Page / Order Detail / 交易完成全面重设计，核心变化：Order Detail从两步合并为一步，收款账号前置，主 CTA 语义从「去支付」改为「提醒放币」。', 'The main page, Buy Page, Order Detail, and Completion Page were redesigned end to end. The key shift: Order Detail was merged from two steps into one, payment account information was moved forward, and the primary CTA changed from “Pay” to “Remind to release”.'],
+    ['基础商家列表，无特殊分区', 'Basic merchant list with no dedicated sections'],
+    ['无 T+2 提币限制提示', 'No T+2 withdrawal-limit notice'],
+    ['无空状态引导', 'No empty-state guidance'],
+    ['认证徽章：✓商家 ✓邮箱 ✓手机（三项）', 'Verification badges: merchant, email, and phone'],
+    ['⚠ 全局 T+2 提币提示条（新增）', 'Global T+2 withdrawal notice added'],
+    ['标题区加入 Express Buy 快捷入口', 'Express Buy shortcut added to the title area'],
+    ['空状态引导使用「快捷买币」（新增）', 'Empty-state guidance now uses “Quick Buy”'],
+    ['底部 Tab：P2P / 订单历史 / 广告 / 我的', 'Bottom tabs: P2P / Orders / Ads / Profile'],
+    ['总结', 'Summary'],
+    ['新版从单一商家列表升级为完整的交易入口：风险限制提前告知，快捷买币与空状态引导缩短下单路径，底部导航补齐订单与商家管理闭环。同时保留核心认证信息，在提升效率的同时维持交易信任感。', 'The new version turns a simple merchant list into a complete trading entry point. Risk limits are surfaced earlier, Quick Buy and empty-state guidance shorten the order path, and bottom navigation completes the loop for orders and merchant management. Core verification cues remain to preserve trust while improving efficiency.'],
+    ['商家信息过少，用户无法判断商家可信度', 'Merchant information was too limited for users to judge trustworthiness.'],
+    ['缺少在线状态，不知道商家是否会及时响应', 'No online status, so users could not judge whether the merchant would respond in time.'],
+    ['商家信息透明：认证状态、成单率、放行时间一目了然', 'More transparent merchant info: verification status, completion rate, and release time are visible at a glance.'],
+    ['在线状态实时可见，用户安全感更强 · 信任数据前置，降低交易顾虑', 'Real-time online status and upfront trust data reduce hesitation and increase confidence.'],
+    ['结论', 'Conclusion'],
+    ['新方案以转化效率为优先，旧方案以信任建立为优先。两者各有侧重，理想解法是在新方案简洁界面的基础上，保留商家在线状态和核心信任数据。', 'The new solution prioritizes conversion efficiency, while the legacy version emphasized trust building. The ideal direction keeps the new interface’s simplicity while preserving online status and core trust data.'],
+    ['★ 本次最大改动', 'Biggest change'],
+    ['从信息割裂、双 CTA 的订单页，收敛为状态连续、信任前置、单一路径的付款引导。', 'The order page shifted from fragmented information and dual CTAs to a continuous, trust-forward, single-path payment guide.'],
+    ['旧版 · 倒计时独立展示', 'Legacy · Separate Countdown Module'],
+    ['新版 · 状态与操作整合', 'New · Status and Actions Integrated'],
+    ['主要改动', 'Key changes'],
+    ['导航与状态更连续', 'More continuous navigation and status'],
+    ['取消订单独立到右上角；倒计时从醒目的独立模块整合进付款提示，并由 5 分钟延长至 60 分钟。', 'Cancel order moved to the top right. The countdown was integrated into the payment prompt and extended from 5 minutes to 60 minutes.'],
+    ['商家信任信息前置', 'Merchant trust cues moved forward'],
+    ['新增认证徽章、在线状态，以及聊天和关注入口，减少买家对商家可靠性的顾虑。', 'Verification badges, online status, chat, and follow actions were added to reduce concerns about merchant reliability.'],
+    ['信息精简并补齐风控', 'Cleaner information with stronger risk control'],
+    ['移除重复的买家与支付方式字段，保留交易核心信息；新增反诈提示，补足安全提醒。', 'Redundant buyer and payment fields were removed, core transaction information was retained, and anti-fraud warnings were added.'],
+    ['操作路径收敛', 'Action path simplified'],
+    ['双按钮改为单一主 CTA「获取付款详情」，先获取收款信息，再进入支付动作，降低选择与误操作成本。', 'Two buttons were reduced to one primary CTA, “Get payment details”, so users retrieve payment info before taking action.'],
+    ['新版核心收益', 'Core value of the new version'],
+    ['信息更聚焦', 'More focused information'],
+    ['信任感增强', 'Stronger trust'],
+    ['流程更清晰', 'Clearer flow'],
+    ['风控更完整', 'More complete risk control'],
+    ['视觉更连贯', 'More consistent visuals'],
+    ['完成态从强调系统结果，转向说明用户已获得什么、资产在哪里，以及下一步可以做什么。', 'The completion state shifted from system status to explaining what the user received, where the asset is, and what to do next.'],
+    ['旧版 · 系统状态与申诉入口', 'Legacy · System Status and Appeal Entry'],
+    ['新版 · 用户收益与资产引导', 'New · User Value and Asset Guidance'],
+    ['成功态转向用户收益', 'Success state focuses on user value'],
+    ['旧版以绿勾和「订单已完成」强调系统状态；新版用「交易已完成」与资产到账说明，直接回答用户最关心的结果。', 'The legacy version emphasized system status with a green check and “Order completed”. The new version uses “Trade completed” and asset-arrival guidance to answer the user’s key concern.'],
+    ['商家信任体验统一', 'Consistent merchant trust experience'],
+    ['移除成功页中容易引起误解的禁止图标，延续认证、在线状态、聊天与关注入口，减少认知歧义。', 'The confusing disabled icon was removed, while verification, online status, chat, and follow actions continue across the success page.'],
+    ['卖家信息更透明', 'More transparent seller information'],
+    ['收款信息由一行摘要拆分为支付方式、账号、银行、姓名与昵称，便于交易后核对和异常举证。', 'Payment information was split into method, account, bank, name, and nickname for easier verification and dispute evidence.'],
+    ['下一步路径更明确', 'Clearer next step'],
+    ['副标题说明资产去向并连接资金账户，把完成页从结果展示升级为下一步操作入口。', 'The subtitle explains where the asset went and links to Funding, turning the completion page into a next-step entry.'],
+    ['CTA 与成功情绪匹配', 'CTA matches the success state'],
+    ['主操作由负向的「申诉」调整为正向的「查看资产」，帮助入口降为次级按钮，层级与用户完成交易后的心理预期一致。', 'The primary action changed from the negative “Appeal” to the positive “View assets”, while Help moved to a secondary level.'],
+    ['收益表达明确', 'Clearer value expression'],
+    ['信任体验统一', 'Unified trust experience'],
+    ['信息可核对', 'Information is verifiable'],
+    ['资产路径闭环', 'Closed-loop asset path'],
+    ['CTA 情绪匹配', 'CTA matches user emotion'],
+    ['新增运营 banner、限时置顶和优惠广告展示。平台可集中分发活动信息，商家可用价格优势获得更多曝光，买家也能更快识别推荐广告和优惠价格。', 'Operational banners, limited-time pinned ads, and discount pricing were added. The platform can distribute campaign information centrally, merchants gain more exposure through pricing advantages, and buyers can identify recommended ads and deals faster.'],
+    ['新版 · Banner + 置顶 + 优惠价', 'New · Banner + Pinned Ads + Discount Price'],
+    ['顶部 Banner', 'Top banner'],
+    ['运营信息从列表中抽离到顶部，活动入口更集中，减少买家错过关键信息。', 'Campaign information is lifted from the list to the top, creating a more focused entry and reducing missed information.'],
+    ['限时置顶', 'Limited-time pinning'],
+    ['推荐广告获得独立展示区和新手推荐标签，帮助买家更快找到可交易对象。', 'Recommended ads get a dedicated section and new-user labels, helping buyers find tradable merchants faster.'],
+    ['优惠价格', 'Discount price'],
+    ['折扣价与原价同时出现，价格优势更直接，降低买家比价成本。', 'Discount and original prices are shown together, making the price advantage easier to compare.'],
+    ['安全提示', 'Safety notice'],
+    ['列表前置资金安全提醒，降低低价广告带来的误判和风险。', 'A fund-safety notice appears before the list to reduce misjudgment around low-price ads.'],
+    ['业务价值', 'Business value'],
+    ['把运营活动、广告曝光和优惠转化合并到同一交易路径，提升流量分发效率和广告成交确定性。', 'Campaigns, ad exposure, and discount conversion are merged into one trading path to improve traffic distribution and conversion certainty.'],
+    ['活动更醒目', 'More visible campaigns'],
+    ['曝光更集中', 'More focused exposure'],
+    ['价格更清晰', 'Clearer pricing'],
+    ['风险有提示', 'Visible risk cues'],
+    ['转化路径更短', 'Shorter conversion path'],
+    ['新增商家级营业状态，可在营业中和未营业之间一键切换。相比逐条关闭广告，新模式能更快暂停接单，减少休息期间误接单、超时和取消风险。', 'A merchant-level operating status was added, allowing one-tap switching between Open and Resting. Compared with closing ads one by one, this pauses order intake faster and reduces accidental orders, timeouts, and cancellations.'],
+    ['未营业 · 暂停接单', 'Resting · Orders paused'],
+    ['营业中 · 正常曝光', 'Open · Normal exposure'],
+    ['新增营业状态', 'New operating status'],
+    ['顶部直接显示营业中或未营业，买卖双方更容易判断当前是否可接单。', 'Open or Resting status is shown at the top so both buyers and merchants can judge availability quickly.'],
+    ['一键休息', 'One-tap rest'],
+    ['商家可快速暂停接单，降低逐条关闭广告的操作成本。', 'Merchants can pause order intake quickly instead of closing each ad manually.'],
+    ['自动休息入口', 'Auto-rest entry'],
+    ['支持按经营节奏管理广告曝光，让广告只在可服务时段保持有效展示。', 'Ad exposure can follow operating rhythms, keeping ads visible only during serviceable periods.'],
+    ['风险控制', 'Risk control'],
+    ['减少休息期间误接单、超时、取消和纠纷，提升交易确定性。', 'Reduces accidental orders, timeouts, cancellations, and disputes during rest periods.'],
+    ['转化价值', 'Conversion value'],
+    ['曝光集中在可响应时段，有助于提升商家响应率、买家信任和成交效率。', 'Exposure is concentrated during responsive periods, improving response rate, buyer trust, and transaction efficiency.'],
+    ['状态更清晰', 'Clearer status'],
+    ['操作更快', 'Faster operation'],
+    ['风险更低', 'Lower risk'],
+    ['曝光更准', 'More precise exposure'],
+    ['成交更稳', 'More stable conversion'],
+    ['五期需求的本质是一次「信任体系重建」。订单详情合并减少了用户在关键付款时刻的页面跳转焦虑；神盾认证贯穿全程持续强化可信感；置顶 + 折扣为平台商业化提供支撑。每一步改动都在回答同一个问题：', 'At its core, the five-phase scope rebuilt the trust system. Merging Order Detail reduced jump anxiety at the critical payment moment; merchant verification reinforced credibility throughout the path; pinned and discount ads supported platform commercialization. Every change answers one question:'],
+    ['五期需求的本质是一次「信任体系重建」。Order Detail合并减少了用户在关键付款时刻的页面跳转焦虑；神盾认证贯穿全程持续强化可信感；置顶 + 折扣为平台商业化提供支撑。每一步改动都在回答同一个问题：', 'At its core, the five-phase scope rebuilt the trust system. Merging Order Detail reduced jump anxiety at the critical payment moment; merchant verification reinforced credibility throughout the path; pinned and discount ads supported platform commercialization. Every change answers one question:'],
+    ['「用户在此刻最担心什么？」', '“What is the user most worried about at this moment?”'],
+    ['设计理念转变', 'Design Mindset Shift'],
+    ['设计理念', 'Design Mindset'],
+    ['· 37单 · 95.48%', '· 37 orders · 95.48%'],
+    ['② Buy Page（填写Amount）', '② Buy Page · Enter Amount'],
+    ['订单Amount', 'Order amount'],
+    ['付款Amount 0.00 CNY', 'Payment amount 0.00 CNY'],
+    ['收款Amount', 'Received amount'],
+    ['④ 订单Details（倒计时）', '④ Order Detail · Countdown'],
+    ['④ 订单Details（等待付款）', '④ Order Detail · Waiting for Payment'],
+    ['↳ Blocked分支（不满足Ads要求）', '↳ Blocked branch · Ad requirements not met'],
+    ['不满足Ads要求', 'Ad requirements not met'],
+    ['您当前不满足此Ads的交易条件，请选择其他Ads或完成相应要求后再试', 'You do not meet this ad’s trading requirements. Choose another ad or complete the required conditions first.'],
+    ['返回Ads列表', 'Back to ad list'],
+    ['Blocked弹窗', 'Blocked modal'],
+    ['Confirm出售', 'Confirm sell'],
+    ['Trade completed，款项将按Receiving method到账，请注意查收', 'The trade is completed. Funds will arrive through your receiving method.'],
+    ['Order Flow重构 · 最大变更', 'Order Flow Redesign · Biggest Change'],
+    ['主界面 / Buy Page / 订单Details / 交易完成全面重设计，核心变化：订单Details从两步合并为一步，收款Account前置，主 CTA 语义从「去支付」改为「提醒放币」。', 'The main page, Buy Page, Order Detail, and Completion Page were redesigned end to end. The key shift: Order Detail was merged from two steps into one, payment account information was moved forward, and the primary CTA changed from “Pay” to “Remind to release”.'],
+    ['底部 Tab：P2P / Orders / Ads / Profile', 'Bottom tabs: P2P / Orders / Ads / Profile'],
+    ['Merchant info过少，用户无法判断商家可信度', 'Merchant information was too limited for users to judge trustworthiness.'],
+    ['Merchant info透明：认证状态、成单率、放行时间一目了然', 'More transparent merchant info: verification status, completion rate, and release time are visible at a glance.'],
+    ['订单Details', 'Order Detail'],
+    ['新增认证徽章、在线状态，以及Chat和关注入口，减少买家对商家可靠性的顾虑。', 'Verification badges, online status, chat, and follow actions were added to reduce concerns about merchant reliability.'],
+    ['双按钮改为单一主 CTA「获取付款Details」，先获取收款信息，再进入支付动作，降低选择与误操作成本。', 'Two buttons were reduced to one primary CTA, “Get payment details”, so users retrieve payment info before taking action.'],
+    ['旧版以绿勾和「订单已完成」强调系统状态；新版用「Trade completed」与资产到账说明，直接回答用户最关心的结果。', 'The legacy version emphasized system status with a green check and “Order completed”. The new version uses “Trade completed” and asset-arrival guidance to answer the user’s key concern.'],
+    ['移除成功页中容易引起误解的禁止图标，延续认证、在线状态、Chat与关注入口，减少认知歧义。', 'The confusing disabled icon was removed, while verification, online status, chat, and follow actions continue across the success page.'],
+    ['收款信息由一行摘要拆分为支付方式、Account、银行、姓名与昵称，便于交易后核对和异常举证。', 'Payment information was split into method, account, bank, name, and nickname for easier verification and dispute evidence.'],
+    ['主操作由负向的「申诉」调整为正向的「View assets」，帮助入口降为次级按钮，层级与用户完成交易后的心理预期一致。', 'The primary action changed from the negative “Appeal” to the positive “View assets”, while Help moved to a secondary level.'],
+    ['置顶与优惠Ads · 增长曝光工具', 'Pinned & Discount Ads · Growth Exposure'],
+    ['置顶Ads和订单优惠设计稿', 'Pinned ads and discount design mockup'],
+    ['置顶与优惠Ads', 'Pinned & Discount Ads'],
+    ['新增运营 banner、Limited-time pinning和优惠Ads展示。平台可集中分发活动信息，商家可用价格优势获得更多曝光，买家也能更快识别推荐Ads和Discount price。', 'Operational banners, limited-time pinned ads, and discount pricing were added. The platform can distribute campaign information centrally, merchants gain more exposure through pricing advantages, and buyers can identify recommended ads and deals faster.'],
+    ['推荐Ads获得独立展示区和新手推荐标签，帮助买家更快找到可交易对象。', 'Recommended ads get a dedicated section and new-user labels, helping buyers find tradable merchants faster.'],
+    ['列表前置资金安全提醒，降低低价Ads带来的误判和风险。', 'A fund-safety notice appears before the list to reduce misjudgment around low-price ads.'],
+    ['把运营活动、Ads曝光和优惠转化合并到同一交易路径，提升流量分发效率和Ads成交确定性。', 'Campaigns, ad exposure, and discount conversion are merged into one trading path to improve traffic distribution and conversion certainty.'],
+    ['商家休息模式 · New operating status', 'Merchant Rest Mode · New Operating Status'],
+    ['商家休息模式未营业状态设计稿', 'Merchant rest mode inactive-state mockup'],
+    ['商家休息模式营业中状态设计稿', 'Merchant rest mode active-state mockup'],
+    ['商家休息模式', 'Merchant Rest Mode'],
+    ['设计稿', 'mockup'],
+    ['新增商家级营业状态，可在营业中和未营业之间一键切换。相比逐条关闭Ads，新模式能更快暂停接单，减少休息期间误接单、超时和取消风险。', 'A merchant-level operating status was added, allowing one-tap switching between Open and Resting. Compared with closing ads one by one, this pauses order intake faster and reduces accidental orders, timeouts, and cancellations.'],
+    ['商家可快速暂停接单，降低逐条关闭Ads的操作成本。', 'Merchants can pause order intake quickly instead of closing each ad manually.'],
+    ['支持按经营节奏管理Ads曝光，让Ads只在可服务时段保持有效展示。', 'Ad exposure can follow operating rhythms, keeping ads visible only during serviceable periods.'],
+    ['五期需求的本质是一次「信任体系重建」。订单Details合并减少了用户在关键付款时刻的页面跳转焦虑；神盾认证贯穿全程持续强化可信感；置顶 + 折扣为平台商业化提供支撑。每一步改动都在回答同一个问题：', 'At its core, the five-phase scope rebuilt the trust system. Merging Order Detail reduced jump anxiety at the critical payment moment; merchant verification reinforced credibility throughout the path; pinned and discount ads supported platform commercialization. Every change answers one question:'],
+    ['新版', 'New'],
+    ['旧版', 'Legacy'],
+    ['P2P 主界面', 'P2P Main Page'],
+    ['购买页', 'Buy Page'],
+    ['订单详情', 'Order Detail'],
+    ['交易完成页', 'Completion Page'],
+    ['置顶与优惠广告 · 增长曝光工具', 'Pinned & Discount Ads · Growth Exposure'],
+    ['商家休息模式 · 新增营业状态', 'Merchant Rest Mode · New Operating Status'],
+    ['项目背景', 'Overview'],
+    ['核心挑战', 'Core Challenge'],
+    ['设计过程', 'Design Process'],
+    ['设计亮点', 'Highlights'],
+    ['核心数据', 'Key Results'],
+    ['设计洞察', 'Design Insight'],
+    ['② Buy Page（填写Amount）', '② Buy Page · Enter Amount'],
+    ['主界面 / Buy Page / Order Detail / 交易完成全面重设计，核心变化：Order Detail从两步合并为一步，收款Account前置，主 CTA 语义从「去支付」改为「提醒放币」。', 'The main page, Buy Page, Order Detail, and Completion Page were redesigned end to end. The key shift: Order Detail was merged from two steps into one, payment account information was moved forward, and the primary CTA changed from “Pay” to “Remind to release”.'],
+    ['五期需求的本质是一次「信任体系重建」。Order Detail合并减少了用户在关键付款时刻的页面跳转焦虑；神盾认证贯穿全程持续强化可信感；置顶 + 折扣为平台商业化提供支撑。每一步改动都在回答同一个问题：', 'At its core, the five-phase scope rebuilt the trust system. Merging Order Detail reduced jump anxiety at the critical payment moment; merchant verification reinforced credibility throughout the path; pinned and discount ads supported platform commercialization. Every change answers one question:']
+  ];
+  return replacements.reduce((html, pair) => html.split(pair[0]).join(pair[1]), OTC_BODY_HTML);
+}
+
 function normalizeModalScreenshots(container) {
   if (!container) return;
   const images = Array.from(container.querySelectorAll('img'));
@@ -5847,11 +6595,17 @@ function setupModalSectionTabs(card) {
   const hdWrap = document.getElementById('proj-modal-hd-wrap');
   if (!body || !hdWrap) return null;
 
-  const tabTitles = [
-    'P2P 主界面', '购买页', '订单详情', '交易完成页',
-    '置顶与优惠广告 · 增长曝光工具',
-    '商家休息模式 · 新增营业状态'
-  ];
+  const tabTitles = _lang === 'en'
+    ? [
+      'P2P Main Page', 'Buy Page', 'Order Detail', 'Completion Page',
+      'Pinned & Discount Ads · Growth Exposure',
+      'Merchant Rest Mode · New Operating Status'
+    ]
+    : [
+      'P2P 主界面', '购买页', '订单详情', '交易完成页',
+      '置顶与优惠广告 · 增长曝光工具',
+      '商家休息模式 · 新增营业状态'
+    ];
   const allSpans = Array.from(body.querySelectorAll('span'));
   const sections = tabTitles.map((title) => {
     const label = allSpans.find((span) => span.textContent.trim() === title);
@@ -5930,9 +6684,46 @@ function setupModalSectionTabs(card) {
   return { update };
 }
 
+const projectScrollLock = {
+  y: 0,
+  locked: false
+};
+
+function lockProjectPageScroll() {
+  if (projectScrollLock.locked) return;
+  projectScrollLock.y = window.scrollY || document.documentElement.scrollTop || 0;
+  projectScrollLock.locked = true;
+  document.documentElement.classList.add('project-modal-locked');
+  document.body.classList.add('project-modal-locked');
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${projectScrollLock.y}px`;
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+  document.body.style.width = '100%';
+}
+
+function unlockProjectPageScroll() {
+  if (!projectScrollLock.locked) return;
+  const y = projectScrollLock.y;
+  projectScrollLock.locked = false;
+  document.documentElement.classList.remove('project-modal-locked');
+  document.body.classList.remove('project-modal-locked');
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  document.body.style.width = '';
+  document.body.style.overflow = '';
+  window.scrollTo(0, y);
+}
+
 window.openProjectModal = function(key) {
-  const data = PROJECT_DATA[key];
+  window.__currentProjectKey = key;
+  const data = getProjectDisplayData(key);
   if (!data) return;
+  const modalLabels = _lang === 'en'
+    ? { screenshots:'Screenshots', overview:'Overview', challenge:'Core Challenge', process:'Design Process', highlights:'Highlights', results:'Key Results', insight:'Design Insight' }
+    : { screenshots:'设计截图', overview:'项目背景', challenge:'核心挑战', process:'设计过程', highlights:'设计亮点', results:'核心数据', insight:'设计洞察' };
 
   const modal  = document.getElementById('proj-modal');
   const card   = document.getElementById('proj-modal-card');
@@ -5996,7 +6787,7 @@ window.openProjectModal = function(key) {
     ${data.images && data.images.length ? `
     <div style="padding:32px var(--modal-px) 0">
       <p style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
-                color:rgba(255,255,255,0.45);margin:0 0 16px">设计截图</p>
+                color:rgba(255,255,255,0.45);margin:0 0 16px">${modalLabels.screenshots}</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
         ${data.images.map(img => `
           <div style="border-radius:16px;overflow:hidden;aspect-ratio:375/812;position:relative;
@@ -6033,11 +6824,11 @@ window.openProjectModal = function(key) {
       <!-- overview + challenge -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-bottom:0">
         <div>
-          ${sectionLabel('项目背景')}
+          ${sectionLabel(modalLabels.overview)}
           <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.9;margin:0">${data.overview}</p>
         </div>
         <div>
-          ${sectionLabel('核心挑战')}
+          ${sectionLabel(modalLabels.challenge)}
           <p style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.9;margin:0">${data.challenge}</p>
         </div>
       </div>
@@ -6045,7 +6836,7 @@ window.openProjectModal = function(key) {
       ${divider}
 
       <!-- process -->
-      ${sectionLabel('设计过程')}
+      ${sectionLabel(modalLabels.process)}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
         ${data.process.map(p => `
           <div style="border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:22px 24px;
@@ -6059,7 +6850,7 @@ window.openProjectModal = function(key) {
       ${divider}
 
       <!-- highlights -->
-      ${sectionLabel('设计亮点')}
+      ${sectionLabel(modalLabels.highlights)}
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
         ${data.highlights.map(h => `
           <div style="border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:24px;
@@ -6077,11 +6868,11 @@ window.openProjectModal = function(key) {
       <!-- results + insight -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px">
         <div>
-          ${sectionLabel('核心数据')}
+          ${sectionLabel(modalLabels.results)}
           ${resultsHTML}
         </div>
         <div>
-          ${sectionLabel('Design Insight')}
+          ${sectionLabel(modalLabels.insight)}
           <div style="border-left:2px solid ${data.accentColor};padding-left:20px">
             <p style="font-size:14px;color:rgba(255,255,255,0.52);line-height:1.9;margin:0">${data.insight}</p>
           </div>
@@ -6098,16 +6889,16 @@ window.openProjectModal = function(key) {
     panels.forEach(function(panel, i) { panel.classList.toggle('active', i === index); });
   };
 
-    if (key === 'otc') {
+  if (key === 'otc') {
     const ob = document.getElementById('proj-modal-body');
-    if (ob) ob.innerHTML = OTC_BODY_HTML;
+    if (ob) ob.innerHTML = getOtcBodyHtml();
   }
-  if (key === 'copy') {
+  if (key === 'copy' && _lang !== 'en') {
     const ob = document.getElementById('proj-modal-body');
     if (ob) {
       const lofiEl = document.createElement('div');
       lofiEl.style.cssText = 'border:1px solid rgba(255,255,255,.1);border-radius:16px;overflow:hidden;margin-bottom:32px';
-      lofiEl.innerHTML = `<button onclick="(function(btn){const body=btn.parentElement.querySelector('.lofi-body-copy');const arrow=btn.querySelector('.lofi-arrow-copy');const open=body.style.maxHeight&&body.style.maxHeight!=='0px';body.style.maxHeight=open?'0px':'9999px';body.style.opacity=open?'0':'1';arrow.style.transform=open?'rotate(0deg)':'rotate(180deg)'})(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:rgba(255,255,255,.04);border:none;cursor:pointer;gap:12px"><div style="text-align:left"><span style="font-size:16px;color:#ffffff;font-weight:600">低保真线框探索</span><span style="font-size:13px;color:rgba(255,255,255,.35);font-weight:400">（Lo-fi Wireframes）</span></div><svg class="lofi-arrow-copy" style="transition:transform .3s ease;flex-shrink:0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="lofi-body-copy" style="max-height:0;opacity:0;overflow:hidden;transition:max-height .6s cubic-bezier(.16,1,.3,1),opacity .3s ease"><div style="padding:0"><style id='copy-lofi-styles'>
+      lofiEl.innerHTML = `<button onclick="(function(btn){const body=btn.parentElement.querySelector('.lofi-body-copy');const arrow=btn.querySelector('.lofi-arrow-copy');const open=body.style.maxHeight&&body.style.maxHeight!=='0px';body.style.maxHeight=open?'0px':'9999px';body.style.opacity=open?'0':'1';arrow.style.transform=open?'rotate(0deg)':'rotate(180deg)'})(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:18px 24px;background:rgba(255,255,255,.04);border:none;cursor:pointer;gap:12px"><div style="text-align:left"><span style="font-size:16px;color:#ffffff;font-weight:600">低保真线框探索</span><span style="font-size:13px;color:rgba(255,255,255,.35);font-weight:400">（低保真线框）</span></div><svg class="lofi-arrow-copy" style="transition:transform .3s ease;flex-shrink:0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="lofi-body-copy" style="max-height:0;opacity:0;overflow:hidden;transition:max-height .6s cubic-bezier(.16,1,.3,1),opacity .3s ease"><div style="padding:0"><style id='copy-lofi-styles'>
 .copy-lofi-embed .copy-lofi-embed *, .copy-lofi-embed .copy-lofi-embed *::before, .copy-lofi-embed .copy-lofi-embed *::after { box-sizing: border-box; margin: 0; padding: 0; }.copy-lofi-embed {
   background: #f2f2f7;
   font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
@@ -7328,8 +8119,9 @@ window.openProjectModal = function(key) {
   // open modal — card is the scroll container
   modal.classList.remove('closing');
   modal.classList.add('open');
+  window.__projectModalOpen = true;
   card.scrollTop = 0;
-  document.body.style.overflow = 'hidden';
+  lockProjectPageScroll();
   if (window.setGhostMode) window.setGhostMode('minimal');
 
   // measure full header height, lock card padding-top — never changes again (no layout shift)
@@ -7351,14 +8143,24 @@ window.openProjectModal = function(key) {
 
   // click backdrop to close
   modal.onclick = (e) => { if (e.target === modal) closeProjectModal(); };
+  modal.onwheel = (e) => {
+    if (!e.target.closest('#proj-modal-card')) e.preventDefault();
+  };
+  modal.ontouchmove = (e) => {
+    if (!e.target.closest('#proj-modal-card')) e.preventDefault();
+  };
 };
 
 window.closeProjectModal = function() {
   const modal = document.getElementById('proj-modal');
   const card  = document.getElementById('proj-modal-card');
   if (!modal.classList.contains('open') || modal.classList.contains('closing')) return;
+  window.__projectModalOpen = false;
 
-  // Keep the backdrop visible while the full-screen sheet exits downward.
+  const hint = document.getElementById('proj-modal-scroll-hint');
+  if (hint) hint.classList.add('hidden');
+
+  // Let the sheet leave downward without leaving a black overlay behind.
   modal.classList.add('closing');
   setTimeout(() => {
     modal.classList.remove('open', 'closing');
@@ -7366,9 +8168,11 @@ window.closeProjectModal = function() {
     card.onscroll = null;
     const hdWrapEl = document.getElementById('proj-modal-hd-wrap');
     if (hdWrapEl) hdWrapEl.innerHTML = '';
-    document.body.style.overflow = '';
+    unlockProjectPageScroll();
+    modal.onwheel = null;
+    modal.ontouchmove = null;
     if (window.setGhostMode) window.setGhostMode('full');
-  }, 440);
+  }, 280);
 };
 
 document.addEventListener('keydown', e => {
@@ -7981,44 +8785,86 @@ window.toggleMobileMenu = function(){
 
 const LANG_TRANSLATIONS = {
   zh: {
-    'nav-hero':'Hero','nav-foundation':'Foundation','nav-components':'Components','nav-featured':'精选项目','nav-aboutme':'关于我','nav-other':'Other','nav-sayhi':'打个招呼',
+    'nav-hero':'首页','nav-foundation':'设计系统','nav-components':'组件系统','nav-featured':'精选项目','nav-aboutme':'关于我','nav-other':'其他','nav-sayhi':'打个招呼',
     'hero-desc':'专注 Web3 产品的端到端 UI/UX 设计——从复杂交易流程到 0→1 冷启动。调研驱动，像素精准，快速交付。',
     'hero-trust':'UI 设计师 · Web3 & FinTech 产品','hero-sayhi':'打个招呼',
-    'works-label':'精选作品','works-title':'精选项目','works-desc':'Web3 产品设计，从 0 到 1 的全链路交付。','card-view':'查看案例 →',
+    'ds-desc':'完整嵌入 Design System spotlight 文件，保留原始交互与动效；外层仅按网页宽度等比缩放展示。',
+    'works-label':'精选作品','works-title':'精选项目','works-desc':'Web3 产品设计，从 0 到 1 的全链路交付。','card-view':'查看案例 →','card-visual-placeholder':'设计稿主视觉',
+    'components-label':'组件系统','components-title':'Input / Button 组件','components-desc':'CoinW 交易产品中的输入框与按钮组件状态预览，保留原始组件颜色与交互。',
     'card-otc-badge':'P2P 场外','card-copy-badge':'跟单系统','card-community-badge':'社区改版','card-landing-badge':'落地页',
     'card-otc-title':'OTC 场外交易系统','card-otc-sub':'信任机制 · 流程优化 · 跨平台一致性',
+    'card-otc-tag1':'信任设计','card-otc-tag2':'流程重构','card-otc-tag3':'跨平台',
     'card-copy-title':'跟单交易系统','card-copy-sub':'0→1 设计 · 数据层级 · 社交跟单',
+    'card-copy-tag1':'0→1','card-copy-tag2':'数据可视化','card-copy-tag3':'社交',
+    'card-community-title':'社区功能改版','card-community-sub':'V1→V3 迭代 · 内容生态 · 留存',
+    'card-community-tag1':'迭代设计','card-community-tag2':'内容生态','card-community-tag3':'留存',
+    'card-landing-title':'落地页矩阵','card-landing-sub':'A/B 测试 · 4层框架 · 转化优化',
+    'card-landing-tag1':'A/B测试','card-landing-tag2':'转化优化','card-landing-tag3':'多语言',
     'about-label':'关于我','about-h2':'在 Web3 与设计工艺<br>的交汇处创作',
     'about-p1':'湖南城市学院平面设计本科，深耕数字设计 10 年，其中 Web3 行业 4 年。擅长将复杂链上逻辑转化为直观界面，在快节奏 Web3 团队中兼顾品牌一致性与用户体验。',
     'about-p2':'曾参与加密交易所、DeFi 协议与 NFT 平台从 0 到 1 的产品设计，覆盖 PC 端与移动端双平台，建立过 200+ 组件的设计系统。',
     'about-cta':'联系我 →','exp-label':'工作经历',
+    'edu-label':'毕业院校','edu-school':'湖南城市学院','edu-degree':'平面设计 · 本科',
+    'exp1-role':'UI 设计师','exp1-li1':'→ 主导落地页、OTC、跟单系统、社区四大模块全链路设计','exp1-li2':'→ 设计目标：提升注册转化率 & 降低新用户激活门槛','exp1-li3':'→ 设计方法：竞品拆解 → 用户旅程图 → 线框 → 高保真 → 可用性测试','exp1-li4':'→ 跟单系统上线后新用户激活率 +38%，OTC 交易完成率 +21%',
+    'exp2-role':'高级产品设计师','exp2-company':'Web3 协议（DEX / 多链钱包）','exp2-li1':'→ 负责 DEX 交易界面与多链钱包 UX，覆盖桌面端与 App 双端','exp2-li2':'→ 设计方法：信息架构梳理 → 交互规范制定 → 工程协同交付','exp2-li3':'→ 从零搭建 200+ 组件设计系统，设计效率提升 40%',
+    'exp3-role':'UI / UX 设计师','exp3-company':'区块链创业公司（NFT 市场 + 钱包）','exp3-li1':'→ 入门 Web3，主导 NFT 市场与钱包连接全流程设计','exp3-li2':'→ 设计目标：降低 Web3 新手的认知门槛','exp3-li3':'→ 输出品牌视觉体系 + Web & App 双端界面规范',
+    'exp4-role':'视觉 / UI 设计师','exp4-company':'数字营销 & 互联网行业','exp4-desc':'平面设计转型交互设计，积累跨行业视觉叙事能力。',
+    'skill-design-system':'设计系统','skill-component-lib':'组件库','skill-brand':'品牌','skill-mobile':'移动端',
     'stat-1':'Web3 从业年限','stat-2':'交付项目数','stat-3':'设计经验年限',
-    'journal-label':'','journal-title':'About AI','journal-viewall':'查看全部 →',
+    'journal-label':'','journal-title':'关于 AI','journal-viewall':'查看全部 →','journal-kicker':'WEB3 / 用户体验 / 系统',
+    'journal-ai-assisted':'AI 辅助','journal-ai-title':'关于<br>AI','journal-ai-desc':'用 AI 辅助研究、拆解复杂信息，并把想法转成可落地的产品界面。',
+    'gesture-card-title':'手势实验室','gesture-card-sub':'手势适配交互 · 新网页打开',
+    'gesture-modal-kicker':'小彩蛋','gesture-modal-title':'手势滤镜实验室','gesture-modal-desc':'一个用 vibe coding 做的小实验：用摄像头识别手势，把滤镜模块和贴纸变成可被手掌触发的互动界面。','gesture-modal-note':'这是嵌入的网页内容。点击确认后会打开新网页进行体验，页面可能会请求摄像头权限，用于手势识别。','gesture-modal-cancel':'先不打开','gesture-modal-open':'打开新网页 ↗',
+    'journal-workflow-label':'AI 工作流','journal-workflow-title':'从模糊输入<br class="hidden md:block">到清晰界面',
+    'journal-signal-label':'01 / 信号','journal-signal-desc':'把用户反馈、链上规则和业务目标压缩成可判断的设计信号。',
+    'journal-structure-label':'02 / 结构','journal-structure-desc':'用 AI 快速拆解路径，再由设计判断筛掉噪音，留下可落地的结构。',
+    'journal-human-label':'人工判断','journal-human-desc':'AI 负责加速，最终体验由人的判断、取舍和审美完成。',
     'je-1':'Web3 产品中的信任建立：从钉包连接到交易确认',
     'je-2':'复杂数据可视化设计：让链上数据变得可读',
     'je-3':'为什么 DeFi 产品总让普通用户感到困惑',
     'je-4':'设计系统在快节奏 Web3 团队中的实践价値',
-    'footer-label':'联系我','footer-h2':'一起创造<br>一些很棒的东西','footer-cta':'发起合作 ↗','footer-status':'开放合作中',
+    'contact-title':'联系我','contact-copy':'复制','footer-marquee':'构建未来 •\u00a0','footer-label':'联系我','footer-h2':'一起创造<br>一些很棒的东西','footer-cta':'发起合作 ↗','footer-status':'开放合作中',
   },
   en: {
     'nav-hero':'Hero','nav-foundation':'Foundation','nav-components':'Components','nav-featured':'Featured','nav-aboutme':'About','nav-other':'Other','nav-sayhi':'Say Hi',
     'hero-desc':'End-to-end UI/UX for Web3 products — from complex trading flows to zero-to-one launches. Research-driven, pixel-precise, shipped fast.',
     'hero-trust':'UI Designer · Web3 & FinTech Products','hero-sayhi':'Say Hi',
-    'works-label':'Selected Work','works-title':'Featured projects','works-desc':'End-to-end Web3 product design, from 0 to 1.','card-view':'View Case →',
+    'ds-desc':'Embedded the Design System spotlight file with its original interactions and motion preserved; the outer page only scales it proportionally to the web layout.',
+    'works-label':'Selected Work','works-title':'Featured projects','works-desc':'End-to-end Web3 product design, from 0 to 1.','card-view':'View Case →','card-visual-placeholder':'Design preview',
+    'components-label':'Components','components-title':'Input / Button Components','components-desc':'Interactive component states based on CoinW trading-product inputs and buttons, preserving original component colors and interactions.',
     'card-otc-badge':'OTC Trading','card-copy-badge':'Copy Trading','card-community-badge':'Community','card-landing-badge':'Landing Page',
     'card-otc-title':'OTC P2P Redesign','card-otc-sub':'Trust · Flow Optimization · Cross-platform',
+    'card-otc-tag1':'Trust Design','card-otc-tag2':'Flow Redesign','card-otc-tag3':'Cross-platform',
     'card-copy-title':'Copy Trading','card-copy-sub':'0→1 Design · Data Hierarchy · Social Copy',
+    'card-copy-tag1':'0→1','card-copy-tag2':'Data Viz','card-copy-tag3':'Social',
+    'card-community-title':'Community Redesign','card-community-sub':'V1→V3 Iteration · Content Ecosystem · Retention',
+    'card-community-tag1':'Iteration','card-community-tag2':'Content','card-community-tag3':'Retention',
+    'card-landing-title':'Landing Page Matrix','card-landing-sub':'A/B Testing · 4-layer Framework · Conversion',
+    'card-landing-tag1':'A/B Testing','card-landing-tag2':'Conversion','card-landing-tag3':'Multilingual',
     'about-label':'About','about-h2':'Designing at the intersection<br>of Web3 &amp; craft',
     'about-p1':'Graphic Design B.A., 10 years in digital design — 4 years in Web3. I translate complex on-chain logic into intuitive interfaces, balancing brand consistency and UX in fast-paced teams.',
     'about-p2':'Led product design for crypto exchanges, DeFi protocols, and NFT platforms from 0→1, across desktop and mobile. Built a 200+ component design system from scratch.',
     'about-cta':'Get in touch →','exp-label':'Experience',
+    'edu-label':'Education','edu-school':'Hunan City University','edu-degree':'Graphic Design · B.A.',
+    'exp1-role':'UI Designer','exp1-li1':'→ Led end-to-end design for landing pages, OTC, copy trading, and community modules','exp1-li2':'→ Goal: improve registration conversion and reduce new-user activation friction','exp1-li3':'→ Method: competitor teardown → journey map → wireframe → high fidelity → usability test','exp1-li4':'→ Copy trading activation +38%, OTC completion rate +21% after launch',
+    'exp2-role':'Senior Product Designer','exp2-company':'Web3 Protocol (DEX / Multi-chain Wallet)','exp2-li1':'→ Owned DEX trading UI and multi-chain wallet UX across desktop and app','exp2-li2':'→ Method: information architecture → interaction rules → engineering handoff','exp2-li3':'→ Built a 200+ component design system from scratch, improving design efficiency by 40%',
+    'exp3-role':'UI / UX Designer','exp3-company':'Blockchain Startup (NFT Market + Wallet)','exp3-li1':'→ Entered Web3 by leading NFT marketplace and wallet connection flows','exp3-li2':'→ Goal: lower the cognitive barrier for Web3 beginners','exp3-li3':'→ Delivered brand visual system and Web & App interface guidelines',
+    'exp4-role':'Visual / UI Designer','exp4-company':'Digital Marketing & Internet Industry','exp4-desc':'Moved from graphic design into interaction design, building cross-industry visual storytelling skills.',
+    'skill-design-system':'Design System','skill-component-lib':'Component Lib','skill-brand':'Brand','skill-mobile':'Mobile',
     'stat-1':'Years in Web3','stat-2':'Projects Delivered','stat-3':'Years of Experience',
-    'journal-label':'','journal-title':'About AI','journal-viewall':'View all →',
+    'journal-label':'','journal-title':'About AI','journal-viewall':'View all →','journal-kicker':'WEB3 / UX / SYSTEMS',
+    'journal-ai-assisted':'AI Assisted','journal-ai-title':'ABOUT<br>AI','journal-ai-desc':'I use AI to support research, unpack complex information, and turn rough ideas into product interfaces that can actually ship.',
+    'gesture-card-title':'Gesture Lab','gesture-card-sub':'Gesture interaction · opens a new page',
+    'gesture-modal-kicker':'Little Easter Egg','gesture-modal-title':'Gesture Filter Lab','gesture-modal-desc':'A small vibe-coding experiment: use the camera to recognize hand gestures and turn filter modules and stickers into palm-triggered interactions.','gesture-modal-note':'This opens an embedded web experiment in a new page. It may request camera permission for gesture recognition.','gesture-modal-cancel':'Not now','gesture-modal-open':'Open page ↗',
+    'journal-workflow-label':'AI Workflow','journal-workflow-title':'From fuzzy input<br class="hidden md:block"> to clear interface',
+    'journal-signal-label':'01 / Signal','journal-signal-desc':'Compress user feedback, on-chain rules, and business goals into design signals that can be judged.',
+    'journal-structure-label':'02 / Structure','journal-structure-desc':'Use AI to quickly decompose paths, then rely on design judgment to filter noise and keep the structure that can land.',
+    'journal-human-label':'Human Decision','journal-human-desc':'AI accelerates the process; the final experience is shaped by human judgment, trade-offs, and taste.',
     'je-1':'Building Trust in Web3: From Wallet Connect to Trade Confirm',
     'je-2':'Complex Data Viz: Making On-chain Data Readable',
     'je-3':'Why DeFi Products Always Confuse Regular Users',
     'je-4':'Practical Value of Design Systems in Fast-paced Web3 Teams',
-    'footer-label':'GET IN TOUCH','footer-h2':"Let's create<br>something great",'footer-cta':'Get in touch ↗','footer-status':'Available for projects',
+    'contact-title':'Get in Touch','contact-copy':'Copy','footer-marquee':'BUILDING THE FUTURE •\u00a0','footer-label':'GET IN TOUCH','footer-h2':"Let's create<br>something great",'footer-cta':'Get in touch ↗','footer-status':'Available for projects',
   }
 };
 
@@ -8042,11 +8888,30 @@ function applyLang(lang) {
     btn.classList.toggle('en-active', lang === 'en');
   }
   _lang = lang;
+  window._lang = lang;
   localStorage.setItem('portfolio-lang', lang);
+  const componentFrame = document.querySelector('.component-embed-frame');
+  if (componentFrame && componentFrame.contentWindow) {
+    componentFrame.contentWindow.postMessage({ type: 'portfolio-lang', lang }, '*');
+  }
   _heroDescSplit();
+  if (typeof window.refreshLandingLanguage === 'function') window.refreshLandingLanguage();
+  const projectModal = document.getElementById('proj-modal');
+  if (projectModal && window.__projectModalOpen && window.__currentProjectKey) {
+    window.openProjectModal(window.__currentProjectKey);
+  }
 }
 
-function toggleLang() { applyLang(_lang === 'zh' ? 'en' : 'zh'); }
+function toggleLang(event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  applyLang(_lang === 'zh' ? 'en' : 'zh');
+}
+
+window.applyLang = applyLang;
+window.toggleLang = toggleLang;
 
 /* ── Hero Word-by-Word Reveal ── */
 let _wordRevealDone = false;
@@ -8272,7 +9137,11 @@ document.addEventListener('DOMContentLoaded', function() {
     {
       id: 0,
       title: 'AI Agent 专区',
+      titleZh: 'AI Agent 专区',
+      titleEn: 'AI Agent Hub',
       sub: 'AI Skills · 智能自动化',
+      subZh: 'AI Skills · 智能自动化',
+      subEn: 'AI Skills · Automation',
       accent: '#6C4FFF',
       gradient: 'linear-gradient(145deg,#0a0618 0%,#1a0e38 60%,#0e0820 100%)',
       thumb: 'assets/landing-pages/thumbs/ai-agent-cover.png?v=20260624-ai-agent-6s',
@@ -8287,7 +9156,11 @@ document.addEventListener('DOMContentLoaded', function() {
     {
       id: 1,
       title: 'Ai Trader DNA',
+      titleZh: 'Ai Trader DNA',
+      titleEn: 'Ai Trader DNA',
       sub: 'AI 测评 · 交易人格',
+      subZh: 'AI 测评 · 交易人格',
+      subEn: 'AI Assessment · Trader Persona',
       accent: '#5B39F5',
       gradient: 'linear-gradient(145deg,#0e0e14 0%,#151520 55%,#0a0618 100%)',
       thumb: 'assets/landing-pages/thumbs/ai-trader-dna-cover.png',
@@ -8301,32 +9174,41 @@ document.addEventListener('DOMContentLoaded', function() {
     },
     {
       id: 2,
-      title: '产品功能介绍页',
-      sub: '功能对比 · 多语言',
-      accent: '#4A9EF5',
-      gradient: 'linear-gradient(145deg,#020d1a 0%,#041830 50%,#020c18 100%)',
-      thumb: 'assets/landing-pages/thumbs/product-feature-cover.png',
-      content: function() { return `
-        <div style="min-height:100%;background:linear-gradient(180deg,#020d1a 0%,#010810 100%);padding:60px 48px 80px;font-family:-apple-system,sans-serif">
-          <div style="max-width:700px;margin:0 auto">
-            <div style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(74,158,245,0.6);margin-bottom:16px">全功能一站式交易平台</div>
-            <h1 style="font-size:44px;font-weight:900;color:#fff;line-height:1.1;margin:0 0 20px;letter-spacing:-.03em">一个平台<br>满足<span style="color:#4A9EF5">所有交易需求</span></h1>
-            <p style="font-size:15px;color:rgba(255,255,255,0.45);line-height:1.7;margin:0 0 40px">从现货到合约，从跟单到理财，CoinW 覆盖您的每一种交易场景。</p>
-            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:40px">
-              ${[['现货交易','700+ 交易对，深度流动性，0.1% 超低手续费','#3ECF8E'],['合约交易','最高 200x 杠杆，专业风控，实时强平预警','#4A9EF5'],['跟单系统','一键复制顶级交易员策略，新手也能轻松盈利','#C9AAF0'],['余币宝','闲置资产自动理财，年化最高 18%，随存随取','#CCAA89']].map(([t,d,c])=>`<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px 22px;display:flex;align-items:center;gap:16px"><div style="width:4px;height:40px;background:${c};border-radius:2px;flex-shrink:0"></div><div><div style="font-size:14px;font-weight:600;color:rgba(255,255,255,0.9);margin-bottom:4px">${t}</div><div style="font-size:12px;color:rgba(255,255,255,0.38);line-height:1.5">${d}</div></div></div>`).join('')}
-            </div>
-            <div style="display:flex;gap:12px">
-              <button style="flex:1;background:#4A9EF5;color:#fff;font-size:15px;font-weight:700;padding:14px;border-radius:100px;border:none;cursor:pointer">立即注册</button>
-              <button style="flex:1;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.7);font-size:15px;font-weight:500;padding:14px;border-radius:100px;border:1px solid rgba(255,255,255,0.1);cursor:pointer">下载 App</button>
-            </div>
-          </div>
-        </div>`; }
+      title: 'CWC 合伙人认购页',
+      titleZh: 'CWC 合伙人认购页',
+      titleEn: 'CWC Partner Subscription',
+      sub: '合伙人邀约 · 申购流程',
+      subZh: '合伙人邀约 · 申购流程',
+      subEn: 'Partner Invite · Subscription Flow',
+      accent: '#6C4FFF',
+      gradient: 'linear-gradient(145deg,#03030a 0%,#071124 54%,#05050a 100%)',
+      thumb: 'assets/landing-pages/thumbs/cwc-partner-cover.png?v=20260624',
+      content: function(lang) {
+        var safeLang = lang === 'en' ? 'en' : 'zh';
+        return '<div class="landing-iframe-shell" style="width:100%;min-height:100%;overflow:hidden;background:#000;display:block">' +
+          '<div class="landing-iframe-stage" style="width:1440px;transform-origin:top left">' +
+            '<iframe src="cwc-partner-subscription.html?embed=1&lang='+safeLang+'" data-landing-iframe data-design-width="1440" data-design-height="2700" onload="window.fitLandingIframe && window.fitLandingIframe(this)" style="width:1440px;height:2700px;border:none;display:block;background:#000" allowfullscreen></iframe>' +
+          '</div>' +
+        '</div>';
+      }
     }
   ];
 
   var currentLandingIdx = 0;
   var landingPreloadHost = null;
   var landingPreloadedNodes = {};
+
+  function landingLang() {
+    return window._lang || _lang || localStorage.getItem('portfolio-lang') || 'zh';
+  }
+
+  function landingTitle(page) {
+    return landingLang() === 'en' ? (page.titleEn || page.title) : (page.titleZh || page.title);
+  }
+
+  function landingSub(page) {
+    return landingLang() === 'en' ? (page.subEn || page.sub) : (page.subZh || page.sub);
+  }
 
   function getLandingPreloadHost() {
     if (landingPreloadHost) return landingPreloadHost;
@@ -8343,7 +9225,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var p = LANDING_PAGES[idx];
     if (!p || typeof p.content !== 'function') return null;
     var tmp = document.createElement('div');
-    tmp.innerHTML = p.content();
+    tmp.innerHTML = p.content(landingLang());
     var node = tmp.firstElementChild;
     if (!node) return null;
     node.setAttribute('data-preloaded-landing', String(idx));
@@ -8411,22 +9293,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function buildNav() {
     var nav = document.getElementById('landing-lb-nav');
-    var navHTML = '<p style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin:0 0 12px 4px;font-weight:600">落地页列表</p>';
+    var navHTML = '<p style="font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin:0 0 12px 4px;font-weight:600">'+(landingLang() === 'en' ? 'Landing Pages' : '落地页列表')+'</p>';
     LANDING_PAGES.forEach(function(p, i) {
       navHTML += '<div id="landing-nav-'+i+'" onclick="switchLandingPage('+i+')" style="border-radius:12px;padding:12px 14px;cursor:pointer;border:1px solid transparent;transition:all .2s ease;margin-bottom:4px">';
       navHTML += '<div style="height:72px;border-radius:8px;background:'+p.gradient+';margin-bottom:10px;overflow:hidden;position:relative">';
       if (p.thumb) {
-        navHTML += '<img src="'+p.thumb+'" alt="'+p.title+' hero cover" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">';
+        navHTML += '<img src="'+p.thumb+'" alt="'+landingTitle(p)+' hero cover" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block">';
       } else {
         navHTML += '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center"><div style="width:24px;height:3px;background:'+p.accent+';border-radius:2px"></div></div>';
       }
       navHTML += '</div>';
-      navHTML += '<div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.75);margin-bottom:2px">'+p.title+'</div>';
-      navHTML += '<div style="font-size:10px;color:rgba(255,255,255,0.3)">'+p.sub+'</div>';
+      navHTML += '<div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.75);margin-bottom:2px">'+landingTitle(p)+'</div>';
+      navHTML += '<div style="font-size:10px;color:rgba(255,255,255,0.3)">'+landingSub(p)+'</div>';
       navHTML += '</div>';
     });
     nav.innerHTML = navHTML;
   }
+
+  window.refreshLandingLanguage = function() {
+    landingPreloadedNodes = {};
+    buildNav();
+    var lb = document.getElementById('landing-lightbox');
+    var contentEl = document.getElementById('landing-lb-content');
+    var current = contentEl && contentEl.getAttribute('data-current-landing');
+    if (lb && lb.style.display === 'block' && current !== null) {
+      contentEl.innerHTML = '';
+      contentEl.removeAttribute('data-current-landing');
+      switchLandingPage(Number(current));
+    }
+  };
 
   function updateNav(idx) {
     LANDING_PAGES.forEach(function(p, i) {
@@ -8508,14 +9403,14 @@ document.addEventListener('DOMContentLoaded', function() {
     var preloadedNode = landingPreloadedNodes[idx];
     if (!preloadedNode && idx === 0) {
       var tmp = document.createElement('div');
-      tmp.innerHTML = p.content();
+      tmp.innerHTML = p.content(landingLang());
       preloadedNode = tmp.firstElementChild;
       if (preloadedNode) landingPreloadedNodes[idx] = preloadedNode;
     }
     if (preloadedNode) {
       contentEl.appendChild(preloadedNode);
     } else {
-      contentEl.innerHTML = p.content();
+      contentEl.innerHTML = p.content(landingLang());
     }
     contentEl.setAttribute('data-current-landing', String(idx));
     // Iframe pages are scaled to the preview width; the preview container handles vertical scroll.
@@ -8564,13 +9459,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const previewVideos = [...document.querySelectorAll('#works .pcard-banner video')];
     const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
     const saveData = !!(navigator.connection && navigator.connection.saveData);
+
+    const attachVideoSrc = (video) => {
+      if (video.dataset.videoAttached === 'true' || !video.dataset.src) return;
+      video.src = video.dataset.src;
+      video.dataset.videoAttached = 'true';
+    };
 
     const safePlay = (video) => {
       if (!canHover || reduceMotion || saveData || document.hidden) return;
+      attachVideoSrc(video);
       video.muted = true;
       video.defaultMuted = true;
       video.volume = 0;
+      if (video.readyState < 2) video.load();
       const playPromise = video.play();
       if (playPromise && typeof playPromise.catch === 'function') playPromise.catch(() => {});
     };
@@ -8583,8 +9487,9 @@ document.addEventListener('DOMContentLoaded', function() {
       video.muted = true;
       video.defaultMuted = true;
       video.volume = 0;
-      video.preload = 'metadata';
+      video.preload = 'none';
       const markReady = () => video.closest('.pcard-banner')?.classList.add('video-ready');
+      if (video.poster) markReady();
       if ('requestVideoFrameCallback' in video) {
         video.requestVideoFrameCallback(markReady);
       } else {
@@ -8595,11 +9500,20 @@ document.addEventListener('DOMContentLoaded', function() {
       video.addEventListener('loadeddata', markReady, { once: true });
     });
 
-    if ('IntersectionObserver' in window) {
+    if (isMobile || saveData) {
+      previewVideos.forEach((video) => {
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      });
+    } else if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           const video = entry.target;
-          if (entry.isIntersecting) video.load();
+          if (entry.isIntersecting) {
+            attachVideoSrc(video);
+            video.load();
+          }
           else pauseVideo(video);
         });
       }, { rootMargin: '240px 0px', threshold: 0.01 });
