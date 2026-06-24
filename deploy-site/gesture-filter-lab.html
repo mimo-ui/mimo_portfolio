@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Camera Gesture Filter</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <style>
+    :root {
+      --black: #050505;
+      --paper: #f5efe3;
+      --pink: #ff2b75;
+      --portfolio-primary: #5ed29c;
+      --portfolio-blue-a: #89AACC;
+      --portfolio-blue-b: #4E85BF;
+      --yellow: #ffe12c;
+      --red: #e85661;
+      --blue: #322eff;
+      --line: rgba(245, 239, 227, 0.78);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: var(--black);
+      color: var(--paper);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    body {
+      display: grid;
+      place-items: stretch;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .stage {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255, 43, 117, 0.16), transparent 34%),
+        #050505;
+      isolation: isolate;
+    }
+
+    .camera,
+    .module-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+
+    .camera {
+      z-index: 0;
+      filter: none;
+      transition: filter 0.24s ease;
+    }
+
+    .stage.is-tracking .camera {
+      filter: none;
+    }
+
+    .empty-state {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle, rgba(255, 43, 117, 0.22) 0 1px, transparent 1px),
+        linear-gradient(135deg, rgba(232, 86, 97, 0.34), transparent 42%, rgba(255, 225, 44, 0.18));
+      background-size: 14px 14px, auto;
+      color: rgba(245, 239, 227, 0.72);
+      text-align: center;
+      font-size: clamp(18px, 2.5vw, 30px);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .stage.is-live .empty-state {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .filter-field {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .filter-module {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      opacity: 0;
+      clip-path: polygon(48% 48%, 52% 48%, 52% 52%, 48% 52%);
+      transition: opacity 0.12s ease;
+      pointer-events: none;
+    }
+
+    .stage.is-tracking .filter-module {
+      opacity: 0.88;
+    }
+
+    .filter-module::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background-image:
+        radial-gradient(circle, var(--dot-color, #050505) 0 var(--dot-core, 34%), transparent calc(var(--dot-core, 34%) + 4%)),
+        radial-gradient(circle, var(--dot-shadow, rgba(5, 5, 5, 0.28)) 0 20%, transparent 23%);
+      background-size: var(--dot-size, 10px) var(--dot-size, 10px), calc(var(--dot-size, 10px) * 1.8) calc(var(--dot-size, 10px) * 1.8);
+      background-position: var(--dot-x, 0) var(--dot-y, 0);
+      opacity: var(--dot-opacity, 0.82);
+      mix-blend-mode: multiply;
+    }
+
+    .filter-module::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      z-index: 3;
+      border: 1px solid rgba(245, 239, 227, 0.34);
+      background:
+        radial-gradient(circle, rgba(245,239,227,0.42) 0 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245,239,227,0.12) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(245,239,227,0.08) 1px, transparent 1px);
+      background-size: 23px 23px, 42px 42px, 42px 42px;
+      mix-blend-mode: screen;
+      opacity: 0.26;
+    }
+
+    .filter-module[data-filter="poster"] .module-video {
+      filter: grayscale(1) contrast(3.6) brightness(1.18);
+    }
+
+    .filter-module[data-filter="poster"] {
+      --dot-color: #050505;
+      --dot-shadow: rgba(255, 225, 44, 0.72);
+      --dot-size: 8px;
+      --dot-core: 39%;
+      --dot-opacity: 0.9;
+      background: linear-gradient(180deg, rgba(232,86,97,0.5) 0 44%, rgba(255,225,44,0.34) 44% 100%);
+      mix-blend-mode: hard-light;
+    }
+
+    .filter-module[data-filter="xerox"] .module-video {
+      filter: grayscale(1) contrast(4.6) brightness(1.36);
+    }
+
+    .filter-module[data-filter="xerox"] {
+      --dot-color: #050505;
+      --dot-shadow: rgba(120, 120, 120, 0.48);
+      --dot-size: 9px;
+      --dot-core: 42%;
+      --dot-opacity: 0.92;
+      mix-blend-mode: normal;
+    }
+
+    .filter-module[data-filter="thermal"] .module-video {
+      filter: grayscale(0.45) saturate(3.4) contrast(2.1) hue-rotate(-28deg) brightness(1.04);
+    }
+
+    .filter-module[data-filter="thermal"] {
+      --dot-color: #ffe12c;
+      --dot-shadow: rgba(255, 43, 117, 0.62);
+      --dot-size: 12px;
+      --dot-core: 36%;
+      --dot-opacity: 0.76;
+      mix-blend-mode: hard-light;
+    }
+
+    .filter-module[data-filter="acid"] .module-video {
+      filter: grayscale(0.28) saturate(4.2) contrast(2.35) hue-rotate(252deg) brightness(1.12);
+    }
+
+    .filter-module[data-filter="acid"] {
+      --dot-color: #ff2b75;
+      --dot-shadow: rgba(50, 46, 255, 0.62);
+      --dot-size: 14px;
+      --dot-core: 38%;
+      --dot-opacity: 0.76;
+      mix-blend-mode: screen;
+    }
+
+    .filter-module[data-filter="newsprint"] .module-video {
+      filter: grayscale(1) contrast(3.9) brightness(1.06);
+    }
+
+    .filter-module[data-filter="newsprint"] {
+      --dot-color: #d43269;
+      --dot-shadow: rgba(5, 5, 5, 0.5);
+      --dot-size: 11px;
+      --dot-core: 40%;
+      --dot-opacity: 0.82;
+      mix-blend-mode: normal;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        radial-gradient(circle, rgba(0, 0, 0, 0.88) 0 30%, transparent 33%),
+        repeating-linear-gradient(0deg, rgba(245,239,227,0.18) 0 1px, transparent 1px 5px);
+      background-size: 10px 10px, auto;
+      mix-blend-mode: multiply;
+      transition: opacity 0.2s ease;
+    }
+
+    .stage.is-live .overlay {
+      opacity: 0;
+    }
+
+    .stage.is-tracking .overlay {
+      opacity: 0;
+    }
+
+    .concept-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        linear-gradient(180deg, rgba(232, 86, 97, 0.72) 0 34%, rgba(255, 225, 44, 0.36) 34% 62%, transparent 62%),
+        radial-gradient(circle at 50% 42%, transparent 0 24%, rgba(0, 0, 0, 0.52) 66%),
+        repeating-linear-gradient(115deg, rgba(245, 239, 227, 0.12) 0 2px, transparent 2px 22px);
+      mix-blend-mode: hard-light;
+      transition: opacity 0.2s ease;
+    }
+
+    .stage.is-live .concept-layer {
+      opacity: 0;
+    }
+
+    .stage.is-tracking .concept-layer {
+      opacity: 0;
+    }
+
+    .poster-cutout {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0;
+      background:
+        linear-gradient(72deg, transparent 0 18%, rgba(245, 239, 227, 0.32) 18.2% 24%, transparent 24.2%),
+        linear-gradient(154deg, transparent 0 58%, rgba(255, 43, 117, 0.36) 58.2% 68%, transparent 68.2%);
+      mix-blend-mode: screen;
+      transition: opacity 0.2s ease;
+    }
+
+    .stage.is-tracking .poster-cutout {
+      opacity: 0;
+    }
+
+    .landmarks {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .sticker-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .gesture-sticker {
+      position: absolute;
+      left: 0;
+      top: 0;
+      display: grid;
+      place-items: center;
+      transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.4);
+      opacity: 0;
+      animation: sticker-pop 1450ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      will-change: transform, opacity;
+      filter: drop-shadow(7px 8px 0 rgba(0, 0, 0, 0.64));
+    }
+
+    .gesture-sticker img {
+      display: block;
+      width: clamp(90px, 13vw, 190px);
+      height: auto;
+      object-fit: contain;
+    }
+
+    .sticker-shape {
+      min-width: 72px;
+      min-height: 58px;
+      padding: 8px 12px;
+      color: #050505;
+      background: var(--paper);
+      border: 2px solid #050505;
+      font-size: clamp(28px, 5vw, 72px);
+      line-height: 0.9;
+      font-weight: 950;
+      text-transform: uppercase;
+      -webkit-text-stroke: 1px #050505;
+    }
+
+    .sticker-shape.burst {
+      width: clamp(74px, 11vw, 150px);
+      aspect-ratio: 1;
+      color: var(--blue);
+      background: var(--yellow);
+      clip-path: polygon(50% 0, 60% 30%, 94% 10%, 72% 44%, 100% 55%, 67% 64%, 84% 100%, 51% 77%, 18% 100%, 33% 65%, 0 54%, 32% 43%, 9% 12%, 43% 32%);
+    }
+
+    .sticker-shape.bubble {
+      min-width: clamp(120px, 18vw, 240px);
+      min-height: 68px;
+      color: var(--paper);
+      background: #050505;
+      border-color: var(--paper);
+      font-size: clamp(18px, 3vw, 42px);
+      clip-path: polygon(0 10%, 88% 0, 100% 78%, 66% 76%, 58% 100%, 49% 76%, 7% 84%);
+    }
+
+    .sticker-shape.bolt {
+      width: clamp(54px, 8vw, 108px);
+      aspect-ratio: 0.72;
+      background: var(--red);
+      color: var(--yellow);
+      clip-path: polygon(58% 0, 100% 0, 69% 38%, 100% 38%, 30% 100%, 47% 55%, 12% 55%);
+    }
+
+    .hand-line {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 1.35;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+      filter: drop-shadow(0 0 8px rgba(255, 43, 117, 0.55));
+    }
+
+    .bridge-line {
+      fill: none;
+      stroke: rgba(255, 43, 117, 0.86);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-dasharray: 7 8;
+      vector-effect: non-scaling-stroke;
+      animation: dash 1.2s linear infinite;
+    }
+
+    .dot {
+      fill: var(--yellow);
+      stroke: rgba(5, 5, 5, 0.82);
+      stroke-width: 1.4;
+      vector-effect: non-scaling-stroke;
+      filter: drop-shadow(0 0 10px rgba(255, 225, 44, 0.68));
+    }
+
+    .dot.tip {
+      fill: var(--pink);
+      stroke: var(--paper);
+      stroke-width: 1.7;
+      filter: drop-shadow(0 0 13px rgba(255, 43, 117, 0.9));
+    }
+
+    .controls {
+      position: absolute;
+      z-index: 6;
+      left: 18px;
+      bottom: 18px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      background: rgba(5, 5, 5, 0.62);
+      border: 1px solid rgba(245, 239, 227, 0.2);
+      backdrop-filter: blur(14px);
+    }
+
+    .btn {
+      height: 42px;
+      padding: 0 16px;
+      border: 1px solid rgba(245, 239, 227, 0.25);
+      color: var(--paper);
+      background: rgba(245, 239, 227, 0.08);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn:not(:disabled):hover {
+      border-color: rgba(137, 170, 204, 0.68);
+      background: rgba(137, 170, 204, 0.16);
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      color: #050505;
+      background: var(--portfolio-primary);
+      border-color: var(--portfolio-primary);
+      box-shadow: 0 0 22px rgba(94, 210, 156, 0.24);
+    }
+
+    .btn.primary:not(:disabled):hover {
+      color: #07110d;
+      border-color: var(--portfolio-blue-a);
+      background: linear-gradient(90deg, var(--portfolio-primary), var(--portfolio-blue-a));
+    }
+
+    .btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .status {
+      position: absolute;
+      z-index: 6;
+      left: 18px;
+      top: 18px;
+      max-width: min(520px, calc(100vw - 36px));
+      padding: 9px 11px;
+      color: rgba(245, 239, 227, 0.78);
+      background: rgba(5, 5, 5, 0.5);
+      border: 1px solid rgba(245, 239, 227, 0.14);
+      font: 800 11px/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    @keyframes dash {
+      to { stroke-dashoffset: -15; }
+    }
+
+    @keyframes sticker-pop {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) rotate(var(--rot, 0deg)) scale(0.25);
+      }
+      14% {
+        opacity: 1;
+      }
+      74% {
+        opacity: 0.96;
+        transform: translate(calc(-50% + var(--drift-x, 0px)), calc(-50% + var(--drift-y, -22px))) rotate(calc(var(--rot, 0deg) * 1.08)) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--drift-x, 0px)), calc(-50% + var(--drift-y, -42px))) rotate(calc(var(--rot, 0deg) * 1.12)) scale(0.92);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .controls {
+        right: 14px;
+        left: 14px;
+        bottom: 14px;
+      }
+
+      .btn {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage" id="stage">
+    <video class="camera" id="camera" autoplay muted playsinline></video>
+    <div class="empty-state" id="emptyState">Open camera to draw filters with your hands</div>
+    <div class="filter-field" id="filterField" aria-hidden="true"></div>
+    <div class="overlay" aria-hidden="true"></div>
+    <div class="concept-layer" aria-hidden="true"></div>
+    <div class="poster-cutout" aria-hidden="true"></div>
+    <div class="sticker-layer" id="stickerLayer" aria-hidden="true"></div>
+    <svg class="landmarks" id="landmarks" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+    <div class="status" id="status">Camera off</div>
+    <div class="controls" aria-label="Camera controls">
+      <button class="btn primary" id="openCamera" type="button">Open camera</button>
+      <button class="btn" id="closeCamera" type="button" disabled>Close camera</button>
+    </div>
+  </main>
+
+  <script type="module">
+    const stage = document.getElementById("stage");
+    const camera = document.getElementById("camera");
+    const svg = document.getElementById("landmarks");
+    const filterField = document.getElementById("filterField");
+    const stickerLayer = document.getElementById("stickerLayer");
+    const openCamera = document.getElementById("openCamera");
+    const closeCamera = document.getElementById("closeCamera");
+    const statusEl = document.getElementById("status");
+
+    const handConnections = [
+      [0, 1], [1, 2], [2, 3], [3, 4],
+      [0, 5], [5, 6], [6, 7], [7, 8],
+      [0, 9], [9, 10], [10, 11], [11, 12],
+      [0, 13], [13, 14], [14, 15], [15, 16],
+      [0, 17], [17, 18], [18, 19], [19, 20],
+      [5, 9], [9, 13], [13, 17]
+    ];
+
+    const bridgePairs = [
+      [4, 4],
+      [8, 8],
+      [12, 12],
+      [16, 16],
+      [20, 20]
+    ];
+
+    const fingertipIds = new Set([4, 8, 12, 16, 20]);
+    const filters = ["poster", "xerox", "thermal", "acid", "newsprint"];
+
+    let stream = null;
+    let recognizer = null;
+    let GestureRecognizer = null;
+    let FilesetResolver = null;
+    let rafId = null;
+    let lastVideoTime = -1;
+    let lastStickerAt = 0;
+
+    const modules = filters.map((filter) => {
+      const module = document.createElement("div");
+      module.className = "filter-module";
+      module.dataset.filter = filter;
+      module.innerHTML = '<video class="module-video" autoplay muted playsinline></video>';
+      filterField.appendChild(module);
+      return module;
+    });
+
+    const stickerAssets = [
+      { type: "image", src: "assets/gesture-stickers/sticker-wordmark-01.png" },
+      { type: "image", src: "assets/gesture-stickers/sticker-wordmark-02.png" },
+      { type: "shape", variant: "burst", text: "!" },
+      { type: "shape", variant: "bubble", text: "SIGNAL" },
+      { type: "shape", variant: "bolt", text: "" },
+      { type: "shape", variant: "plain", text: "NOISE" }
+    ];
+
+    function setStatus(text) {
+      statusEl.textContent = text;
+    }
+
+    function svgEl(name, attrs = {}) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", name);
+      Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+      return el;
+    }
+
+    function landmarkToPoint(landmark) {
+      return {
+        x: (1 - landmark.x) * 100,
+        y: landmark.y * 100
+      };
+    }
+
+    function toSvg(point) {
+      return {
+        x: point.x * 10,
+        y: point.y * 10
+      };
+    }
+
+    function drawHand(points) {
+      handConnections.forEach(([a, b]) => {
+        const p1 = toSvg(points[a]);
+        const p2 = toSvg(points[b]);
+        svg.appendChild(svgEl("line", {
+          class: "hand-line",
+          x1: p1.x,
+          y1: p1.y,
+          x2: p2.x,
+          y2: p2.y
+        }));
+      });
+
+      points.forEach((point, index) => {
+        const p = toSvg(point);
+        svg.appendChild(svgEl("circle", {
+          class: fingertipIds.has(index) ? "dot tip" : "dot",
+          cx: p.x,
+          cy: p.y,
+          r: fingertipIds.has(index) ? 6.5 : 4.3
+        }));
+      });
+    }
+
+    function drawBridgeModules(left, right) {
+      bridgePairs.forEach(([leftId, rightId], index) => {
+        const a = left[leftId];
+        const b = right[rightId];
+        const aSvg = toSvg(a);
+        const bSvg = toSvg(b);
+        svg.appendChild(svgEl("line", {
+          class: "bridge-line",
+          x1: aSvg.x,
+          y1: aSvg.y,
+          x2: bSvg.x,
+          y2: bSvg.y
+        }));
+
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const distance = Math.hypot(dx, dy) || 1;
+        const nx = -dy / distance;
+        const ny = dx / distance;
+        const width = 8.8 + Math.min(distance, 52) * 0.2;
+        const wobble = Math.sin(performance.now() / 380 + index) * 1.2;
+        const p1 = [a.x + nx * width, a.y + ny * width];
+        const p2 = [b.x + nx * width, b.y + ny * width];
+        const p3 = [b.x - nx * width * 0.76 + wobble, b.y - ny * width * 0.76 - wobble];
+        const p4 = [a.x - nx * width * 0.76 - wobble, a.y - ny * width * 0.76 + wobble];
+        if (index % 2 === 0) {
+          modules[index].style.clipPath = `polygon(${p1[0]}% ${p1[1]}%, ${p2[0]}% ${p2[1]}%, ${p3[0]}% ${p3[1]}%, ${p4[0]}% ${p4[1]}%)`;
+        } else {
+          const mid = [(a.x + b.x) / 2 - nx * width * 1.08, (a.y + b.y) / 2 - ny * width * 1.08];
+          modules[index].style.clipPath = `polygon(${p1[0]}% ${p1[1]}%, ${p2[0]}% ${p2[1]}%, ${mid[0]}% ${mid[1]}%)`;
+        }
+        modules[index].style.setProperty("--dot-x", `${index * 7 + wobble}px`);
+        modules[index].style.setProperty("--dot-y", `${index * -6 - wobble}px`);
+      });
+    }
+
+    function drawSingleHandModules(points) {
+      const palm = points[0];
+      [4, 8, 12, 16, 20].forEach((tipId, index) => {
+        const tip = points[tipId];
+        const dx = tip.x - palm.x;
+        const dy = tip.y - palm.y;
+        const distance = Math.hypot(dx, dy) || 1;
+        const nx = -dy / distance;
+        const ny = dx / distance;
+        const width = 8.2 + Math.min(distance, 38) * 0.22;
+        const p1 = [palm.x + nx * width, palm.y + ny * width];
+        const p2 = [tip.x + nx * width, tip.y + ny * width];
+        const p3 = [tip.x - nx * width, tip.y - ny * width];
+        const p4 = [palm.x - nx * width, palm.y - ny * width];
+        if (index % 2 === 0) {
+          modules[index].style.clipPath = `polygon(${p1[0]}% ${p1[1]}%, ${p2[0]}% ${p2[1]}%, ${p3[0]}% ${p3[1]}%, ${p4[0]}% ${p4[1]}%)`;
+        } else {
+          const mid = [(palm.x + tip.x) / 2 - nx * width * 1.18, (palm.y + tip.y) / 2 - ny * width * 1.18];
+          modules[index].style.clipPath = `polygon(${p1[0]}% ${p1[1]}%, ${p2[0]}% ${p2[1]}%, ${mid[0]}% ${mid[1]}%)`;
+        }
+      });
+    }
+
+    function maybeSpawnSticker(hands) {
+      const now = performance.now();
+      if (!hands.length || now - lastStickerAt < 520) return;
+      const probability = hands.length >= 2 ? 0.065 : 0.038;
+      if (Math.random() > probability) return;
+
+      const hand = hands[Math.floor(Math.random() * hands.length)];
+      const anchors = [4, 8, 12, 16, 20, 0];
+      const point = hand[anchors[Math.floor(Math.random() * anchors.length)]];
+      spawnSticker(point);
+      lastStickerAt = now;
+    }
+
+    function spawnSticker(point) {
+      const asset = stickerAssets[Math.floor(Math.random() * stickerAssets.length)];
+      const sticker = document.createElement("div");
+      sticker.className = "gesture-sticker";
+      sticker.style.left = `${point.x}%`;
+      sticker.style.top = `${point.y}%`;
+      sticker.style.setProperty("--rot", `${Math.round(-18 + Math.random() * 36)}deg`);
+      sticker.style.setProperty("--drift-x", `${Math.round(-28 + Math.random() * 56)}px`);
+      sticker.style.setProperty("--drift-y", `${Math.round(-56 - Math.random() * 42)}px`);
+
+      if (asset.type === "image") {
+        const image = document.createElement("img");
+        image.src = asset.src;
+        image.alt = "";
+        sticker.appendChild(image);
+      } else {
+        const shape = document.createElement("div");
+        shape.className = `sticker-shape ${asset.variant}`;
+        shape.textContent = asset.text;
+        sticker.appendChild(shape);
+      }
+
+      stickerLayer.appendChild(sticker);
+      window.setTimeout(() => sticker.remove(), 1600);
+    }
+
+    function renderLandmarks(results) {
+      svg.replaceChildren();
+      const hands = (results.landmarks || []).map(hand => hand.map(landmarkToPoint));
+
+      hands.forEach(drawHand);
+
+      if (hands.length >= 2) {
+        drawBridgeModules(hands[0], hands[1]);
+        stage.classList.add("is-tracking");
+        setStatus("Tracking two hands / linked filter regions active");
+      } else if (hands.length === 1) {
+        drawSingleHandModules(hands[0]);
+        stage.classList.add("is-tracking");
+        setStatus("Tracking one hand / fingertip filter regions active");
+      } else {
+        stage.classList.remove("is-tracking");
+        setStatus("Camera live / show one or two hands");
+      }
+
+      maybeSpawnSticker(hands);
+    }
+
+    async function loadRecognizer() {
+      if (recognizer) return recognizer;
+      if (!GestureRecognizer || !FilesetResolver) {
+        setStatus("Loading hand tracker");
+        const visionTasks = await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3");
+        GestureRecognizer = visionTasks.GestureRecognizer;
+        FilesetResolver = visionTasks.FilesetResolver;
+      }
+      setStatus("Loading hand tracker");
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm"
+      );
+      recognizer = await GestureRecognizer.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath:
+            "https://storage.googleapis.com/mediapipe-models/gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task",
+          delegate: "GPU"
+        },
+        runningMode: "VIDEO",
+        numHands: 2
+      });
+      return recognizer;
+    }
+
+    async function predict() {
+      if (!stream || !recognizer) return;
+      if (camera.readyState >= 2 && camera.currentTime !== lastVideoTime) {
+        lastVideoTime = camera.currentTime;
+        const results = recognizer.recognizeForVideo(camera, performance.now());
+        renderLandmarks(results);
+      }
+      rafId = requestAnimationFrame(predict);
+    }
+
+    async function startCamera() {
+      try {
+        openCamera.disabled = true;
+        setStatus("Requesting camera permission");
+        await loadRecognizer();
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: "user"
+          },
+          audio: false
+        });
+
+        camera.srcObject = stream;
+        modules.forEach(module => {
+          module.querySelector("video").srcObject = stream;
+        });
+
+        await camera.play();
+        await Promise.all(modules.map(module => module.querySelector("video").play()));
+        stage.classList.add("is-live");
+        closeCamera.disabled = false;
+        setStatus("Camera live / show one or two hands");
+        predict();
+      } catch (error) {
+        openCamera.disabled = false;
+        closeCamera.disabled = true;
+        setStatus(`Camera unavailable / ${error.name || "permission blocked"}`);
+      }
+    }
+
+    function stopCamera() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+      svg.replaceChildren();
+      stage.classList.remove("is-live", "is-tracking");
+      modules.forEach(module => {
+        module.style.clipPath = "polygon(48% 48%, 52% 48%, 52% 52%, 48% 52%)";
+        module.querySelector("video").srcObject = null;
+      });
+      stickerLayer.replaceChildren();
+      camera.srcObject = null;
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+      }
+      openCamera.disabled = false;
+      closeCamera.disabled = true;
+      setStatus("Camera off");
+    }
+
+    openCamera.addEventListener("click", startCamera);
+    closeCamera.addEventListener("click", stopCamera);
+  </script>
+</body>
+</html>

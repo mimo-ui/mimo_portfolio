@@ -33,7 +33,7 @@
     body {
       margin: 0;
       min-height: 100%;
-      overflow-x: hidden;
+      overflow: hidden;
       color: var(--text-primary);
       background: var(--bg-page);
       font-family: var(--font);
@@ -82,6 +82,10 @@
       gap: 20px;
       padding-top: 24px;
       min-width: 0;
+    }
+
+    .mobile-switch {
+      display: none;
     }
 
     .component-block {
@@ -573,7 +577,7 @@
     @media (max-width: 880px) {
       .page {
         width: 100%;
-        padding: 24px 12px 40px;
+        padding: 20px 12px 28px;
       }
 
       .title {
@@ -587,9 +591,63 @@
         text-align: left;
       }
 
-      .board { grid-template-columns: 1fr; }
-      .component-block { max-width: calc(100vw - 24px); }
-      .preview { min-height: 220px; }
+      .mobile-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-top: 18px;
+        padding: 4px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 999px;
+        background: rgba(255,255,255,.045);
+      }
+
+      .mobile-switch button {
+        height: 36px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--text-tertiary);
+        cursor: pointer;
+        font-size: 13px;
+        line-height: 18px;
+        font-weight: 700;
+      }
+
+      .mobile-switch button[aria-selected="true"] {
+        background: var(--brand-default);
+        color: #fff;
+      }
+
+      .board {
+        display: block;
+        padding-top: 14px;
+      }
+
+      .component-block {
+        max-width: calc(100vw - 24px);
+        min-height: 0;
+        max-height: none;
+        grid-template-rows: auto auto auto;
+      }
+
+      .component-block[hidden] {
+        display: none !important;
+      }
+
+      .preview {
+        min-height: 0;
+        padding: 24px 14px;
+      }
+
+      .controls {
+        min-height: 0;
+        overflow: visible;
+        overscroll-behavior: contain;
+        align-content: start;
+        grid-auto-rows: max-content;
+        padding-right: 0;
+      }
 
       .block-head {
         align-items: flex-start;
@@ -601,10 +659,10 @@
 
       .control-row {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
         width: 100%;
-        overflow: hidden;
+        overflow: visible;
       }
 
       .control-row strong {
@@ -638,8 +696,13 @@
       <p class="source">Interactive component states based on the Figma Input and Button components.</p>
     </header>
 
+    <nav class="mobile-switch" aria-label="Component type">
+      <button type="button" data-panel-target="button" aria-selected="true">Button</button>
+      <button type="button" data-panel-target="input" aria-selected="false">Input</button>
+    </nav>
+
     <section class="board" aria-label="CoinW input and button components">
-      <article class="component-block">
+      <article class="component-block" data-component-panel="button">
         <div class="block-head">
           <h2>Button</h2>
           <div class="variant-label" id="buttonVariant">Solid / M / Primary / Default</div>
@@ -688,7 +751,7 @@
         </div>
       </article>
 
-      <article class="component-block">
+      <article class="component-block" data-component-panel="input">
         <div class="block-head">
           <h2>Input</h2>
           <div class="variant-label" id="inputVariant">M / Inputted Off / Default</div>
@@ -757,6 +820,33 @@
     const params = new URLSearchParams(window.location.search);
     if (["base", "trade", "verify"].includes(params.get("mode"))) {
       state.inputMode = params.get("mode");
+    }
+
+    const mobileQuery = window.matchMedia("(max-width: 880px)");
+    let activePanel = "button";
+
+    function syncPanels() {
+      const isMobile = mobileQuery.matches;
+      document.querySelectorAll("[data-component-panel]").forEach((panel) => {
+        panel.hidden = isMobile && panel.dataset.componentPanel !== activePanel;
+      });
+      document.querySelectorAll("[data-panel-target]").forEach((button) => {
+        button.setAttribute("aria-selected", String(button.dataset.panelTarget === activePanel));
+      });
+      requestFrameResize();
+    }
+
+    document.querySelectorAll("[data-panel-target]").forEach((button) => {
+      button.addEventListener("click", () => {
+        activePanel = button.dataset.panelTarget;
+        syncPanels();
+      });
+    });
+
+    if (typeof mobileQuery.addEventListener === "function") {
+      mobileQuery.addEventListener("change", syncPanels);
+    } else if (typeof mobileQuery.addListener === "function") {
+      mobileQuery.addListener(syncPanels);
     }
 
     const buttonSizes = {
@@ -963,6 +1053,18 @@
     function render() {
       renderButton();
       renderInput();
+      requestFrameResize();
+    }
+
+    function requestFrameResize() {
+      window.requestAnimationFrame(() => {
+        const page = document.querySelector(".page");
+        const height = Math.ceil((page ? page.getBoundingClientRect().height : document.documentElement.scrollHeight) + 8);
+        window.parent && window.parent.postMessage({
+          type: "coinw-components-height",
+          height
+        }, "*");
+      });
     }
 
     function normalizeButtonState() {
@@ -1070,6 +1172,8 @@
 
     syncControl("inputMode", state.inputMode);
     render();
+    syncPanels();
+    window.addEventListener("resize", requestFrameResize, { passive: true });
   </script>
 </body>
 </html>
