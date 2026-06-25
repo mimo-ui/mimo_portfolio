@@ -1311,7 +1311,8 @@ body.standard-cursor #ghost-dot {
   }
 
   #proj-modal-banner img,
-  .pcard-banner img {
+  .pcard-banner img,
+  .pcard-banner video {
     width: 100% !important;
     height: 100% !important;
     object-fit: contain !important;
@@ -1366,7 +1367,8 @@ body.standard-cursor #ghost-dot {
     height: 34.2% !important;
     border-radius: clamp(9px, 3vw, 16px) !important;
   }
-  #holo-track .pcard-banner img {
+  #holo-track .pcard-banner img,
+  #holo-track .pcard-banner video {
     object-fit: cover !important;
   }
   #holo-track .pcard-body {
@@ -1495,16 +1497,19 @@ body.standard-cursor #ghost-dot {
   border: 0 !important;
   border-radius: 0 !important;
   background: #0f1013 !important;
-  opacity: 1 !important;
+  opacity: 0 !important;
   transform: translate3d(0, 100%, 0) scale(.985) !important;
   transform-origin: bottom center !important;
-  will-change: transform !important;
-  transition: transform .52s cubic-bezier(.16,1,.3,1) !important;
+  will-change: transform, opacity !important;
+  transition: transform .52s cubic-bezier(.16,1,.3,1),
+              opacity .34s ease !important;
 }
 #proj-modal.open:not(.closing) #proj-modal-card {
+  opacity: 1 !important;
   transform: translate3d(0, 0, 0) scale(1) !important;
 }
 #proj-modal.open.closing #proj-modal-card {
+  opacity: 0 !important;
   transform: translate3d(0, 100%, 0) scale(.985) !important;
   transition-timing-function: cubic-bezier(.7,0,.84,0) !important;
   transition-duration: .26s !important;
@@ -1699,15 +1704,19 @@ body.project-modal-locked {
   border-bottom-color: rgba(255,255,255,.07) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
+  opacity: 0 !important;
   transform: translate3d(0, 100vh, 0) !important;
-  will-change: transform !important;
+  will-change: transform, opacity !important;
   transition: transform .52s cubic-bezier(.16,1,.3,1),
+              opacity .3s ease,
               border-color .25s ease, padding .25s ease !important;
 }
 #proj-modal.open:not(.closing) .modal-sticky-hd {
+  opacity: 1 !important;
   transform: translate3d(0, 0, 0) !important;
 }
 #proj-modal.open.closing .modal-sticky-hd {
+  opacity: 0 !important;
   transform: translate3d(0, 100vh, 0) !important;
   transition-timing-function: cubic-bezier(.7,0,.84,0) !important;
   transition-duration: .26s !important;
@@ -1831,6 +1840,166 @@ body.project-modal-locked {
   background: #ccff00;
 }
 .pm-tab-section > .pm-tab-heading { display: none !important; }
+
+.otc-trust-showcase {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+.otc-trust-title {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(28px, 4.5vw, 54px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+.otc-trust-lead {
+  max-width: 860px;
+  margin: 0;
+  color: rgba(255,255,255,.58);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.75;
+}
+.otc-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.otc-trust-grid.is-four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.otc-trust-card {
+  min-height: 148px;
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  background: rgba(255,255,255,.025);
+}
+.otc-trust-card.is-compact {
+  min-height: 128px;
+}
+.otc-trust-card b {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(255,255,255,.9);
+  font-size: 14px;
+  font-weight: 750;
+}
+.otc-trust-card span,
+.otc-trust-card li {
+  color: rgba(255,255,255,.52);
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.65;
+}
+.otc-trust-card ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.otc-trust-flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+.otc-trust-step {
+  padding: 24px;
+  border: 1px solid rgba(137,170,204,.16);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(137,170,204,.055), rgba(255,255,255,.015));
+}
+.otc-trust-step i {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 10px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(137,170,204,.16);
+  color: #89AACC;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+}
+.otc-trust-step b {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(255,255,255,.9);
+  font-size: 14px;
+  font-weight: 760;
+  line-height: 1.35;
+}
+.otc-trust-step span {
+  display: block;
+  color: rgba(255,255,255,.58);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.65;
+}
+.otc-trust-quote {
+  padding: 18px 20px;
+  border-left: 3px solid #89AACC;
+  border-radius: 0 14px 14px 0;
+  background: rgba(137,170,204,.07);
+  color: rgba(255,255,255,.76);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.75;
+}
+.otc-trust-matrix {
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+}
+.otc-trust-row {
+  display: grid;
+  grid-template-columns: .7fr 1fr 1fr 1.2fr;
+}
+.otc-trust-row + .otc-trust-row {
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.otc-trust-cell {
+  padding: 16px;
+  color: rgba(255,255,255,.52);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.65;
+}
+.otc-trust-cell + .otc-trust-cell {
+  border-left: 1px solid rgba(255,255,255,.08);
+}
+.otc-trust-head {
+  color: rgba(255,255,255,.36);
+  background: rgba(255,255,255,.035);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.otc-trust-cell strong {
+  color: rgba(255,255,255,.86);
+}
+@media (max-width: 760px) {
+  .otc-trust-grid,
+  .otc-trust-flow,
+  .otc-trust-row {
+    grid-template-columns: 1fr;
+  }
+  .otc-trust-grid.is-four {
+    grid-template-columns: 1fr;
+  }
+  .otc-trust-card {
+    min-height: auto;
+  }
+  .otc-trust-cell + .otc-trust-cell {
+    border-left: 0;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+}
 
 .pm-order-compare {
   display: grid;
@@ -2113,53 +2282,132 @@ body.project-modal-locked {
       background: linear-gradient(90deg, var(--design-lime), var(--design-blue));
     }
 
-    #ls-word {
-      min-width: 7.5em;
-      text-align: center;
-      font-weight: 500 !important;
-      letter-spacing: -0.035em;
-      font-synthesis: none;
-      text-rendering: geometricPrecision;
-      -webkit-font-smoothing: antialiased;
-      will-change: opacity, transform;
-    }
-    #ls-count {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 0.04em;
-      font-variant-numeric: tabular-nums;
-      line-height: 0.9;
-    }
-    #ls-count .ls-percent {
-      font-size: 0.42em;
-      font-weight: 700;
-      opacity: 0.72;
-      transform: translateY(-0.08em);
-    }
-    #ls-bar {
+    .ls-search-wrap {
       position: relative;
-      overflow: hidden;
-      background: linear-gradient(90deg, var(--design-lime), var(--design-blue));
+      width: min(720px, calc(100vw - 40px));
+      opacity: 0;
+      transform: translateY(14px) scale(.985);
+      transition: opacity .45s ease, transform .45s cubic-bezier(.16,1,.3,1);
+      --ls-cursor-x: 0px;
+      --ls-cursor-y: 0px;
+    }
+    .ls-search-wrap.is-ready {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .ls-search-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 66px;
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 22px;
+      background: rgba(18,18,18,.92);
       box-shadow:
-        0 0 10px rgba(204,255,0,.34),
-        0 0 22px rgba(20,209,255,.18) !important;
+        0 24px 70px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
     }
-    #ls-bar::after {
+    .ls-search-field {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      padding: 0 14px 0 18px;
+      font-family: "Inter", "HarmonyOS Sans SC", sans-serif;
+      font-size: clamp(18px, 4.5vw, 24px);
+      font-weight: 500;
+      line-height: 1.2;
+      color: rgba(255,255,255,.94);
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    #ls-query::after {
       content: "";
-      position: absolute;
-      top: -6px;
-      bottom: -6px;
-      left: -28%;
-      width: 34%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.88), transparent);
-      filter: blur(6px);
-      opacity: .72;
-      animation: loading-bar-shine 1.15s ease-in-out infinite;
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      margin-left: 3px;
+      transform: translateY(.16em);
+      border-radius: 999px;
+      background: #ccff00;
+      animation: ls-caret .82s steps(1) infinite;
     }
-    @keyframes loading-bar-shine {
-      0% { transform: translateX(0); opacity: 0; }
-      18% { opacity: .72; }
-      100% { transform: translateX(390%); opacity: 0; }
+    .ls-search-wrap.is-clicking #ls-query::after {
+      animation: none;
+      opacity: 0;
+    }
+    .ls-search-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 118px;
+      height: 50px;
+      border-radius: 16px;
+      background: #ccff00;
+      color: #050505;
+      font-family: "Inter", "HarmonyOS Sans SC", sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+      box-shadow: 0 0 0 rgba(204,255,0,0);
+    }
+    .ls-search-wrap.is-clicking .ls-search-button {
+      transform: scale(.96);
+      background: #e7ff74;
+      box-shadow: 0 0 28px rgba(204,255,0,.32);
+    }
+    .ls-search-button svg {
+      width: 17px;
+      height: 17px;
+      stroke-width: 2.3;
+    }
+    .ls-click-cursor {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 34px;
+      height: 34px;
+      opacity: 0;
+      pointer-events: none;
+      --ls-cursor-start-x: calc(var(--ls-cursor-x) - 62px);
+      --ls-cursor-start-y: calc(var(--ls-cursor-y) - 42px);
+      transform: translate(var(--ls-cursor-start-x), var(--ls-cursor-start-y)) rotate(-18deg) scale(.94);
+      transform-origin: 8px 8px;
+      filter: drop-shadow(0 5px 12px rgba(0,0,0,.45));
+      z-index: 2;
+    }
+    .ls-search-wrap.is-clicking .ls-click-cursor {
+      animation: ls-cursor-click .48s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    @keyframes ls-caret {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    @keyframes ls-cursor-click {
+      0% { opacity: 0; transform: translate(var(--ls-cursor-start-x), var(--ls-cursor-start-y)) rotate(-18deg) scale(.94); }
+      24% { opacity: 1; }
+      72% { opacity: 1; transform: translate(var(--ls-cursor-x), var(--ls-cursor-y)) rotate(-18deg) scale(1); }
+      100% { opacity: 1; transform: translate(calc(var(--ls-cursor-x) + 5px), calc(var(--ls-cursor-y) + 5px)) rotate(-18deg) scale(.9); }
+    }
+    @media (max-width: 520px) {
+      .ls-search-box {
+        grid-template-columns: 1fr;
+        min-height: 0;
+        padding: 10px;
+        border-radius: 20px;
+      }
+      .ls-search-field {
+        min-height: 48px;
+        padding: 0 10px;
+      }
+      .ls-search-button {
+        width: 100%;
+        min-width: 0;
+      }
     }
 
     .hero-nav-link:hover {
@@ -2217,7 +2465,7 @@ body.project-modal-locked {
       width: 100%;
       height: 100%;
       z-index: 0;
-      pointer-events: none;
+      pointer-events: auto !important;
       filter: contrast(0.92) brightness(0.94);
       image-rendering: auto;
     }
@@ -2615,7 +2863,8 @@ body.project-modal-locked {
       background: rgba(255,255,255,.035) !important;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
     }
-    #works .pcard-banner img {
+    #works .pcard-banner img,
+    #works .pcard-banner video {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -2665,7 +2914,8 @@ body.project-modal-locked {
       object-position: center;
       pointer-events: none;
     }
-    #works .pcard:hover .pcard-banner img { transform: scale(1.035); filter: saturate(1.08); opacity: 1; }
+    #works .pcard:hover .pcard-banner img,
+    #works .pcard:hover .pcard-banner video { transform: scale(1.035); filter: saturate(1.08); opacity: 1; }
     #works .pcard-banner-ph { display: none !important; }
 
     /* Featured case: a large editorial card */
@@ -3495,6 +3745,12 @@ body.project-modal-locked {
     #journal .journal-bento > article:first-child {
       background: transparent !important;
       border-color: transparent !important;
+      min-height: 220px !important;
+      padding: 16px !important;
+    }
+
+    #journal .journal-bento > article:first-child p {
+      margin-top: 0 !important;
     }
 
     #journal .journal-bento > article:first-child > .absolute.inset-0,
@@ -3504,6 +3760,13 @@ body.project-modal-locked {
 
     #journal .journal-bento > article:first-child h3 {
       text-shadow: none !important;
+    }
+
+    html[lang="zh-CN"] #journal .journal-bento > article:first-child h3 {
+      font-size: clamp(44px, 5.2vw, 64px) !important;
+      line-height: 1.04 !important;
+      letter-spacing: -0.045em !important;
+      white-space: nowrap !important;
     }
 
     #journal .ai-system-grid .ai-orbit,
@@ -3544,6 +3807,12 @@ body.project-modal-locked {
       #journal .journal-bento > article:first-child h3 {
         font-size: 54px !important;
       }
+
+      html[lang="zh-CN"] #journal .journal-bento > article:first-child h3 {
+        font-size: 44px !important;
+        line-height: 1.05 !important;
+        letter-spacing: -0.035em !important;
+      }
     }
   </style>
 </head>
@@ -3583,30 +3852,24 @@ body.project-modal-locked {
     Portfolio
   </p>
 
-  <!-- centre cycling word -->
-  <div class="flex-1 flex items-center justify-center">
-    <p id="ls-word"
-       class="text-5xl md:text-7xl text-text-primary/80
-              transition-all duration-300 ease-out">
-      Design
-    </p>
-  </div>
-
-  <!-- bottom: counter + bar -->
-  <div class="pb-10 px-8 md:px-12">
-    <div class="flex justify-end mb-5">
-      <span id="ls-count"
-            class="text-6xl md:text-8xl font-bold text-text-primary tabular-nums">
-        0%
-      </span>
-    </div>
-    <div class="h-[3px] bg-white/5 rounded-full overflow-hidden" style="box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)">
-      <div id="ls-bar"
-           class="h-full accent-gradient rounded-full origin-left"
-           style="transform:scaleX(0);
-                  box-shadow:0 0 8px rgba(137,170,204,.35);
-                  will-change:transform;">
+  <!-- centre search input -->
+  <div class="flex-1 flex items-center justify-center px-5">
+    <div id="ls-search" class="ls-search-wrap">
+      <div class="ls-search-box">
+        <div class="ls-search-field" aria-label="Search query">
+          <span id="ls-query"></span>
+        </div>
+        <button id="ls-search-button" class="ls-search-button" type="button" aria-label="Search Mimo's portfolio">
+          <span>Search</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m16.5 16.5 4 4"></path>
+          </svg>
+        </button>
       </div>
+      <svg class="ls-click-cursor" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M5.4 3.8 26.8 18.7c1.3.9.7 3-1 3.1l-8.6.5-4.6 6.7c-.9 1.3-3 .7-3.1-.9L4 5.4c-.3-1.3.5-2.2 1.4-1.6Z" fill="#050505" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
     </div>
   </div>
 </div>
@@ -3979,7 +4242,16 @@ body.project-modal-locked {
                 <span class="pcard-badge" data-i18n="card-landing-badge">落地页</span>
               </div>
               <div class="pcard-banner">
-                <img src="assets/thumbnails/landing-pages.png" alt="落地页矩阵预览" loading="lazy" decoding="async" fetchpriority="low" />
+                <video
+                  data-src="assets/landing-page-matrix-banner.mp4"
+                  poster="assets/landing-page-matrix-banner-poster.jpg"
+                  type="video/mp4"
+                  aria-label="落地页矩阵预览"
+                  muted
+                  loop
+                  playsinline
+                  preload="none">
+                </video>
                 <div class="pcard-banner-ph">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
                   <span data-i18n="card-visual-placeholder">设计稿主视觉</span>
@@ -4070,7 +4342,7 @@ body.project-modal-locked {
                   <h4 class="text-sm font-semibold text-text-primary" data-i18n="exp1-role">UI 设计师</h4>
                   <p class="text-xs text-muted">CoinW · Legend Tech</p>
                 </div>
-                <span class="text-[11px] text-muted shrink-0 ml-4">2025.07 — 至今</span>
+                <span class="text-[11px] text-muted shrink-0 ml-4" data-i18n="exp1-date">2025.07 — 至今</span>
               </div>
               <ul class="text-xs text-muted leading-relaxed space-y-1 list-none">
                 <li data-i18n="exp1-li1">→ 主导落地页、OTC、跟单系统、社区四大模块全链路设计</li>
@@ -4178,20 +4450,8 @@ body.project-modal-locked {
   </section>
 
   <!-- ── JOURNAL (Design Thoughts) ─────────────────────────── -->
-  <section id="journal" class="bg-bg py-16 md:py-24 border-t border-stroke">
+  <section id="journal" class="bg-bg py-10 md:py-14 border-t border-stroke">
     <div class="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16">
-
-      <div class="journal-hd flex flex-col md:flex-row md:items-end md:justify-between mb-12
-                  opacity-0 translate-y-8">
-        <div>
-          <h2 class="text-4xl md:text-5xl font-light text-text-primary" data-i18n="journal-title">
-            About AI
-          </h2>
-        </div>
-        <span class="hidden md:inline-flex items-center gap-2 mt-4 text-xs uppercase tracking-[.22em] text-muted" data-i18n="journal-kicker">
-          Web3 / UX / Systems
-        </span>
-      </div>
 
       <div class="journal-bento je opacity-0 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-4 md:gap-5 overflow-hidden rounded-[28px] bg-[#030404] p-3 md:p-5">
         <article class="relative min-h-[260px] overflow-hidden rounded-[22px] border border-white/10 bg-[#070b0a] p-5 text-white">
@@ -4201,12 +4461,9 @@ body.project-modal-locked {
                  radial-gradient(circle at 74% 76%, rgba(137,170,204,.13), transparent 34%),
                  linear-gradient(135deg, rgba(255,255,255,.055), transparent 50%);"></div>
           <div class="relative z-10 flex h-full flex-col justify-between">
-            <div>
-              <div class="text-[10px] font-bold uppercase tracking-[.26em] text-[#ccff00]/80" data-i18n="journal-ai-assisted">AI 辅助</div>
-              <h3 class="mt-5 text-[44px] font-bold leading-[.84] tracking-[-.08em]" data-i18n-html="journal-ai-title">
-                ABOUT<br>AI
-              </h3>
-            </div>
+            <h3 class="text-[44px] font-bold leading-[.84] tracking-[-.08em]" data-i18n-html="journal-ai-title">
+              关于 AI
+            </h3>
             <div class="relative z-20 space-y-3">
               <p class="max-w-[200px] text-xs font-medium leading-[1.85] text-white/68" data-i18n="journal-ai-desc">
                 用 AI 辅助研究、拆解复杂信息，并把想法转成可落地的产品界面。
@@ -4479,10 +4736,93 @@ body.project-modal-locked {
 (function(){
   const ls   = document.getElementById('loading');
   const page = document.getElementById('page');
-  const countEl = document.getElementById('ls-count');
-  const barEl   = document.getElementById('ls-bar');
-  const wordEl  = document.getElementById('ls-word');
   const labelEl = document.getElementById('ls-label');
+  const searchEl = document.getElementById('ls-search');
+  const queryEl = document.getElementById('ls-query');
+  const searchButton = document.getElementById('ls-search-button');
+  const query = "Mimo's portfolio";
+  let loadingFinished = false;
+  let audioCtx;
+  let audioUnlocked = false;
+
+  function ensureAudio(){
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if(!AudioContext) return null;
+    try {
+      audioCtx = audioCtx || new AudioContext();
+      audioUnlocked = audioCtx.state === 'running';
+      return audioCtx;
+    } catch(e) {
+      return null;
+    }
+  }
+
+  function emitTick(ctx, strength, mode = 'type'){
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const noise = ctx.createBufferSource();
+      const gain = ctx.createGain();
+      const noiseGain = ctx.createGain();
+      const duration = mode === 'search' ? 0.09 : 0.032;
+      const buffer = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * 0.018)), ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for(let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      noise.buffer = buffer;
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(mode === 'search' ? 560 : 900 + Math.random() * 260, now);
+      if(mode === 'search') osc.frequency.exponentialRampToValueAtTime(1120, now + 0.055);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime((mode === 'search' ? 0.075 : 0.055) * strength, now + 0.004);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      noiseGain.gain.setValueAtTime(0.0001, now);
+      noiseGain.gain.exponentialRampToValueAtTime((mode === 'search' ? 0.018 : 0.028) * strength, now + 0.003);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.018);
+      osc.connect(gain);
+      noise.connect(noiseGain);
+      gain.connect(ctx.destination);
+      noiseGain.connect(ctx.destination);
+      osc.start(now);
+      noise.start(now);
+      osc.stop(now + duration + 0.004);
+      noise.stop(now + 0.02);
+    } catch(e) {}
+  }
+
+  function playLoadingSound(mode = 'type', strength = 1){
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    if(ctx.state === 'suspended'){
+      ctx.resume()
+        .then(()=>{ audioUnlocked = ctx.state === 'running'; })
+        .catch(()=>{});
+      return;
+    }
+    audioUnlocked = true;
+    emitTick(ctx, strength, mode);
+  }
+
+  function unlockAudioSilently(){
+    const ctx = ensureAudio();
+    if(!ctx || ctx.state !== 'suspended') return;
+    ctx.resume()
+      .then(()=>{ audioUnlocked = ctx.state === 'running'; })
+      .catch(()=>{});
+  }
+
+  ensureAudio();
+  ['pointerdown','keydown','touchstart'].forEach(type=>{
+    window.addEventListener(type, unlockAudioSilently, { once: true, passive: true });
+  });
+
+  function focusCursorOnButton(){
+    const wrapRect = searchEl.getBoundingClientRect();
+    const buttonRect = searchButton.getBoundingClientRect();
+    const x = buttonRect.left - wrapRect.left + buttonRect.width / 2 - 8;
+    const y = buttonRect.top - wrapRect.top + buttonRect.height / 2 - 8;
+    searchEl.style.setProperty('--ls-cursor-x', `${x}px`);
+    searchEl.style.setProperty('--ls-cursor-y', `${y}px`);
+  }
 
   // label entrance
   setTimeout(()=>{
@@ -4490,38 +4830,46 @@ body.project-modal-locked {
     labelEl.style.transform='translateY(0)';
   },120);
 
-  // cycling words
-  const words=['Design','Create','Inspire'];
-  let wi=0;
-  const wTimer=setInterval(()=>{
-    wi=(wi+1)%words.length;
-    wordEl.style.opacity='0';
-    wordEl.style.transform='translateY(16px)';
-    setTimeout(()=>{
-      wordEl.textContent=words[wi];
-      wordEl.style.opacity='1';
-      wordEl.style.transform='translateY(0)';
-    },200);
-  },900);
-
-  // Keep the intro brief so it never blocks access to the portfolio.
-  const dur=650, t0=performance.now();
-  function tick(now){
-    const pct=Math.min(1,(now-t0)/dur);
-    const n=Math.floor(pct*100);
-    countEl.innerHTML = n + '<span class="ls-percent">%</span>';
-    barEl.style.transform=`scaleX(${pct})`;
-    if(pct<1){ requestAnimationFrame(tick); return; }
-    clearInterval(wTimer);
+  function finishLoading(){
+    if(loadingFinished) return;
+    loadingFinished = true;
     setTimeout(()=>{
       ls.classList.add('done');                  // loading screen fades out (0.6s)
       setTimeout(()=>{
         page.style.opacity='1';                  // page fades in AFTER loading screen starts fading
         setTimeout(()=>{ ls.style.display='none'; initPage(); }, 450);
       }, 120);
-    },80);
+    },180);
   }
-  requestAnimationFrame(tick);
+
+  function triggerSearch(){
+    focusCursorOnButton();
+    searchEl.classList.add('is-clicking');
+    searchButton.setAttribute('aria-pressed','true');
+    playLoadingSound('search', 1);
+    setTimeout(finishLoading, 520);
+  }
+
+  searchButton.addEventListener('click', triggerSearch);
+
+  function typeQuery(index){
+    if(index > query.length){
+      setTimeout(triggerSearch, 280);
+      return;
+    }
+
+    queryEl.textContent = query.slice(0, index);
+    playLoadingSound('type', .85);
+    const char = query[index - 1] || '';
+    const delay = char === ' ' ? 120 : 48 + Math.random() * 74;
+    setTimeout(()=>typeQuery(index + 1), delay);
+  }
+
+  // Keep the intro brief while making the typing feel human.
+  setTimeout(()=>{
+    searchEl.classList.add('is-ready');
+    setTimeout(()=>typeQuery(1), 260);
+  },220);
 })();
 
 // ── HLS Video helper ────────────────────────────────────────────
@@ -4568,11 +4916,7 @@ function initPage(){
     })
   );
 
-  // ── Journal header + entries
-  ScrollTrigger.create({
-    trigger:'.journal-hd', start:'top 80%',
-    onEnter:()=>gsap.to('.journal-hd',{opacity:1,y:0,duration:.9,ease:'power2.out'})
-  });
+  // ── Journal entries
   document.querySelectorAll('.je').forEach((el,i)=>
     ScrollTrigger.create({
       trigger:el, start:'top 90%',
@@ -5268,6 +5612,67 @@ function getProjectDisplayData(key) {
 // ── Project Modal ───────────────────────────────────────────────
 /* ── OTC P2P Rich Modal Body ── */
 const OTC_BODY_HTML = `
+<div class='otc-trust-showcase'>
+ <div class='pm-tab-heading' style='margin-bottom:0'>
+  <span style='font-size:12px;font-weight:700;color:#89AACC;letter-spacing:.12em;text-transform:uppercase'>信任履约系统</span>
+ </div>
+ <div>
+  <div class='pm-ey'>Resume Supplement · OTC Product Thinking</div>
+  <h2 class='otc-trust-title'>OTC P2P 重构 · 信任履约设计</h2>
+  <p class='otc-trust-lead'>这部分补充说明 OTC P2P 重构的核心判断：它不只是页面改版，而是围绕交易履约阶段建立信任、解释风险，并给用户清晰的异常恢复路径。</p>
+ </div>
+ <div class='otc-trust-grid'>
+  <div class='otc-trust-card is-compact'><b>价格不确定</b><span>从询价到付款存在时间差，价格、Gas、市场深度变化都会影响实际成交结果。</span></div>
+  <div class='otc-trust-card is-compact'><b>对手方不确定</b><span>用户不只比较价格，也会判断对方是否可靠、是否在线、是否有足够履约记录。</span></div>
+  <div class='otc-trust-card is-compact'><b>结算状态不确定</b><span>最容易产生争议的不是失败，而是用户不知道钱在哪、下一步该谁处理。</span></div>
+ </div>
+ <div class='pm-div'></div>
+ <div class='pm-st' style='font-size:22px;margin-bottom:0'>把交易风险转化为界面问题</div>
+ <div class='otc-trust-matrix'>
+  <div class='otc-trust-row otc-trust-head'>
+   <div class='otc-trust-cell'>风险</div><div class='otc-trust-cell'>用户担心</div><div class='otc-trust-cell'>界面应该回答</div><div class='otc-trust-cell'>设计策略</div>
+  </div>
+  <div class='otc-trust-row'>
+   <div class='otc-trust-cell'><strong>价格波动</strong></div><div class='otc-trust-cell'>最终到账是否减少</div><div class='otc-trust-cell'>报价是否仍有效，滑点是否超限</div><div class='otc-trust-cell'>报价有效期、预计到账、滑点阈值、价格刷新</div>
+  </div>
+  <div class='otc-trust-row'>
+   <div class='otc-trust-cell'><strong>对手方风险</strong></div><div class='otc-trust-cell'>付款后对方是否放币</div><div class='otc-trust-cell'>商家是否可信，响应是否稳定</div><div class='otc-trust-cell'>KYC、成单率、平均放币时间、在线状态前置</div>
+  </div>
+  <div class='otc-trust-row'>
+   <div class='otc-trust-cell'><strong>结算争议</strong></div><div class='otc-trust-cell'>资金是否卡住，下一步谁负责</div><div class='otc-trust-cell'>当前状态、责任方、超时后的处理路径</div><div class='otc-trust-cell'>状态机、责任方提示、倒计时、申诉证据链</div>
+  </div>
+ </div>
+ <div class='otc-trust-grid'>
+  <div class='otc-trust-card'><b>状态可解释</b><span>明确区分待付款、待放币、等待确认、申诉中、已完成、已取消，避免用笼统的“处理中”掩盖风险。</span></div>
+  <div class='otc-trust-card'><b>责任可归属</b><span>每个阶段都说明下一步动作属于买方、卖方、平台还是链上网络，减少买卖双方互相扯皮。</span></div>
+  <div class='otc-trust-card'><b>异常可恢复</b><span>超时、凭证缺失、网络拥堵、付款账户错误时，给出可执行动作，而不是只提供客服入口。</span></div>
+ </div>
+ <div class='pm-st' style='font-size:22px;margin-bottom:0'>用状态机梳理交易履约过程</div>
+ <div class='otc-trust-flow'>
+  <div class='otc-trust-step'><i>1</i><b>待询价</b><span>确认金额、报价、支付方式、价格有效期。</span></div>
+  <div class='otc-trust-step'><i>2</i><b>买方确认</b><span>买方确认付款意图，系统保留交易上下文。</span></div>
+  <div class='otc-trust-step'><i>3</i><b>卖方确认</b><span>展示卖方响应状态和履约进度。</span></div>
+  <div class='otc-trust-step'><i>4</i><b>等待结算</b><span>进入付款、放币或链上确认阶段。</span></div>
+  <div class='otc-trust-step'><i>5</i><b>完成 / 异常</b><span>完成后说明资产去向；异常时提供恢复路径。</span></div>
+ </div>
+ <div class='otc-trust-quote'>示例异常：付款超时、卖方迟迟不放币、Tx Hash 查不到、RPC 拥堵、凭证缺失。每个异常都需要对应解释、责任方和用户动作。</div>
+ <div class='pm-st' style='font-size:22px;margin-bottom:0'>基于这套理解可沉淀的设计输出</div>
+ <div class='otc-trust-grid is-four'>
+  <div class='otc-trust-card'><b>多步交易状态机</b><span>展示状态流转、倒计时、责任方和异常回滚。</span></div>
+  <div class='otc-trust-card'><b>滑点与 Gas 模拟器</b><span>当风险超过阈值时，按钮从 CTA 变成风控闸门。</span></div>
+  <div class='otc-trust-card'><b>对手方信誉看板</b><span>KYC、成单率、放币速度、纠纷记录前置到交易决策。</span></div>
+  <div class='otc-trust-card'><b>异常态交互规范</b><span>定义 KYC 超时、Tx 查不到、RPC 拥堵等边界情况。</span></div>
+ </div>
+ <div class='pm-st' style='font-size:22px;margin-bottom:0'>从页面优化到交易履约系统设计</div>
+ <div class='otc-trust-grid'>
+  <div class='otc-trust-card'><b>传统页面优化视角</b><ul><li>优化订单详情页的信息层级</li><li>减少付款与放币过程中的跳转</li><li>统一商家信息、倒计时和操作入口</li></ul></div>
+  <div class='otc-trust-card'><b>交易履约系统视角</b><ul><li>拆解履约状态、责任方与异常路径</li><li>让用户明确当前资金状态和下一步责任人</li><li>用状态解释和风控提示降低结算争议</li></ul></div>
+  <div class='otc-trust-card'><b>核心设计价值</b><span>将订单详情页从“信息汇总页”升级为“交易履约控制台”，帮助用户理解资金状态、责任方与下一步动作。</span></div>
+ </div>
+ <div class='otc-trust-quote'>我将 OTC 订单详情从“下单后的信息页”升级为“交易履约控制台”：通过状态解释、责任归属和异常恢复，降低用户在大额交易中的不确定性。</div>
+ <div class='otc-trust-quote'>这部分用于补充说明我在 OTC 模块中的设计判断：我关注的不只是页面改版，而是交易履约阶段的信任、风控与异常恢复体验。</div>
+</div>
+
 <!-- ═══════════════════════ OVERVIEW ═══════════════════════ -->
 <div style='margin-bottom:6px'>
  <div class='pm-ey'>P2P 重构 1.0 · 五期需求总览</div>
@@ -6281,6 +6686,75 @@ const OTC_BODY_HTML = `
 function getOtcBodyHtml() {
   if (_lang !== 'en') return OTC_BODY_HTML;
   const replacements = [
+    ['信任履约系统', 'Trust Fulfillment'],
+    ['OTC P2P 重构 · 信任履约设计', 'OTC P2P Redesign · Trust Fulfillment Design'],
+    ['这部分补充说明 OTC P2P 重构的核心判断：它不只是页面改版，而是围绕交易履约阶段建立信任、解释风险，并给用户清晰的异常恢复路径。', 'This section explains the core thinking behind the OTC P2P redesign: it is not just a page update, but a trust, risk explanation, and recovery system for the transaction fulfillment stage.'],
+    ['价格不确定', 'Price uncertainty'],
+    ['从询价到付款存在时间差，价格、Gas、市场深度变化都会影响实际成交结果。', 'There is a time gap between quote and payment; price, gas, and market depth can all affect the final result.'],
+    ['对手方不确定', 'Counterparty uncertainty'],
+    ['用户不只比较价格，也会判断对方是否可靠、是否在线、是否有足够履约记录。', 'Users compare price, but also judge whether the counterparty is reliable, online, and backed by enough fulfillment history.'],
+    ['结算状态不确定', 'Settlement uncertainty'],
+    ['最容易产生争议的不是失败，而是用户不知道钱在哪、下一步该谁处理。', 'Disputes often start when users do not know where the money is or who should act next.'],
+    ['把交易风险转化为界面问题', 'Turn trading risks into interface problems'],
+    ['风险', 'Risk'],
+    ['用户担心', 'User concern'],
+    ['界面应该回答', 'Interface answer'],
+    ['设计策略', 'Design strategy'],
+    ['价格波动', 'Price volatility'],
+    ['最终到账是否减少', 'Whether the final received amount decreases'],
+    ['报价是否仍有效，滑点是否超限', 'Whether the quote is still valid and slippage is within limit'],
+    ['报价有效期、预计到账、滑点阈值、价格刷新', 'Quote validity, estimated received amount, slippage threshold, and price refresh'],
+    ['对手方风险', 'Counterparty risk'],
+    ['付款后对方是否放币', 'Whether the counterparty releases crypto after payment'],
+    ['商家是否可信，响应是否稳定', 'Whether the merchant is trustworthy and responsive'],
+    ['KYC、成单率、平均放币时间、在线状态前置', 'KYC, completion rate, average release time, and online status surfaced earlier'],
+    ['结算争议', 'Settlement dispute'],
+    ['资金是否卡住，下一步谁负责', 'Whether funds are stuck and who owns the next step'],
+    ['当前状态、责任方、超时后的处理路径', 'Current status, responsible party, and timeout handling path'],
+    ['状态机、责任方提示、倒计时、申诉证据链', 'State machine, responsibility cues, countdown, and appeal evidence chain'],
+    ['状态可解释', 'Explainable status'],
+    ['明确区分待付款、待放币、等待确认、申诉中、已完成、已取消，避免用笼统的“处理中”掩盖风险。', 'Clearly separate pending payment, pending release, confirming, appeal, completed, and cancelled states instead of hiding risk behind a vague processing state.'],
+    ['责任可归属', 'Clear responsibility'],
+    ['每个阶段都说明下一步动作属于买方、卖方、平台还是链上网络，减少买卖双方互相扯皮。', 'Each stage clarifies whether the buyer, seller, platform, or network owns the next action.'],
+    ['异常可恢复', 'Recoverable exceptions'],
+    ['超时、凭证缺失、网络拥堵、付款账户错误时，给出可执行动作，而不是只提供客服入口。', 'Timeouts, missing proof, network congestion, and wrong payment accounts need executable recovery actions, not just a support entry.'],
+    ['待询价', 'Quote pending'],
+    ['确认金额、报价、支付方式、价格有效期。', 'Confirm amount, quote, payment method, and quote validity.'],
+    ['买方确认', 'Buyer confirmation'],
+    ['买方确认付款意图，系统保留交易上下文。', 'The buyer confirms payment intent while the system keeps the trade context.'],
+    ['卖方确认', 'Seller confirmation'],
+    ['展示卖方响应状态和履约进度。', 'Show seller response status and fulfillment progress.'],
+    ['等待结算', 'Settlement pending'],
+    ['进入付款、放币或链上确认阶段。', 'Enter payment, release, or on-chain confirmation.'],
+    ['完成 / 异常', 'Completed / Exception'],
+    ['完成后说明资产去向；异常时提供恢复路径。', 'Explain where assets went after completion; provide recovery paths for exceptions.'],
+    ['用状态机梳理交易履约过程', 'Map fulfillment through a state machine'],
+    ['示例异常：付款超时、卖方迟迟不放币、Tx Hash 查不到、RPC 拥堵、凭证缺失。每个异常都需要对应解释、责任方和用户动作。', 'Example exceptions: payment timeout, delayed release, missing Tx Hash, RPC congestion, or missing proof. Each exception needs an explanation, responsible party, and user action.'],
+    ['基于这套理解可沉淀的设计输出', 'Design outputs based on this framework'],
+    ['可沉淀输出', 'Reusable outputs'],
+    ['多步交易状态机', 'Multi-step trade state machine'],
+    ['展示状态流转、倒计时、责任方和异常回滚。', 'Show state transitions, countdowns, responsible parties, and exception rollback.'],
+    ['滑点与 Gas 模拟器', 'Slippage and gas simulator'],
+    ['当风险超过阈值时，按钮从 CTA 变成风控闸门。', 'When risk exceeds the threshold, the CTA becomes a risk-control gate.'],
+    ['对手方信誉看板', 'Counterparty trust dashboard'],
+    ['KYC、成单率、放币速度、纠纷记录前置到交易决策。', 'KYC, completion rate, release speed, and dispute history are surfaced before the trade decision.'],
+    ['异常态交互规范', 'Exception-state interaction rules'],
+    ['定义 KYC 超时、Tx 查不到、RPC 拥堵等边界情况。', 'Define edge cases such as KYC timeout, missing transaction, and RPC congestion.'],
+    ['从页面优化到交易履约系统设计', 'From page optimization to fulfillment-system design'],
+    ['传统页面优化视角', 'Traditional page optimization view'],
+    ['优化订单详情页的信息层级', 'Improve order-detail information hierarchy'],
+    ['减少付款与放币过程中的跳转', 'Reduce jumps during payment and release'],
+    ['统一商家信息、倒计时和操作入口', 'Unify merchant info, countdown, and action entries'],
+    ['交易履约系统视角', 'Fulfillment-system view'],
+    ['拆解履约状态、责任方与异常路径', 'Break down fulfillment states, responsibility, and exception paths'],
+    ['让用户明确当前资金状态和下一步责任人', 'Clarify fund status and who owns the next step'],
+    ['用状态解释和风控提示降低结算争议', 'Reduce settlement disputes through status explanation and risk cues'],
+    ['核心设计价值', 'Core design value'],
+    ['将订单详情页从“信息汇总页”升级为“交易履约控制台”，帮助用户理解资金状态、责任方与下一步动作。', 'Upgrade order detail from an information summary into a fulfillment console that explains fund status, responsibility, and next actions.'],
+    ['风控交互目标', 'Risk-control interaction goal'],
+    ['用状态解释、责任归属和异常恢复，降低大额交易中的不确定性和结算争议。', 'Reduce uncertainty and settlement disputes in high-value trades through status explanation, ownership, and recovery.'],
+    ['我将 OTC 订单详情从“下单后的信息页”升级为“交易履约控制台”：通过状态解释、责任归属和异常恢复，降低用户在大额交易中的不确定性。', 'I reframed OTC order detail from a post-order information page into a trade fulfillment console: status explanation, responsibility, and recovery reduce uncertainty in high-value trades.'],
+    ['这部分用于补充说明我在 OTC 模块中的设计判断：我关注的不只是页面改版，而是交易履约阶段的信任、风控与异常恢复体验。', 'This supplement clarifies my design judgment in the OTC module: the focus is not only page redesign, but trust, risk control, and exception recovery during trade fulfillment.'],
     ['P2P 重构 1.0 · 五期需求总览', 'P2P Redesign 1.0 · Five-phase Scope'],
     ['旧版 vs 新版 · P2P 交易链路全面升级', 'Legacy vs New · Full P2P Trading Flow Upgrade'],
     ['下单交易链路优化', 'Order Flow Optimization'],
@@ -6336,6 +6810,7 @@ function getOtcBodyHtml() {
     ['交易提醒', 'Trading reminder'],
     ['如您同意CoinW P2P条款即接受服务声明', 'By agreeing to CoinW P2P terms, you accept the service statement.'],
     ['0手续费购买 USDT', 'Buy USDT with zero fees'],
+    ['② 购买页（填写金额）', '② Buy Page · Enter Amount'],
     ['② Buy Page（填写金额）', '② Buy Page · Enter Amount'],
     ['② 出售页', '② Sell Page'],
     ['注册时间 2022/08/25', 'Registered on 2022/08/25'],
@@ -6377,6 +6852,8 @@ function getOtcBodyHtml() {
     ['聊天', 'Chat'],
     ['我已付款', 'I have paid'],
     ['确认出售', 'Confirm sell'],
+    ['④ 订单详情（倒计时）', '④ Order Detail · Countdown'],
+    ['④ 订单详情（等待付款）', '④ Order Detail · Waiting for Payment'],
     ['④ Order Detail（倒计时）', '④ Order Detail · Countdown'],
     ['④ Order Detail（等待付款）', '④ Order Detail · Waiting for Payment'],
     ['等待买家付款', 'Waiting for buyer payment'],
@@ -6559,7 +7036,9 @@ function getOtcBodyHtml() {
     ['主界面 / Buy Page / Order Detail / 交易完成全面重设计，核心变化：Order Detail从两步合并为一步，收款Account前置，主 CTA 语义从「去支付」改为「提醒放币」。', 'The main page, Buy Page, Order Detail, and Completion Page were redesigned end to end. The key shift: Order Detail was merged from two steps into one, payment account information was moved forward, and the primary CTA changed from “Pay” to “Remind to release”.'],
     ['五期需求的本质是一次「信任体系重建」。Order Detail合并减少了用户在关键付款时刻的页面跳转焦虑；神盾认证贯穿全程持续强化可信感；置顶 + 折扣为平台商业化提供支撑。每一步改动都在回答同一个问题：', 'At its core, the five-phase scope rebuilt the trust system. Merging Order Detail reduced jump anxiety at the critical payment moment; merchant verification reinforced credibility throughout the path; pinned and discount ads supported platform commercialization. Every change answers one question:']
   ];
-  return replacements.reduce((html, pair) => html.split(pair[0]).join(pair[1]), OTC_BODY_HTML);
+  return replacements
+    .sort((a, b) => b[0].length - a[0].length)
+    .reduce((html, pair) => html.split(pair[0]).join(pair[1]), OTC_BODY_HTML);
 }
 
 function normalizeModalScreenshots(container) {
@@ -6590,6 +7069,42 @@ function normalizeModalScreenshots(container) {
   });
 }
 
+function hydrateModalImages(card) {
+  const imgs = Array.from(card.querySelectorAll('img[data-modal-key], img[data-modal-src]'));
+  if (!imgs.length) return;
+
+  const load = (img) => {
+    if (!img || img.dataset.loaded === '1') return;
+    img.dataset.loaded = '1';
+    img.src = (window.__modalImageStore && window.__modalImageStore[img.dataset.modalKey]) || img.dataset.modalSrc;
+    img.removeAttribute('data-modal-key');
+    img.removeAttribute('data-modal-src');
+  };
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      imgs.slice(0, 2).forEach(load);
+    });
+  });
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        load(entry.target);
+        io.unobserve(entry.target);
+      });
+    }, {
+      root: card,
+      rootMargin: '640px 0px'
+    });
+    imgs.slice(2).forEach((img) => io.observe(img));
+    return;
+  }
+
+  requestAnimationFrame(() => imgs.slice(2).forEach(load));
+}
+
 function setupModalSectionTabs(card) {
   const body = card.querySelector('#proj-modal-body');
   const hdWrap = document.getElementById('proj-modal-hd-wrap');
@@ -6597,11 +7112,13 @@ function setupModalSectionTabs(card) {
 
   const tabTitles = _lang === 'en'
     ? [
+      'Trust Fulfillment',
       'P2P Main Page', 'Buy Page', 'Order Detail', 'Completion Page',
       'Pinned & Discount Ads · Growth Exposure',
       'Merchant Rest Mode · New Operating Status'
     ]
     : [
+      '信任履约系统',
       'P2P 主界面', '购买页', '订单详情', '交易完成页',
       '置顶与优惠广告 · 增长曝光工具',
       '商家休息模式 · 新增营业状态'
@@ -6721,6 +7238,7 @@ window.openProjectModal = function(key) {
   window.__currentProjectKey = key;
   const data = getProjectDisplayData(key);
   if (!data) return;
+  window.__modalImageStore = {};
   const modalLabels = _lang === 'en'
     ? { screenshots:'Screenshots', overview:'Overview', challenge:'Core Challenge', process:'Design Process', highlights:'Highlights', results:'Key Results', insight:'Design Insight' }
     : { screenshots:'设计截图', overview:'项目背景', challenge:'核心挑战', process:'设计过程', highlights:'设计亮点', results:'核心数据', insight:'设计洞察' };
@@ -6728,6 +7246,50 @@ window.openProjectModal = function(key) {
   const modal  = document.getElementById('proj-modal');
   const card   = document.getElementById('proj-modal-card');
   const hdWrap = document.getElementById('proj-modal-hd-wrap');
+
+  const renderToken = `${key}-${Date.now()}`;
+  window.__modalRenderToken = renderToken;
+  window.__modalCleanupToken = '';
+  modal.classList.remove('closing');
+  modal.classList.add('open');
+  window.__projectModalOpen = true;
+  card.scrollTop = 0;
+  card.style.paddingTop = '';
+  lockProjectPageScroll();
+  if (window.setGhostMode) window.setGhostMode('minimal');
+  hdWrap.innerHTML = `
+    <div class="modal-sticky-hd" id="modal-sticky-hd">
+      <p class="modal-hd-eyebrow" style="color:${data.accentColor};opacity:.85">${data.eyebrow}</p>
+      <h2 class="modal-hd-title">${data.title}</h2>
+      <button id="proj-modal-close" onclick="closeProjectModal()" aria-label="Close project">✕</button>
+    </div>`;
+  card.innerHTML = `<div id="proj-modal-body" style="min-height:100vh;padding:calc(72px + var(--modal-px)) var(--modal-px) var(--modal-px);display:grid;place-items:center">
+    <div style="width:44px;height:44px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)"></div>
+  </div>`;
+  const hint = document.getElementById('proj-modal-scroll-hint');
+  if (hint) hint.classList.add('hidden');
+  card.onscroll = () => {
+    const stickyHd = document.getElementById('modal-sticky-hd');
+    if (stickyHd) stickyHd.classList.toggle('scrolled', card.scrollTop > 40);
+  };
+  modal.onclick = (e) => { if (e.target === modal) closeProjectModal(); };
+  modal.onwheel = (e) => {
+    if (!e.target.closest('#proj-modal-card')) e.preventDefault();
+  };
+  modal.ontouchmove = (e) => {
+    if (!e.target.closest('#proj-modal-card')) e.preventDefault();
+  };
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      if (window.__modalRenderToken !== renderToken || !modal.classList.contains('open') || modal.classList.contains('closing')) return;
+      renderProjectModalContent();
+    }, 420);
+  });
+  return;
+
+  function renderProjectModalContent() {
+  if (window.__modalRenderToken !== renderToken || !modal.classList.contains('open') || modal.classList.contains('closing')) return;
+  window.__modalImageStore = {};
 
   const sectionLabel = (text) =>
     `<p style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
@@ -6789,9 +7351,14 @@ window.openProjectModal = function(key) {
       <p style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
                 color:rgba(255,255,255,0.45);margin:0 0 16px">${modalLabels.screenshots}</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
-        ${data.images.map(img => `
+        ${data.images.map((img, idx) => {
+          const imageKey = `project-${key}-${idx}`;
+          if (img.src) window.__modalImageStore[imageKey] = img.src;
+          return `
           <div style="border-radius:16px;overflow:hidden;aspect-ratio:375/812;position:relative;
-                      background:${img.src ? `url('${img.src}') center top / cover no-repeat` : img.bg}">
+                      background:${img.src ? 'rgba(255,255,255,0.025)' : img.bg}">
+            ${img.src ? `<img data-modal-key="${imageKey}" alt="${img.label || data.title}" loading="lazy" decoding="async"
+                         style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block">` : ''}
             ${!img.src ? `<div style="position:absolute;inset:0;
                         background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),
                           linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
@@ -6799,7 +7366,8 @@ window.openProjectModal = function(key) {
             ${img.label ? `<div style="position:absolute;bottom:0;left:0;right:0;
                            padding:12px 16px;background:linear-gradient(transparent,rgba(0,0,0,0.75));
                            font-size:11px;font-weight:500;color:rgba(255,255,255,0.7);letter-spacing:.03em">${img.label}</div>` : ''}
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
       </div>
     </div>` : ''}
 
@@ -8113,10 +8681,8 @@ window.openProjectModal = function(key) {
   }
 
 
-  normalizeModalScreenshots(card);
-  const sectionTabs = setupModalSectionTabs(card);
-
   // open modal — card is the scroll container
+  let sectionTabs = null;
   modal.classList.remove('closing');
   modal.classList.add('open');
   window.__projectModalOpen = true;
@@ -8124,8 +8690,12 @@ window.openProjectModal = function(key) {
   lockProjectPageScroll();
   if (window.setGhostMode) window.setGhostMode('minimal');
 
-  // measure full header height, lock card padding-top — never changes again (no layout shift)
   requestAnimationFrame(() => {
+    if (!modal.classList.contains('open') || modal.classList.contains('closing')) return;
+    hydrateModalImages(card);
+    normalizeModalScreenshots(card);
+    sectionTabs = setupModalSectionTabs(card);
+    // measure full header height, lock card padding-top — never changes again (no layout shift)
     const hd = document.getElementById('modal-sticky-hd');
     if (hd) card.style.paddingTop = hd.offsetHeight + 'px';
   });
@@ -8149,6 +8719,7 @@ window.openProjectModal = function(key) {
   modal.ontouchmove = (e) => {
     if (!e.target.closest('#proj-modal-card')) e.preventDefault();
   };
+  }
 };
 
 window.closeProjectModal = function() {
@@ -8162,17 +8733,41 @@ window.closeProjectModal = function() {
 
   // Let the sheet leave downward without leaving a black overlay behind.
   modal.classList.add('closing');
-  setTimeout(() => {
+  const finishClose = () => {
     modal.classList.remove('open', 'closing');
     card.style.paddingTop = '';
     card.onscroll = null;
-    const hdWrapEl = document.getElementById('proj-modal-hd-wrap');
-    if (hdWrapEl) hdWrapEl.innerHTML = '';
     unlockProjectPageScroll();
     modal.onwheel = null;
     modal.ontouchmove = null;
     if (window.setGhostMode) window.setGhostMode('full');
-  }, 280);
+    window.__modalRenderToken = '';
+    window.__modalImageStore = {};
+    const cleanupToken = `${Date.now()}`;
+    window.__modalCleanupToken = cleanupToken;
+    setTimeout(() => {
+      const cleanup = () => {
+        if (window.__modalCleanupToken !== cleanupToken || modal.classList.contains('open')) return;
+        const hdWrapEl = document.getElementById('proj-modal-hd-wrap');
+        if (hdWrapEl) hdWrapEl.innerHTML = '';
+        card.innerHTML = '';
+      };
+      if ('requestIdleCallback' in window) requestIdleCallback(cleanup, { timeout: 2500 });
+      else requestAnimationFrame(cleanup);
+    }, 900);
+  };
+
+  const onEnd = (e) => {
+    if (e.target === card && e.propertyName === 'transform') {
+      card.removeEventListener('transitionend', onEnd);
+      finishClose();
+    }
+  };
+  card.addEventListener('transitionend', onEnd);
+  setTimeout(() => {
+    card.removeEventListener('transitionend', onEnd);
+    if (modal.classList.contains('closing')) finishClose();
+  }, 420);
 };
 
 document.addEventListener('keydown', e => {
@@ -8194,8 +8789,8 @@ document.addEventListener('keydown', e => {
   const interactiveSelector = 'a, button, [role="button"], input, select, textarea, label, [href], .proj-card, .pcard';
 
   const spring = {
-    damping: 45,
-    stiffness: 400,
+    damping: 62,
+    stiffness: 720,
     mass: 1,
     restDelta: 0.001
   };
@@ -8219,6 +8814,7 @@ document.addEventListener('keydown', e => {
     lastX: 0,
     lastY: 0,
     lastTime: Date.now(),
+    hasPointer: false,
     raf: 0,
     scaleTimer: null
   };
@@ -8256,7 +8852,7 @@ document.addEventListener('keydown', e => {
     return diff;
   }
 
-  function setScale(value, delay = 150) {
+  function setScale(value, delay = 90) {
     state.scaleTarget = value;
     if (state.scaleTimer) clearTimeout(state.scaleTimer);
     if (delay > 0) {
@@ -8280,6 +8876,13 @@ document.addEventListener('keydown', e => {
     state.visible = true;
     state.targetX = currentX;
     state.targetY = currentY;
+    if (!state.hasPointer) {
+      state.x = currentX;
+      state.y = currentY;
+      state.lastX = currentX;
+      state.lastY = currentY;
+      state.hasPointer = true;
+    }
     state.vx = nextVx;
     state.vy = nextVy;
     state.lastX = currentX;
@@ -8295,7 +8898,7 @@ document.addEventListener('keydown', e => {
       state.accumulatedRotation += angleDiff;
       state.rotationTarget = state.accumulatedRotation;
       state.previousAngle = currentAngle;
-      setScale(0.95);
+      setScale(0.985);
     }
 
     setCursorOpacity();
@@ -8309,8 +8912,8 @@ document.addEventListener('keydown', e => {
     const damping = spring.damping / 100;
     state.x += (state.targetX - state.x) * stiffness;
     state.y += (state.targetY - state.y) * stiffness;
-    state.rotation += (state.rotationTarget - state.rotation) * 0.18;
-    state.scale += (state.scaleTarget - state.scale) * (1 - damping * 0.35);
+    state.rotation += (state.rotationTarget - state.rotation) * 0.28;
+    state.scale += (state.scaleTarget - state.scale) * (1 - damping * 0.18);
 
     cursorEl.style.transform =
       `translate3d(${state.x}px, ${state.y}px, 0) translate(-50%, -50%) rotate(${state.rotation.toFixed(2)}deg) scale(${state.scale.toFixed(3)})`;
@@ -8511,9 +9114,10 @@ function updateMouse(eX, eY) {
   mouse.tY = eY > size ? eY : size;
   mouse.tY -= mouse.controlsPadding;
 }
-window.addEventListener("mousemove", e => updateMouse(e.clientX, e.clientY));
-window.addEventListener("touchmove", e => updateMouse(e.targetTouches[0].clientX, e.targetTouches[0].clientY));
-window.addEventListener("click",     e => updateMouse(e.clientX, e.clientY));
+const canRunGhostPointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+if (canRunGhostPointer) {
+  window.addEventListener("mousemove", e => updateMouse(e.clientX, e.clientY), { passive: true });
+}
 
 const INTERACTIVE = 'a, button, [role="button"], input, select, textarea, label, [href], .proj-card';
 document.addEventListener("mouseover", e => {
@@ -8805,14 +9409,14 @@ const LANG_TRANSLATIONS = {
     'about-p2':'曾参与加密交易所、DeFi 协议与 NFT 平台从 0 到 1 的产品设计，覆盖 PC 端与移动端双平台，建立过 200+ 组件的设计系统。',
     'about-cta':'联系我 →','exp-label':'工作经历',
     'edu-label':'毕业院校','edu-school':'湖南城市学院','edu-degree':'平面设计 · 本科',
-    'exp1-role':'UI 设计师','exp1-li1':'→ 主导落地页、OTC、跟单系统、社区四大模块全链路设计','exp1-li2':'→ 设计目标：提升注册转化率 & 降低新用户激活门槛','exp1-li3':'→ 设计方法：竞品拆解 → 用户旅程图 → 线框 → 高保真 → 可用性测试','exp1-li4':'→ 跟单系统上线后新用户激活率 +38%，OTC 交易完成率 +21%',
+    'exp1-role':'UI 设计师','exp1-date':'2025.07 — 至今','exp1-li1':'→ 主导落地页、OTC、跟单系统、社区四大模块全链路设计','exp1-li2':'→ 设计目标：提升注册转化率 & 降低新用户激活门槛','exp1-li3':'→ 设计方法：竞品拆解 → 用户旅程图 → 线框 → 高保真 → 可用性测试','exp1-li4':'→ 跟单系统上线后新用户激活率 +38%，OTC 交易完成率 +21%',
     'exp2-role':'高级产品设计师','exp2-company':'Web3 协议（DEX / 多链钱包）','exp2-li1':'→ 负责 DEX 交易界面与多链钱包 UX，覆盖桌面端与 App 双端','exp2-li2':'→ 设计方法：信息架构梳理 → 交互规范制定 → 工程协同交付','exp2-li3':'→ 从零搭建 200+ 组件设计系统，设计效率提升 40%',
     'exp3-role':'UI / UX 设计师','exp3-company':'区块链创业公司（NFT 市场 + 钱包）','exp3-li1':'→ 入门 Web3，主导 NFT 市场与钱包连接全流程设计','exp3-li2':'→ 设计目标：降低 Web3 新手的认知门槛','exp3-li3':'→ 输出品牌视觉体系 + Web & App 双端界面规范',
     'exp4-role':'视觉 / UI 设计师','exp4-company':'数字营销 & 互联网行业','exp4-desc':'平面设计转型交互设计，积累跨行业视觉叙事能力。',
     'skill-design-system':'设计系统','skill-component-lib':'组件库','skill-brand':'品牌','skill-mobile':'移动端',
     'stat-1':'Web3 从业年限','stat-2':'交付项目数','stat-3':'设计经验年限',
-    'journal-label':'','journal-title':'关于 AI','journal-viewall':'查看全部 →','journal-kicker':'WEB3 / 用户体验 / 系统',
-    'journal-ai-assisted':'AI 辅助','journal-ai-title':'关于<br>AI','journal-ai-desc':'用 AI 辅助研究、拆解复杂信息，并把想法转成可落地的产品界面。',
+    'journal-label':'','journal-title':'关于 AI','journal-viewall':'查看全部 →','journal-kicker':'',
+    'journal-ai-assisted':'AI 辅助','journal-ai-title':'关于 AI','journal-ai-desc':'用 AI 辅助研究、拆解复杂信息，并把想法转成可落地的产品界面。',
     'gesture-card-title':'手势实验室','gesture-card-sub':'手势适配交互 · 新网页打开',
     'gesture-modal-kicker':'小彩蛋','gesture-modal-title':'手势滤镜实验室','gesture-modal-desc':'一个用 vibe coding 做的小实验：用摄像头识别手势，把滤镜模块和贴纸变成可被手掌触发的互动界面。','gesture-modal-note':'这是嵌入的网页内容。点击确认后会打开新网页进行体验，页面可能会请求摄像头权限，用于手势识别。','gesture-modal-cancel':'先不打开','gesture-modal-open':'打开新网页 ↗',
     'journal-workflow-label':'AI 工作流','journal-workflow-title':'从模糊输入<br class="hidden md:block">到清晰界面',
@@ -8846,13 +9450,13 @@ const LANG_TRANSLATIONS = {
     'about-p2':'Led product design for crypto exchanges, DeFi protocols, and NFT platforms from 0→1, across desktop and mobile. Built a 200+ component design system from scratch.',
     'about-cta':'Get in touch →','exp-label':'Experience',
     'edu-label':'Education','edu-school':'Hunan City University','edu-degree':'Graphic Design · B.A.',
-    'exp1-role':'UI Designer','exp1-li1':'→ Led end-to-end design for landing pages, OTC, copy trading, and community modules','exp1-li2':'→ Goal: improve registration conversion and reduce new-user activation friction','exp1-li3':'→ Method: competitor teardown → journey map → wireframe → high fidelity → usability test','exp1-li4':'→ Copy trading activation +38%, OTC completion rate +21% after launch',
+    'exp1-role':'UI Designer','exp1-date':'2025.07 — Present','exp1-li1':'→ Led end-to-end design for landing pages, OTC, copy trading, and community modules','exp1-li2':'→ Goal: improve registration conversion and reduce new-user activation friction','exp1-li3':'→ Method: competitor teardown → journey map → wireframe → high fidelity → usability test','exp1-li4':'→ Copy trading activation +38%, OTC completion rate +21% after launch',
     'exp2-role':'Senior Product Designer','exp2-company':'Web3 Protocol (DEX / Multi-chain Wallet)','exp2-li1':'→ Owned DEX trading UI and multi-chain wallet UX across desktop and app','exp2-li2':'→ Method: information architecture → interaction rules → engineering handoff','exp2-li3':'→ Built a 200+ component design system from scratch, improving design efficiency by 40%',
     'exp3-role':'UI / UX Designer','exp3-company':'Blockchain Startup (NFT Market + Wallet)','exp3-li1':'→ Entered Web3 by leading NFT marketplace and wallet connection flows','exp3-li2':'→ Goal: lower the cognitive barrier for Web3 beginners','exp3-li3':'→ Delivered brand visual system and Web & App interface guidelines',
     'exp4-role':'Visual / UI Designer','exp4-company':'Digital Marketing & Internet Industry','exp4-desc':'Moved from graphic design into interaction design, building cross-industry visual storytelling skills.',
     'skill-design-system':'Design System','skill-component-lib':'Component Lib','skill-brand':'Brand','skill-mobile':'Mobile',
     'stat-1':'Years in Web3','stat-2':'Projects Delivered','stat-3':'Years of Experience',
-    'journal-label':'','journal-title':'About AI','journal-viewall':'View all →','journal-kicker':'WEB3 / UX / SYSTEMS',
+    'journal-label':'','journal-title':'About AI','journal-viewall':'View all →','journal-kicker':'',
     'journal-ai-assisted':'AI Assisted','journal-ai-title':'ABOUT<br>AI','journal-ai-desc':'I use AI to support research, unpack complex information, and turn rough ideas into product interfaces that can actually ship.',
     'gesture-card-title':'Gesture Lab','gesture-card-sub':'Gesture interaction · opens a new page',
     'gesture-modal-kicker':'Little Easter Egg','gesture-modal-title':'Gesture Filter Lab','gesture-modal-desc':'A small vibe-coding experiment: use the camera to recognize hand gestures and turn filter modules and stickers into palm-triggered interactions.','gesture-modal-note':'This opens an embedded web experiment in a new page. It may request camera permission for gesture recognition.','gesture-modal-cancel':'Not now','gesture-modal-open':'Open page ↗',

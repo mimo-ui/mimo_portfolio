@@ -41,10 +41,19 @@
 
     button { font: inherit; }
 
+    *::selection {
+      background: #ccff00;
+      color: #050505;
+    }
+    *::-moz-selection {
+      background: #ccff00;
+      color: #050505;
+    }
+
     .page {
-      width: min(1120px, calc(100vw - 40px));
-      margin: 0 auto;
-      padding: 32px 0 56px;
+      width: 100%;
+      margin: 0;
+      padding: 0 0 56px;
     }
 
     .title {
@@ -80,7 +89,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
-      padding-top: 24px;
+      padding-top: 0;
       min-width: 0;
     }
 
@@ -577,7 +586,7 @@
     @media (max-width: 880px) {
       .page {
         width: 100%;
-        padding: 20px 12px 28px;
+        padding: 20px 0 28px;
       }
 
       .title {
@@ -625,7 +634,7 @@
       }
 
       .component-block {
-        max-width: calc(100vw - 24px);
+        max-width: 100%;
         min-height: 0;
         max-height: none;
         grid-template-rows: auto auto auto;
@@ -691,11 +700,6 @@
 </head>
 <body>
   <main class="page">
-    <header class="title">
-      <h1>Input / Button</h1>
-      <p class="source">基于 Figma Input / Button 组件的交互状态预览。</p>
-    </header>
-
     <nav class="mobile-switch" aria-label="Component type">
       <button type="button" data-panel-target="button" aria-selected="true">Button</button>
       <button type="button" data-panel-target="input" aria-selected="false">Input</button>

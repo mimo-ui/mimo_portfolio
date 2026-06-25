@@ -8,6 +8,24 @@
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png" />
 
+  <script>
+    (function(){
+      try {
+        if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      } catch(e) {}
+
+      function scrollToHeroTop() {
+        document.documentElement.style.scrollBehavior = 'auto';
+        window.scrollTo(0, 0);
+        requestAnimationFrame(function(){ window.scrollTo(0, 0); });
+      }
+
+      scrollToHeroTop();
+      window.addEventListener('DOMContentLoaded', scrollToHeroTop, { once: true });
+      window.addEventListener('pageshow', scrollToHeroTop);
+    })();
+  </script>
+
   <!-- HarmonyOS Sans SC -->
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link href="https://cdn.jsdelivr.net/gh/IKKI2000/harmonyos-fonts@main/css/harmonyos_sans_sc.css" rel="stylesheet" />
@@ -136,8 +154,29 @@
     .proj-card:hover .overlay { opacity:1; }
 
     /* ── loading fade ────────────────────────────────────────────── */
-    #loading { transition:opacity .6s ease; }
-    #loading.done { opacity:0; pointer-events:none; }
+    #loading {
+      transition:
+        opacity .5s cubic-bezier(.22, 1, .36, 1),
+        visibility .5s cubic-bezier(.22, 1, .36, 1);
+      will-change: opacity;
+    }
+    #loading.done {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    #loading.done #ls-label,
+    #loading.done #ls-search {
+      opacity: 0 !important;
+      transform: translate3d(0, -10px, 0) scale(.985) !important;
+      transition:
+        opacity .26s ease,
+        transform .34s cubic-bezier(.22, 1, .36, 1) !important;
+    }
+    #page {
+      opacity: 1;
+      transform: none;
+    }
 
     /* ── cursor ──────────────────────────────────────────────────── */
     * { cursor: none !important; }
@@ -1311,7 +1350,8 @@ body.standard-cursor #ghost-dot {
   }
 
   #proj-modal-banner img,
-  .pcard-banner img {
+  .pcard-banner img,
+  .pcard-banner video {
     width: 100% !important;
     height: 100% !important;
     object-fit: contain !important;
@@ -1366,7 +1406,8 @@ body.standard-cursor #ghost-dot {
     height: 34.2% !important;
     border-radius: clamp(9px, 3vw, 16px) !important;
   }
-  #holo-track .pcard-banner img {
+  #holo-track .pcard-banner img,
+  #holo-track .pcard-banner video {
     object-fit: cover !important;
   }
   #holo-track .pcard-body {
@@ -1495,19 +1536,28 @@ body.standard-cursor #ghost-dot {
   border: 0 !important;
   border-radius: 0 !important;
   background: #0f1013 !important;
-  opacity: 1 !important;
+  opacity: 0 !important;
   transform: translate3d(0, 100%, 0) scale(.985) !important;
   transform-origin: bottom center !important;
-  will-change: transform !important;
-  transition: transform .52s cubic-bezier(.16,1,.3,1) !important;
+  will-change: transform, opacity !important;
+  transition: transform .52s cubic-bezier(.16,1,.3,1),
+              opacity .34s ease !important;
 }
 #proj-modal.open:not(.closing) #proj-modal-card {
+  opacity: 1 !important;
   transform: translate3d(0, 0, 0) scale(1) !important;
 }
 #proj-modal.open.closing #proj-modal-card {
+  opacity: 0 !important;
   transform: translate3d(0, 100%, 0) scale(.985) !important;
   transition-timing-function: cubic-bezier(.7,0,.84,0) !important;
   transition-duration: .26s !important;
+}
+#proj-modal.open.closing #proj-modal-card > *,
+#proj-modal.open.closing #proj-modal-hd-wrap > * {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 #proj-modal-body {
   --pm2: #15161a !important;
@@ -1523,6 +1573,7 @@ html.project-modal-locked,
 body.project-modal-locked {
   overflow: hidden !important;
   overscroll-behavior: none !important;
+  scrollbar-gutter: stable !important;
 }
 #proj-modal {
   overscroll-behavior: none !important;
@@ -1555,7 +1606,17 @@ body.project-modal-locked {
 
 /* Landing preview: use the same full-screen modal language as project cards. */
 #landing-lightbox {
-  z-index: 900 !important;
+  z-index: 100200 !important;
+  visibility: hidden !important;
+  contain: layout paint style !important;
+  will-change: opacity !important;
+  transition: opacity .22s ease, visibility .22s ease !important;
+}
+#landing-lightbox.is-open {
+  visibility: visible !important;
+}
+#landing-lightbox.is-closing {
+  pointer-events: none !important;
 }
 #landing-lightbox > div:first-child {
   background: #090a0c !important;
@@ -1569,6 +1630,21 @@ body.project-modal-locked {
   box-shadow: none !important;
   border: 0 !important;
   background: #0f1013 !important;
+  opacity: 0 !important;
+  transform: translate3d(0, 100%, 0) scale(.985) !important;
+  transform-origin: bottom center !important;
+  will-change: transform, opacity !important;
+  transition: transform .36s cubic-bezier(.16,1,.3,1), opacity .2s ease !important;
+}
+#landing-lightbox.is-open:not(.is-closing) > div:nth-of-type(2) {
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) scale(1) !important;
+}
+#landing-lightbox.is-open.is-closing > div:nth-of-type(2) {
+  opacity: 0 !important;
+  transform: translate3d(0, 100%, 0) scale(.985) !important;
+  transition-duration: .22s !important;
+  transition-timing-function: cubic-bezier(.7,0,.84,0) !important;
 }
 #landing-lb-nav {
   width: 280px !important;
@@ -1590,6 +1666,7 @@ body.project-modal-locked {
 #landing-lightbox button[onclick="closeLandingLightbox()"] {
   top: 20px !important;
   right: 20px !important;
+  z-index: 100210 !important;
   width: 20px !important;
   height: 20px !important;
   padding: 0 !important;
@@ -1602,6 +1679,10 @@ body.project-modal-locked {
   box-shadow: none !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+#landing-lightbox.is-closing [data-landing-iframe] {
+  pointer-events: none !important;
+  visibility: hidden !important;
 }
 #landing-lightbox button[onclick="closeLandingLightbox()"]:hover {
   background: #ccff00 !important;
@@ -1643,21 +1724,21 @@ body.project-modal-locked {
 .component-embed-shell {
   position: relative;
   width: 100%;
-  max-width: 1200px;
+  max-width: none;
   height: var(--component-embed-height, 820px);
-  margin: 0 auto;
+  margin: 0;
   overflow: visible;
   background: transparent;
 }
 .component-embed-frame {
   position: absolute;
-  left: 50%;
+  left: 0;
   top: 0;
   width: var(--component-frame-width, 1120px);
   height: var(--component-frame-height, 820px);
   border: 0;
-  transform: translateX(-50%) scale(var(--component-frame-scale, 1));
-  transform-origin: top center;
+  transform: scale(var(--component-frame-scale, 1));
+  transform-origin: top left;
   background: transparent;
   display: block;
 }
@@ -1699,15 +1780,19 @@ body.project-modal-locked {
   border-bottom-color: rgba(255,255,255,.07) !important;
   backdrop-filter: blur(16px) !important;
   -webkit-backdrop-filter: blur(16px) !important;
+  opacity: 0 !important;
   transform: translate3d(0, 100vh, 0) !important;
-  will-change: transform !important;
+  will-change: transform, opacity !important;
   transition: transform .52s cubic-bezier(.16,1,.3,1),
+              opacity .3s ease,
               border-color .25s ease, padding .25s ease !important;
 }
 #proj-modal.open:not(.closing) .modal-sticky-hd {
+  opacity: 1 !important;
   transform: translate3d(0, 0, 0) !important;
 }
 #proj-modal.open.closing .modal-sticky-hd {
+  opacity: 0 !important;
   transform: translate3d(0, 100vh, 0) !important;
   transition-timing-function: cubic-bezier(.7,0,.84,0) !important;
   transition-duration: .26s !important;
@@ -1831,6 +1916,166 @@ body.project-modal-locked {
   background: #ccff00;
 }
 .pm-tab-section > .pm-tab-heading { display: none !important; }
+
+.otc-trust-showcase {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+.otc-trust-title {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(28px, 4.5vw, 54px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.045em;
+}
+.otc-trust-lead {
+  max-width: 860px;
+  margin: 0;
+  color: rgba(255,255,255,.58);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.75;
+}
+.otc-trust-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.otc-trust-grid.is-four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.otc-trust-card {
+  min-height: 148px;
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+  background: rgba(255,255,255,.025);
+}
+.otc-trust-card.is-compact {
+  min-height: 128px;
+}
+.otc-trust-card b {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(255,255,255,.9);
+  font-size: 14px;
+  font-weight: 750;
+}
+.otc-trust-card span,
+.otc-trust-card li {
+  color: rgba(255,255,255,.52);
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.65;
+}
+.otc-trust-card ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.otc-trust-flow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+.otc-trust-step {
+  padding: 24px;
+  border: 1px solid rgba(137,170,204,.16);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(137,170,204,.055), rgba(255,255,255,.015));
+}
+.otc-trust-step i {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  margin-bottom: 10px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(137,170,204,.16);
+  color: #89AACC;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+}
+.otc-trust-step b {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(255,255,255,.9);
+  font-size: 14px;
+  font-weight: 760;
+  line-height: 1.35;
+}
+.otc-trust-step span {
+  display: block;
+  color: rgba(255,255,255,.58);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.65;
+}
+.otc-trust-quote {
+  padding: 18px 20px;
+  border-left: 3px solid #89AACC;
+  border-radius: 0 14px 14px 0;
+  background: rgba(137,170,204,.07);
+  color: rgba(255,255,255,.76);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.75;
+}
+.otc-trust-matrix {
+  display: grid;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 14px;
+}
+.otc-trust-row {
+  display: grid;
+  grid-template-columns: .7fr 1fr 1fr 1.2fr;
+}
+.otc-trust-row + .otc-trust-row {
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.otc-trust-cell {
+  padding: 16px;
+  color: rgba(255,255,255,.52);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.65;
+}
+.otc-trust-cell + .otc-trust-cell {
+  border-left: 1px solid rgba(255,255,255,.08);
+}
+.otc-trust-head {
+  color: rgba(255,255,255,.36);
+  background: rgba(255,255,255,.035);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.otc-trust-cell strong {
+  color: rgba(255,255,255,.86);
+}
+@media (max-width: 760px) {
+  .otc-trust-grid,
+  .otc-trust-flow,
+  .otc-trust-row {
+    grid-template-columns: 1fr;
+  }
+  .otc-trust-grid.is-four {
+    grid-template-columns: 1fr;
+  }
+  .otc-trust-card {
+    min-height: auto;
+  }
+  .otc-trust-cell + .otc-trust-cell {
+    border-left: 0;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
+}
 
 .pm-order-compare {
   display: grid;
@@ -2017,18 +2262,7 @@ body.project-modal-locked {
   background: #45484f !important;
 }
 
-/* Hard separation between the marquee and the footer Spline canvas. */
-#footer-marquee {
-  position: relative;
-  z-index: 5;
-  isolation: isolate;
-  display: block;
-  width: 100%;
-  padding-bottom: 48px !important;
-  background: #000 !important;
-  overflow: hidden !important;
-}
-#footer-marquee + #contact {
+#contact {
   position: relative;
   z-index: 1;
   min-height: 560px;
@@ -2040,7 +2274,7 @@ body.project-modal-locked {
   contain: paint;
   overflow: hidden !important;
 }
-#footer-marquee + #contact > .relative {
+#contact > .relative {
   width: 100%;
   margin-left: auto;
   margin-right: auto;
@@ -2049,14 +2283,13 @@ body.project-modal-locked {
 #about,
 #stats,
 #journal,
-#footer-marquee,
 #contact {
   content-visibility: auto;
   contain-intrinsic-size: auto 680px;
 }
 
 @media (max-width: 768px) {
-  #footer-marquee + #contact {
+  #contact {
     min-height: 560px;
   }
   .experience-scroll-shell {
@@ -2113,53 +2346,132 @@ body.project-modal-locked {
       background: linear-gradient(90deg, var(--design-lime), var(--design-blue));
     }
 
-    #ls-word {
-      min-width: 7.5em;
-      text-align: center;
-      font-weight: 500 !important;
-      letter-spacing: -0.035em;
-      font-synthesis: none;
-      text-rendering: geometricPrecision;
-      -webkit-font-smoothing: antialiased;
-      will-change: opacity, transform;
-    }
-    #ls-count {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 0.04em;
-      font-variant-numeric: tabular-nums;
-      line-height: 0.9;
-    }
-    #ls-count .ls-percent {
-      font-size: 0.42em;
-      font-weight: 700;
-      opacity: 0.72;
-      transform: translateY(-0.08em);
-    }
-    #ls-bar {
+    .ls-search-wrap {
       position: relative;
-      overflow: hidden;
-      background: linear-gradient(90deg, var(--design-lime), var(--design-blue));
+      width: min(720px, calc(100vw - 40px));
+      opacity: 0;
+      transform: translateY(14px) scale(.985);
+      transition: opacity .45s ease, transform .45s cubic-bezier(.16,1,.3,1);
+      --ls-cursor-x: 0px;
+      --ls-cursor-y: 0px;
+    }
+    .ls-search-wrap.is-ready {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .ls-search-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 10px;
+      min-height: 66px;
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 22px;
+      background: rgba(18,18,18,.92);
       box-shadow:
-        0 0 10px rgba(204,255,0,.34),
-        0 0 22px rgba(20,209,255,.18) !important;
+        0 24px 70px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.08);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
     }
-    #ls-bar::after {
+    .ls-search-field {
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      padding: 0 14px 0 18px;
+      font-family: "Inter", "HarmonyOS Sans SC", sans-serif;
+      font-size: clamp(18px, 4.5vw, 24px);
+      font-weight: 500;
+      line-height: 1.2;
+      color: rgba(255,255,255,.94);
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    #ls-query::after {
       content: "";
-      position: absolute;
-      top: -6px;
-      bottom: -6px;
-      left: -28%;
-      width: 34%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.88), transparent);
-      filter: blur(6px);
-      opacity: .72;
-      animation: loading-bar-shine 1.15s ease-in-out infinite;
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      margin-left: 3px;
+      transform: translateY(.16em);
+      border-radius: 999px;
+      background: #ccff00;
+      animation: ls-caret .82s steps(1) infinite;
     }
-    @keyframes loading-bar-shine {
-      0% { transform: translateX(0); opacity: 0; }
-      18% { opacity: .72; }
-      100% { transform: translateX(390%); opacity: 0; }
+    .ls-search-wrap.is-clicking #ls-query::after {
+      animation: none;
+      opacity: 0;
+    }
+    .ls-search-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 118px;
+      height: 50px;
+      border-radius: 16px;
+      background: #ccff00;
+      color: #050505;
+      font-family: "Inter", "HarmonyOS Sans SC", sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      transition: transform .18s ease, background .18s ease, box-shadow .18s ease;
+      box-shadow: 0 0 0 rgba(204,255,0,0);
+    }
+    .ls-search-wrap.is-clicking .ls-search-button {
+      transform: scale(.96);
+      background: #e7ff74;
+      box-shadow: 0 0 28px rgba(204,255,0,.32);
+    }
+    .ls-search-button svg {
+      width: 17px;
+      height: 17px;
+      stroke-width: 2.3;
+    }
+    .ls-click-cursor {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 34px;
+      height: 34px;
+      opacity: 0;
+      pointer-events: none;
+      --ls-cursor-start-x: calc(var(--ls-cursor-x) - 62px);
+      --ls-cursor-start-y: calc(var(--ls-cursor-y) - 42px);
+      transform: translate(var(--ls-cursor-start-x), var(--ls-cursor-start-y)) rotate(-18deg) scale(.94);
+      transform-origin: 8px 8px;
+      filter: drop-shadow(0 5px 12px rgba(0,0,0,.45));
+      z-index: 2;
+    }
+    .ls-search-wrap.is-clicking .ls-click-cursor {
+      animation: ls-cursor-click .48s cubic-bezier(.16,1,.3,1) forwards;
+    }
+    @keyframes ls-caret {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    @keyframes ls-cursor-click {
+      0% { opacity: 0; transform: translate(var(--ls-cursor-start-x), var(--ls-cursor-start-y)) rotate(-18deg) scale(.94); }
+      24% { opacity: 1; }
+      72% { opacity: 1; transform: translate(var(--ls-cursor-x), var(--ls-cursor-y)) rotate(-18deg) scale(1); }
+      100% { opacity: 1; transform: translate(calc(var(--ls-cursor-x) + 5px), calc(var(--ls-cursor-y) + 5px)) rotate(-18deg) scale(.9); }
+    }
+    @media (max-width: 520px) {
+      .ls-search-box {
+        grid-template-columns: 1fr;
+        min-height: 0;
+        padding: 10px;
+        border-radius: 20px;
+      }
+      .ls-search-field {
+        min-height: 48px;
+        padding: 0 10px;
+      }
+      .ls-search-button {
+        width: 100%;
+        min-width: 0;
+      }
     }
 
     .hero-nav-link:hover {
@@ -2217,7 +2529,7 @@ body.project-modal-locked {
       width: 100%;
       height: 100%;
       z-index: 0;
-      pointer-events: none;
+      pointer-events: auto !important;
       filter: contrast(0.92) brightness(0.94);
       image-rendering: auto;
     }
@@ -2487,9 +2799,13 @@ body.project-modal-locked {
       }
     }
 
-    ::selection {
-      background: var(--design-lime);
-      color: #161e00;
+    *::selection {
+      background: #ccff00;
+      color: #050505;
+    }
+    *::-moz-selection {
+      background: #ccff00;
+      color: #050505;
     }
   </style>
   <style id="bento-card-redesign">
@@ -2615,7 +2931,8 @@ body.project-modal-locked {
       background: rgba(255,255,255,.035) !important;
       box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
     }
-    #works .pcard-banner img {
+    #works .pcard-banner img,
+    #works .pcard-banner video {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -2665,7 +2982,8 @@ body.project-modal-locked {
       object-position: center;
       pointer-events: none;
     }
-    #works .pcard:hover .pcard-banner img { transform: scale(1.035); filter: saturate(1.08); opacity: 1; }
+    #works .pcard:hover .pcard-banner img,
+    #works .pcard:hover .pcard-banner video { transform: scale(1.035); filter: saturate(1.08); opacity: 1; }
     #works .pcard-banner-ph { display: none !important; }
 
     /* Featured case: a large editorial card */
@@ -3272,10 +3590,6 @@ body.project-modal-locked {
       padding-top: 56px !important;
       padding-bottom: 56px !important;
     }
-    #footer-marquee {
-      padding-top: 0 !important;
-      padding-bottom: 32px !important;
-    }
     #contact {
       padding-top: 0 !important;
       padding-bottom: 48px !important;
@@ -3290,10 +3604,6 @@ body.project-modal-locked {
       #stats {
         padding-top: 48px !important;
         padding-bottom: 48px !important;
-      }
-      #footer-marquee {
-        padding-top: 0 !important;
-        padding-bottom: 28px !important;
       }
       #contact {
         padding-top: 0 !important;
@@ -3495,6 +3805,12 @@ body.project-modal-locked {
     #journal .journal-bento > article:first-child {
       background: transparent !important;
       border-color: transparent !important;
+      min-height: 220px !important;
+      padding: 16px !important;
+    }
+
+    #journal .journal-bento > article:first-child p {
+      margin-top: 0 !important;
     }
 
     #journal .journal-bento > article:first-child > .absolute.inset-0,
@@ -3504,6 +3820,13 @@ body.project-modal-locked {
 
     #journal .journal-bento > article:first-child h3 {
       text-shadow: none !important;
+    }
+
+    html[lang="zh-CN"] #journal .journal-bento > article:first-child h3 {
+      font-size: clamp(44px, 5.2vw, 64px) !important;
+      line-height: 1.04 !important;
+      letter-spacing: -0.045em !important;
+      white-space: nowrap !important;
     }
 
     #journal .ai-system-grid .ai-orbit,
@@ -3544,8 +3867,381 @@ body.project-modal-locked {
       #journal .journal-bento > article:first-child h3 {
         font-size: 54px !important;
       }
+
+      html[lang="zh-CN"] #journal .journal-bento > article:first-child h3 {
+        font-size: 44px !important;
+        line-height: 1.05 !important;
+        letter-spacing: -0.035em !important;
+      }
     }
   </style>
+
+  <style id="archive-2024-styles">
+    #archive-2024 {
+      background: hsl(var(--bg));
+      border-top: 1px solid hsl(var(--stroke));
+    }
+    .archive-cta {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 28px;
+      align-items: center;
+      border: 1px solid rgba(94,210,156,0.24);
+      border-radius: 18px;
+      padding: 28px;
+      background:
+        radial-gradient(circle at 84% 50%, rgba(94,210,156,0.14), transparent 34%),
+        linear-gradient(135deg, rgba(255,255,255,0.055), rgba(255,255,255,0.016));
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .archive-cta-kicker {
+      font-size: 10px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.36);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+    .archive-cta h3 {
+      margin: 0 0 10px;
+      color: rgba(255,255,255,0.94);
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.18;
+      font-weight: 700;
+    }
+    .archive-cta p {
+      margin: 0;
+      max-width: 720px;
+      color: rgba(255,255,255,0.48);
+      font-size: 14px;
+      line-height: 1.75;
+    }
+    .archive-open-btn {
+      height: 44px;
+      padding: 0 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.88);
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: border-color .22s ease, background .22s ease, transform .22s ease;
+      cursor: pointer !important;
+    }
+    .archive-open-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(94,210,156,0.45);
+      background: rgba(94,210,156,0.12);
+      color: #5ed29c;
+    }
+    #archive-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 99997;
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 0;
+      overflow: hidden;
+      background: rgba(9,10,12,0);
+      backdrop-filter: blur(0);
+      -webkit-backdrop-filter: blur(0);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      overscroll-behavior: none;
+      touch-action: none;
+      transition: opacity .28s ease, visibility .28s ease, background .28s ease, backdrop-filter .28s ease;
+    }
+    #archive-modal.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      background: #090a0c;
+    }
+    #archive-modal.is-open.is-closing {
+      background: rgba(9,10,12,0);
+      backdrop-filter: blur(0);
+      -webkit-backdrop-filter: blur(0);
+      pointer-events: none;
+      transition-duration: .18s;
+    }
+    .archive-shell {
+      width: 100%;
+      max-width: none;
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      overflow: hidden;
+      border: 0;
+      border-radius: 0;
+      background: #0f1013;
+      box-shadow: none;
+      transform: translate3d(0, 100%, 0) scale(.985);
+      transform-origin: bottom center;
+      will-change: transform;
+      transition: transform .52s cubic-bezier(.16,1,.3,1);
+      touch-action: pan-y;
+    }
+    #archive-modal.is-open:not(.is-closing) .archive-shell {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+    #archive-modal.is-open.is-closing .archive-shell {
+      transform: translate3d(0, 100%, 0) scale(.985);
+      transition-duration: .26s;
+      transition-timing-function: cubic-bezier(.7,0,.84,0);
+    }
+    .archive-side {
+      border-right: 1px solid rgba(255,255,255,0.07);
+      padding: 24px 16px;
+      overflow-y: auto;
+      background: #15161a;
+      scrollbar-width: none;
+    }
+    .archive-side::-webkit-scrollbar { display: none; }
+    .archive-side-title {
+      color: rgba(255,255,255,0.92);
+      font-size: 18px;
+      line-height: 1.25;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .archive-side-desc {
+      color: rgba(255,255,255,0.42);
+      font-size: 12px;
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+    .archive-group-btn {
+      width: 100%;
+      display: block;
+      text-align: left;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: transparent;
+      padding: 12px;
+      color: rgba(255,255,255,0.56);
+      cursor: pointer !important;
+      transition: background .2s ease, border-color .2s ease, color .2s ease;
+    }
+    .archive-group-btn:hover,
+    .archive-group-btn.is-active {
+      background: rgba(255,255,255,0.055);
+      border-color: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.9);
+    }
+    .archive-group-index {
+      display: block;
+      font-size: 9px;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: #ccff00;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+    .archive-group-name {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+    .archive-group-meta {
+      display: block;
+      font-size: 11px;
+      color: rgba(255,255,255,0.34);
+    }
+    .archive-main {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      background: #0f1013;
+    }
+    .archive-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 72px;
+      padding: 12px 64px 12px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      background: rgba(15,16,19,.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .archive-frame-title {
+      color: rgba(255,255,255,0.96);
+      font-size: clamp(20px, 2.3vw, 30px);
+      line-height: 1.12;
+      font-weight: 700;
+    }
+    .archive-frame-meta {
+      color: rgba(255,255,255,0.42);
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+    .archive-close {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100000;
+      width: 20px;
+      height: 20px;
+      padding: 0;
+      border: 0;
+      border-radius: 6px;
+      background: rgba(255,255,255,.12);
+      color: rgba(255,255,255,.78);
+      font-size: 11px;
+      line-height: 1;
+      cursor: pointer !important;
+    }
+    .archive-close:hover {
+      background: #ccff00;
+      color: #090a0c;
+    }
+    .archive-nav-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.055);
+      color: rgba(255,255,255,0.72);
+      cursor: pointer !important;
+    }
+    .archive-nav-btn:hover {
+      background: #ccff00;
+      border-color: #ccff00;
+      color: #090a0c;
+    }
+    .archive-stage {
+      position: relative;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 64px;
+      overflow: hidden;
+      background: #0f1013;
+    }
+    .archive-stage img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      max-width: calc((100dvh - 220px) * 1.333333);
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 0;
+      border: 0;
+      box-shadow: none;
+      background: #0f1013;
+    }
+    .archive-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 24px;
+      line-height: 1;
+    }
+    .archive-nav-btn.prev { left: 20px; }
+    .archive-nav-btn.next { right: 20px; }
+    .archive-thumbs {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 14px 22px 18px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      background: #15161a;
+      scrollbar-width: none;
+    }
+    .archive-thumbs::-webkit-scrollbar { display: none; }
+    .archive-thumb {
+      position: relative;
+      flex: 0 0 104px;
+      height: 78px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      opacity: .42;
+      cursor: pointer !important;
+      background: #101016;
+      transition: opacity .2s ease, border-color .2s ease, transform .2s ease;
+    }
+    .archive-thumb.is-active {
+      opacity: 1;
+      border-color: rgba(204,255,0,0.82);
+      transform: translateY(-2px);
+    }
+    .archive-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .archive-thumb-no {
+      position: absolute;
+      left: 6px;
+      bottom: 5px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.68);
+      color: rgba(255,255,255,.86);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+    @media (max-width: 900px) {
+      .archive-cta { grid-template-columns: 1fr; }
+      .archive-open-btn { width: fit-content; }
+      .archive-shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto minmax(0, 1fr);
+      }
+      .archive-side {
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        padding: 14px 52px 12px 14px;
+        overflow-x: auto;
+        overflow-y: hidden;
+      }
+      .archive-side-title,
+      .archive-side-desc { display: none; }
+      .archive-group-list {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .archive-group-list::-webkit-scrollbar { display: none; }
+      .archive-group-btn {
+        flex: 0 0 178px;
+      }
+      .archive-topbar {
+        min-height: 64px;
+        padding: 10px 58px 10px 16px;
+      }
+      .archive-frame-title { font-size: 20px; }
+      .archive-stage { padding: 18px 48px; }
+      .archive-stage img { max-width: calc((100dvh - 250px) * 1.333333); }
+      .archive-nav-btn.prev { left: 10px; }
+      .archive-nav-btn.next { right: 10px; }
+      .archive-thumbs { padding: 12px 14px 14px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .archive-shell,
+      #archive-modal {
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+
 </head>
 
 <body class="bg-bg text-text-primary">
@@ -3583,36 +4279,30 @@ body.project-modal-locked {
     Portfolio
   </p>
 
-  <!-- centre cycling word -->
-  <div class="flex-1 flex items-center justify-center">
-    <p id="ls-word"
-       class="text-5xl md:text-7xl text-text-primary/80
-              transition-all duration-300 ease-out">
-      Design
-    </p>
-  </div>
-
-  <!-- bottom: counter + bar -->
-  <div class="pb-10 px-8 md:px-12">
-    <div class="flex justify-end mb-5">
-      <span id="ls-count"
-            class="text-6xl md:text-8xl font-bold text-text-primary tabular-nums">
-        0%
-      </span>
-    </div>
-    <div class="h-[3px] bg-white/5 rounded-full overflow-hidden" style="box-shadow:inset 0 0 0 1px rgba(255,255,255,.035)">
-      <div id="ls-bar"
-           class="h-full accent-gradient rounded-full origin-left"
-           style="transform:scaleX(0);
-                  box-shadow:0 0 8px rgba(137,170,204,.35);
-                  will-change:transform;">
+  <!-- centre search input -->
+  <div class="flex-1 flex items-center justify-center px-5">
+    <div id="ls-search" class="ls-search-wrap">
+      <div class="ls-search-box">
+        <div class="ls-search-field" aria-label="Search query">
+          <span id="ls-query"></span>
+        </div>
+        <button id="ls-search-button" class="ls-search-button" type="button" aria-label="Search Mimo's portfolio">
+          <span>Search</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m16.5 16.5 4 4"></path>
+          </svg>
+        </button>
       </div>
+      <svg class="ls-click-cursor" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M5.4 3.8 26.8 18.7c1.3.9.7 3-1 3.1l-8.6.5-4.6 6.7c-.9 1.3-3 .7-3.1-.9L4 5.4c-.3-1.3.5-2.2 1.4-1.6Z" fill="#050505" stroke="rgba(255,255,255,.9)" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
     </div>
   </div>
 </div>
 
 <!-- ══════════════════════════════════════════ MAIN PAGE ════ -->
-<div id="page" class="opacity-0 transition-opacity duration-700">
+<div id="page">
 
   <!-- ── NAVBAR ─────────────────────────────────────────────── -->
   <nav class="fixed top-0 left-0 right-0 z-50 grid items-center
@@ -3779,15 +4469,14 @@ body.project-modal-locked {
     <div class="relative max-w-[1360px] mx-auto px-6 md:px-10 lg:px-16">
       <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-10 md:mb-14">
         <div>
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-8 h-px bg-stroke"></div>
+          <div class="mb-4">
             <span class="text-xs text-muted uppercase tracking-[.3em]" data-i18n="components-label">组件系统</span>
           </div>
           <h2 class="text-4xl md:text-5xl font-bold text-text-primary mb-3" data-i18n="components-title">
             Input / Button Components
           </h2>
           <p class="text-sm text-muted max-w-xl leading-relaxed" data-i18n="components-desc">
-            CoinW 交易产品中的输入框与按钮组件状态预览，保留原始组件颜色与交互。
+            Interactive component states based on the Figma Input and Button components.
           </p>
         </div>
       </div>
@@ -3811,9 +4500,9 @@ body.project-modal-locked {
           function resize(){
             const available = shell.clientWidth || frameWidth;
             const isMobile = available < 640;
-            const targetWidth = isMobile ? available : frameWidth;
+            const targetWidth = available;
             const targetHeight = isMobile ? (Number(shell.dataset.mobileHeight) || 920) : frameHeight;
-            const scale = isMobile ? 1 : Math.min(1, available / frameWidth);
+            const scale = 1;
             shell.style.setProperty('--component-frame-width', targetWidth + 'px');
             shell.style.setProperty('--component-frame-height', targetHeight + 'px');
             shell.style.setProperty('--component-frame-scale', scale);
@@ -3885,7 +4574,7 @@ body.project-modal-locked {
           <div class="holo-track" id="holo-track">
 <div class="pcard otc" onclick="openProjectModal('otc')">
               <div class="pcard-header">
-                <span class="pcard-date">2025 · CoinW</span>
+                <span class="pcard-date">2026 · CoinW</span>
                 <span class="pcard-badge" data-i18n="card-otc-badge">P2P 场外</span>
               </div>
               <div class="pcard-banner">
@@ -3915,7 +4604,7 @@ body.project-modal-locked {
             </div>
 <div class="pcard copy" onclick="openProjectModal('copy')">
               <div class="pcard-header">
-                <span class="pcard-date">2025 · CoinW</span>
+                <span class="pcard-date">2026 · CoinW</span>
                 <span class="pcard-badge" data-i18n="card-copy-badge">跟单系统</span>
               </div>
               <div class="pcard-banner">
@@ -3945,7 +4634,7 @@ body.project-modal-locked {
             </div>
 <div class="pcard community" onclick="openProjectModal('community')">
               <div class="pcard-header">
-                <span class="pcard-date">2024 · CoinW</span>
+                <span class="pcard-date">2026 · CoinW</span>
                 <span class="pcard-badge" data-i18n="card-community-badge">社区改版</span>
               </div>
               <div class="pcard-banner">
@@ -3975,11 +4664,20 @@ body.project-modal-locked {
             </div>
 <div class="pcard landing" onclick="openLandingLightbox(0)">
               <div class="pcard-header">
-                <span class="pcard-date">2024 · CoinW</span>
+                <span class="pcard-date">2026 · CoinW</span>
                 <span class="pcard-badge" data-i18n="card-landing-badge">落地页</span>
               </div>
               <div class="pcard-banner">
-                <img src="assets/thumbnails/landing-pages.png" alt="落地页矩阵预览" loading="lazy" decoding="async" fetchpriority="low" />
+                <video
+                  data-src="assets/landing-page-matrix-banner.mp4"
+                  poster="assets/landing-page-matrix-banner-poster.jpg"
+                  type="video/mp4"
+                  aria-label="落地页矩阵预览"
+                  muted
+                  loop
+                  playsinline
+                  preload="none">
+                </video>
                 <div class="pcard-banner-ph">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="8.5" r="1.5"/></svg>
                   <span data-i18n="card-visual-placeholder">设计稿主视觉</span>
@@ -4070,7 +4768,7 @@ body.project-modal-locked {
                   <h4 class="text-sm font-semibold text-text-primary" data-i18n="exp1-role">UI 设计师</h4>
                   <p class="text-xs text-muted">CoinW · Legend Tech</p>
                 </div>
-                <span class="text-[11px] text-muted shrink-0 ml-4">2025.07 — 至今</span>
+                <span class="text-[11px] text-muted shrink-0 ml-4" data-i18n="exp1-date">2025.07 — 至今</span>
               </div>
               <ul class="text-xs text-muted leading-relaxed space-y-1 list-none">
                 <li data-i18n="exp1-li1">→ 主导落地页、OTC、跟单系统、社区四大模块全链路设计</li>
@@ -4155,6 +4853,23 @@ body.project-modal-locked {
     </div>
   </section>
 
+
+  <!-- ── 2024 ARCHIVE ───────────────────────────────────────────── -->
+  <section id="archive-2024" class="py-12 md:py-16">
+    <div class="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16">
+      <div class="archive-cta">
+        <div>
+          <div class="archive-cta-kicker">2024 Web3 Archive</div>
+          <h3 data-i18n="archive-title">2024 Web3 项目归档</h3>
+          <p data-i18n="archive-desc">
+            从单点 UI 交付扩展到 Web3 产品链路设计，覆盖交易、增长、社区与品牌系统。这里保留阶段性项目沉淀，不占用精选案例主线。
+          </p>
+        </div>
+        <button class="archive-open-btn" type="button" onclick="openArchive2024()" data-i18n="archive-open">查看归档 →</button>
+      </div>
+    </div>
+  </section>
+
   <!-- ── STATS ───────────────────────────────────────────────── -->
   <section id="stats" class="bg-bg py-16 md:py-20 border-t border-stroke">
     <div class="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16">
@@ -4178,20 +4893,8 @@ body.project-modal-locked {
   </section>
 
   <!-- ── JOURNAL (Design Thoughts) ─────────────────────────── -->
-  <section id="journal" class="bg-bg py-16 md:py-24 border-t border-stroke">
+  <section id="journal" class="bg-bg py-10 md:py-14 border-t border-stroke">
     <div class="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16">
-
-      <div class="journal-hd flex flex-col md:flex-row md:items-end md:justify-between mb-12
-                  opacity-0 translate-y-8">
-        <div>
-          <h2 class="text-4xl md:text-5xl font-light text-text-primary" data-i18n="journal-title">
-            About AI
-          </h2>
-        </div>
-        <span class="hidden md:inline-flex items-center gap-2 mt-4 text-xs uppercase tracking-[.22em] text-muted" data-i18n="journal-kicker">
-          Web3 / UX / Systems
-        </span>
-      </div>
 
       <div class="journal-bento je opacity-0 grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-4 md:gap-5 overflow-hidden rounded-[28px] bg-[#030404] p-3 md:p-5">
         <article class="relative min-h-[260px] overflow-hidden rounded-[22px] border border-white/10 bg-[#070b0a] p-5 text-white">
@@ -4201,12 +4904,9 @@ body.project-modal-locked {
                  radial-gradient(circle at 74% 76%, rgba(137,170,204,.13), transparent 34%),
                  linear-gradient(135deg, rgba(255,255,255,.055), transparent 50%);"></div>
           <div class="relative z-10 flex h-full flex-col justify-between">
-            <div>
-              <div class="text-[10px] font-bold uppercase tracking-[.26em] text-[#ccff00]/80" data-i18n="journal-ai-assisted">AI 辅助</div>
-              <h3 class="mt-5 text-[44px] font-bold leading-[.84] tracking-[-.08em]" data-i18n-html="journal-ai-title">
-                ABOUT<br>AI
-              </h3>
-            </div>
+            <h3 class="text-[44px] font-bold leading-[.84] tracking-[-.08em]" data-i18n-html="journal-ai-title">
+              关于 AI
+            </h3>
             <div class="relative z-20 space-y-3">
               <p class="max-w-[200px] text-xs font-medium leading-[1.85] text-white/68" data-i18n="journal-ai-desc">
                 用 AI 辅助研究、拆解复杂信息，并把想法转成可落地的产品界面。
@@ -4282,23 +4982,6 @@ body.project-modal-locked {
   </section>
 
   <!-- ── CONTACT / FOOTER ───────────────────────────────────── -->
-  <section id="footer-marquee" class="bg-bg overflow-hidden pb-12">
-    <div class="overflow-hidden border-y border-stroke py-6">
-      <div class="flex whitespace-nowrap animate-marquee" style="will-change:transform">
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
-        <span class="text-4xl md:text-6xl font-light text-muted/30 pr-16" data-i18n="footer-marquee">构建未来 •&nbsp;</span>
-      </div>
-    </div>
-  </section>
-
   <section id="contact" class="relative bg-bg pt-0 pb-8 md:pb-12 overflow-hidden
                                 border-t border-stroke">
 
@@ -4332,6 +5015,33 @@ body.project-modal-locked {
   <!-- scroll hint -->
   <div id="proj-modal-scroll-hint" class="hidden">
     <span>scroll ↓</span>
+  </div>
+</div>
+
+
+<!-- ═════════════════════════════════════ 2024 ARCHIVE MODAL ════ -->
+<div id="archive-modal" aria-hidden="true">
+  <div class="archive-shell" role="dialog" aria-modal="true" aria-labelledby="archive-modal-title">
+    <aside class="archive-side">
+      <div class="archive-side-title" id="archive-modal-title" data-i18n="archive-modal-title">2024 Web3 Archive</div>
+      <div class="archive-side-desc" data-i18n="archive-modal-desc">按能力主线整理旧作品，避免把 2026 精选案例打散。</div>
+      <div class="archive-group-list" id="archive-group-list"></div>
+    </aside>
+    <main class="archive-main">
+      <div class="archive-topbar">
+        <div>
+          <div class="archive-frame-title" id="archive-frame-title">交易链路</div>
+          <div class="archive-frame-meta" id="archive-frame-meta">Page 01 / 19</div>
+        </div>
+        <button class="archive-close" type="button" onclick="closeArchive2024()" aria-label="Close">✕</button>
+      </div>
+      <div class="archive-stage">
+        <button class="archive-nav-btn prev" type="button" onclick="prevArchiveFrame()" aria-label="Previous">‹</button>
+        <img id="archive-frame-image" src="assets/archive-2024/frame-03.png" alt="2024 archive page 01" loading="lazy" decoding="async">
+        <button class="archive-nav-btn next" type="button" onclick="nextArchiveFrame()" aria-label="Next">›</button>
+      </div>
+      <div class="archive-thumbs" id="archive-thumbs"></div>
+    </main>
   </div>
 </div>
 
@@ -4479,10 +5189,100 @@ body.project-modal-locked {
 (function(){
   const ls   = document.getElementById('loading');
   const page = document.getElementById('page');
-  const countEl = document.getElementById('ls-count');
-  const barEl   = document.getElementById('ls-bar');
-  const wordEl  = document.getElementById('ls-word');
   const labelEl = document.getElementById('ls-label');
+  const searchEl = document.getElementById('ls-search');
+  const queryEl = document.getElementById('ls-query');
+  const searchButton = document.getElementById('ls-search-button');
+  const query = "Mimo's portfolio";
+  let loadingFinished = false;
+  let pageInitialized = false;
+  let audioCtx;
+  let audioUnlocked = false;
+
+  function initPageOnce(){
+    if(pageInitialized) return;
+    pageInitialized = true;
+    initPage();
+  }
+
+  function ensureAudio(){
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if(!AudioContext) return null;
+    try {
+      audioCtx = audioCtx || new AudioContext();
+      audioUnlocked = audioCtx.state === 'running';
+      return audioCtx;
+    } catch(e) {
+      return null;
+    }
+  }
+
+  function emitTick(ctx, strength, mode = 'type'){
+    try {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const noise = ctx.createBufferSource();
+      const gain = ctx.createGain();
+      const noiseGain = ctx.createGain();
+      const duration = mode === 'search' ? 0.09 : 0.032;
+      const buffer = ctx.createBuffer(1, Math.max(1, Math.floor(ctx.sampleRate * 0.018)), ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for(let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+      noise.buffer = buffer;
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(mode === 'search' ? 560 : 900 + Math.random() * 260, now);
+      if(mode === 'search') osc.frequency.exponentialRampToValueAtTime(1120, now + 0.055);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime((mode === 'search' ? 0.075 : 0.055) * strength, now + 0.004);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      noiseGain.gain.setValueAtTime(0.0001, now);
+      noiseGain.gain.exponentialRampToValueAtTime((mode === 'search' ? 0.018 : 0.028) * strength, now + 0.003);
+      noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.018);
+      osc.connect(gain);
+      noise.connect(noiseGain);
+      gain.connect(ctx.destination);
+      noiseGain.connect(ctx.destination);
+      osc.start(now);
+      noise.start(now);
+      osc.stop(now + duration + 0.004);
+      noise.stop(now + 0.02);
+    } catch(e) {}
+  }
+
+  function playLoadingSound(mode = 'type', strength = 1){
+    const ctx = ensureAudio();
+    if(!ctx) return;
+    if(ctx.state === 'suspended'){
+      ctx.resume()
+        .then(()=>{ audioUnlocked = ctx.state === 'running'; })
+        .catch(()=>{});
+      return;
+    }
+    audioUnlocked = true;
+    emitTick(ctx, strength, mode);
+  }
+
+  function unlockAudioSilently(){
+    const ctx = ensureAudio();
+    if(!ctx || ctx.state !== 'suspended') return;
+    ctx.resume()
+      .then(()=>{ audioUnlocked = ctx.state === 'running'; })
+      .catch(()=>{});
+  }
+
+  ensureAudio();
+  ['pointerdown','keydown','touchstart'].forEach(type=>{
+    window.addEventListener(type, unlockAudioSilently, { once: true, passive: true });
+  });
+
+  function focusCursorOnButton(){
+    const wrapRect = searchEl.getBoundingClientRect();
+    const buttonRect = searchButton.getBoundingClientRect();
+    const x = buttonRect.left - wrapRect.left + buttonRect.width / 2 - 8;
+    const y = buttonRect.top - wrapRect.top + buttonRect.height / 2 - 8;
+    searchEl.style.setProperty('--ls-cursor-x', `${x}px`);
+    searchEl.style.setProperty('--ls-cursor-y', `${y}px`);
+  }
 
   // label entrance
   setTimeout(()=>{
@@ -4490,38 +5290,47 @@ body.project-modal-locked {
     labelEl.style.transform='translateY(0)';
   },120);
 
-  // cycling words
-  const words=['Design','Create','Inspire'];
-  let wi=0;
-  const wTimer=setInterval(()=>{
-    wi=(wi+1)%words.length;
-    wordEl.style.opacity='0';
-    wordEl.style.transform='translateY(16px)';
+  function finishLoading(){
+    if(loadingFinished) return;
+    loadingFinished = true;
+    initPageOnce();
     setTimeout(()=>{
-      wordEl.textContent=words[wi];
-      wordEl.style.opacity='1';
-      wordEl.style.transform='translateY(0)';
-    },200);
-  },900);
-
-  // Keep the intro brief so it never blocks access to the portfolio.
-  const dur=650, t0=performance.now();
-  function tick(now){
-    const pct=Math.min(1,(now-t0)/dur);
-    const n=Math.floor(pct*100);
-    countEl.innerHTML = n + '<span class="ls-percent">%</span>';
-    barEl.style.transform=`scaleX(${pct})`;
-    if(pct<1){ requestAnimationFrame(tick); return; }
-    clearInterval(wTimer);
-    setTimeout(()=>{
-      ls.classList.add('done');                  // loading screen fades out (0.6s)
+      ls.classList.add('done');
       setTimeout(()=>{
-        page.style.opacity='1';                  // page fades in AFTER loading screen starts fading
-        setTimeout(()=>{ ls.style.display='none'; initPage(); }, 450);
-      }, 120);
+        ls.style.display='none';
+      }, 520);
     },80);
   }
-  requestAnimationFrame(tick);
+
+  function triggerSearch(){
+    focusCursorOnButton();
+    searchEl.classList.add('is-clicking');
+    searchButton.setAttribute('aria-pressed','true');
+    playLoadingSound('search', 1);
+    setTimeout(finishLoading, 520);
+  }
+
+  searchButton.addEventListener('click', triggerSearch);
+
+  function typeQuery(index){
+    if(index > query.length){
+      setTimeout(triggerSearch, 280);
+      return;
+    }
+
+    queryEl.textContent = query.slice(0, index);
+    playLoadingSound('type', .85);
+    const char = query[index - 1] || '';
+    const delay = char === ' ' ? 120 : 48 + Math.random() * 74;
+    setTimeout(()=>typeQuery(index + 1), delay);
+  }
+
+  // Keep the intro brief while making the typing feel human.
+  setTimeout(()=>{
+    searchEl.classList.add('is-ready');
+    setTimeout(()=>typeQuery(1), 260);
+  },220);
+  setTimeout(initPageOnce, 900);
 })();
 
 // ── HLS Video helper ────────────────────────────────────────────
@@ -4537,7 +5346,7 @@ function initPage(){
   });
 
   if (!window.gsap || !window.ScrollTrigger) {
-    document.querySelectorAll('.works-hd,.about-l,.about-r,.stat-item,.journal-hd,.je,.proj-card').forEach(function(el) {
+    document.querySelectorAll('.works-hd,.about-l,.about-r,.archive-cta,.stat-item,.journal-hd,.je,.proj-card').forEach(function(el) {
       el.style.opacity = '1';
       el.style.transform = 'none';
     });
@@ -4568,11 +5377,7 @@ function initPage(){
     })
   );
 
-  // ── Journal header + entries
-  ScrollTrigger.create({
-    trigger:'.journal-hd', start:'top 80%',
-    onEnter:()=>gsap.to('.journal-hd',{opacity:1,y:0,duration:.9,ease:'power2.out'})
-  });
+  // ── Journal entries
   document.querySelectorAll('.je').forEach((el,i)=>
     ScrollTrigger.create({
       trigger:el, start:'top 90%',
@@ -4599,7 +5404,7 @@ function initPage(){
 const PROJECT_DATA = {
   otc: {
     title: 'OTC P2P 重構 1.0',
-    eyebrow: '2025 · CoinW · P2P Reconstruction',
+    eyebrow: '2026 · CoinW · P2P Reconstruction',
     accentColor: '#89AACC',
     bannerGradient: 'linear-gradient(145deg,#060e1c 0%,#0b1c32 60%,#080f1a 100%)',
     glowColor: 'rgba(137,170,204,0.22)',
@@ -4633,7 +5438,7 @@ const PROJECT_DATA = {
 
   copy: {
     title: '跟单交易系统',
-    eyebrow: '2025 · CoinW · Copy Trading',
+    eyebrow: '2026 · CoinW · Copy Trading',
     accentColor: '#C9AAF0',
     bannerGradient: 'linear-gradient(145deg,#0e0820 0%,#1a1035 60%,#0c0618 100%)',
     glowColor: 'rgba(201,170,240,0.22)',
@@ -4679,7 +5484,7 @@ const PROJECT_DATA = {
   },
   community: {
     title: '社区功能改版',
-    eyebrow: '2025 · CoinW · Community',
+    eyebrow: '2026 · CoinW · Community',
     accentColor: '#5ed29c',
     bannerGradient: 'linear-gradient(145deg,#041410 0%,#0b2418 60%,#071810 100%)',
     glowColor: 'rgba(94,210,156,0.22)',
@@ -4725,7 +5530,7 @@ const PROJECT_DATA = {
   },
   landing: {
     title: '落地页矩阵',
-    eyebrow: '2025 · CoinW · Landing Page',
+    eyebrow: '2026 · CoinW · Landing Page',
     accentColor: '#CCAA89',
     bannerGradient: 'linear-gradient(145deg,#181006 0%,#261c08 60%,#181208 100%)',
     glowColor: 'rgba(204,170,137,0.22)',
@@ -4760,7 +5565,7 @@ const PROJECT_DATA = {
   // ── Design System 2.0 ───────────────────────────────────────────
   foundations: {
     title: '设计基础 · Foundations',
-    eyebrow: '2025 · CoinW Design System 2.0',
+    eyebrow: '2026 · CoinW Design System 2.0',
     accentColor: '#9B8FFF',
     bannerGradient: 'linear-gradient(145deg,#0e0b28 0%,#1b1655 55%,#100c22 100%)',
     glowColor: 'rgba(123,111,255,0.26)',
@@ -4794,7 +5599,7 @@ const PROJECT_DATA = {
 
   webcomponents: {
     title: 'Web 全局组件库',
-    eyebrow: '2025 · CoinW Design System 2.0 · Web',
+    eyebrow: '2026 · CoinW Design System 2.0 · Web',
     accentColor: '#4C8EF7',
     bannerGradient: 'linear-gradient(145deg,#080e1c 0%,#0d1d3a 55%,#07101a 100%)',
     glowColor: 'rgba(76,142,247,0.26)',
@@ -4828,7 +5633,7 @@ const PROJECT_DATA = {
 
   appcomponents: {
     title: 'App 组件库',
-    eyebrow: '2025 · CoinW Design System 2.0 · App',
+    eyebrow: '2026 · CoinW Design System 2.0 · App',
     accentColor: '#A48FFF',
     bannerGradient: 'linear-gradient(145deg,#0f0c20 0%,#1c1640 55%,#0b0918 100%)',
     glowColor: 'rgba(164,143,255,0.26)',
@@ -5067,25 +5872,25 @@ const PROJECT_DATA = {
 const PROJECT_ZH_OVERRIDES = {
   otc: {
     title: 'OTC P2P 重构 1.0',
-    eyebrow: '2025 · CoinW · P2P 重构',
+    eyebrow: '2026 · CoinW · P2P 重构',
     role: '主导 UI 设计师',
     platform: 'App · iOS 与 Android',
     tags: ['P2P 重构','聚合面板','流程优化','组件系统','App 设计'],
   },
   copy: {
-    eyebrow: '2025 · CoinW · 跟单交易',
+    eyebrow: '2026 · CoinW · 跟单交易',
     role: '主导 UI 设计师',
     platform: 'PC 与移动端',
     tags: ['跟单交易','数据层级','原型设计','Web3 交易','0→1 产品'],
   },
   community: {
-    eyebrow: '2024 · CoinW · 社区改版',
+    eyebrow: '2026 · CoinW · 社区改版',
     role: '主导 UI 设计师',
     platform: 'Web 与 App',
     tags: ['社区增长','内容结构','任务系统','移动端','视觉改版'],
   },
   landing: {
-    eyebrow: '2024 · CoinW · 落地页矩阵',
+    eyebrow: '2026 · CoinW · 落地页矩阵',
     role: '主导 UI 设计师',
     platform: 'Web 多语言',
     tags: ['A/B 测试','转化优化','多语言','营销设计','4 层框架'],
@@ -5113,7 +5918,7 @@ const PROJECT_ZH_OVERRIDES = {
 const PROJECT_EN_OVERRIDES = {
   otc: {
     title: 'OTC P2P Redesign 1.0',
-    eyebrow: '2025 · CoinW · P2P Reconstruction',
+    eyebrow: '2026 · CoinW · P2P Reconstruction',
     role: 'Lead UI Designer',
     duration: 'First Batch Design Delivery',
     platform: 'App · iOS & Android',
@@ -5137,7 +5942,7 @@ const PROJECT_EN_OVERRIDES = {
   },
   copy: {
     title: 'Copy Trading System',
-    eyebrow: '2025 · CoinW · Copy Trading',
+    eyebrow: '2026 · CoinW · Copy Trading',
     role: 'Lead UI Designer',
     duration: '5 months',
     platform: 'PC & Mobile',
@@ -5174,7 +5979,7 @@ const PROJECT_EN_OVERRIDES = {
   },
   community: {
     title: 'Community Redesign',
-    eyebrow: '2024 · CoinW · Community Redesign',
+    eyebrow: '2026 · CoinW · Community Redesign',
     role: 'Lead UI Designer',
     duration: '3-month iteration',
     platform: 'Web & App',
@@ -5210,7 +6015,7 @@ const PROJECT_EN_OVERRIDES = {
   },
   landing: {
     title: 'Landing Page Matrix',
-    eyebrow: '2024 · CoinW · Landing Matrix',
+    eyebrow: '2026 · CoinW · Landing Matrix',
     role: 'Lead UI Designer',
     duration: 'Ongoing iteration',
     platform: 'Multilingual Web',
@@ -5268,6 +6073,44 @@ function getProjectDisplayData(key) {
 // ── Project Modal ───────────────────────────────────────────────
 /* ── OTC P2P Rich Modal Body ── */
 const OTC_BODY_HTML = `
+<div class='otc-trust-showcase'>
+ <div class='pm-tab-heading' style='margin-bottom:0'>
+  <span style='font-size:12px;font-weight:700;color:#89AACC;letter-spacing:.12em;text-transform:uppercase'>信任履约系统</span>
+ </div>
+ <div>
+  <div class='pm-ey'>Resume Supplement · OTC Product Thinking</div>
+  <h2 class='otc-trust-title'>OTC P2P 重构 · 信任履约设计</h2>
+  <p class='otc-trust-lead'>这次重构的重点不是单页优化，而是让用户在交易履约阶段看清资金状态、责任方和异常处理路径。</p>
+ </div>
+ <div class='otc-trust-grid'>
+  <div class='otc-trust-card is-compact'><b>价格不确定</b><span>报价、Gas、市场深度会影响最终到账。</span></div>
+  <div class='otc-trust-card is-compact'><b>对手方不确定</b><span>用户需要快速判断商家是否可信、是否在线。</span></div>
+  <div class='otc-trust-card is-compact'><b>结算状态不确定</b><span>争议往往来自“不知道钱在哪、谁处理”。</span></div>
+ </div>
+ <div class='pm-div'></div>
+ <div class='pm-st' style='font-size:22px;margin-bottom:0'>把交易风险转化为界面问题</div>
+ <div class='otc-trust-matrix'>
+  <div class='otc-trust-row otc-trust-head'>
+   <div class='otc-trust-cell'>风险</div><div class='otc-trust-cell'>用户担心</div><div class='otc-trust-cell'>界面应该回答</div><div class='otc-trust-cell'>设计策略</div>
+  </div>
+  <div class='otc-trust-row'>
+   <div class='otc-trust-cell'><strong>价格波动</strong></div><div class='otc-trust-cell'>到账是否减少</div><div class='otc-trust-cell'>报价是否有效</div><div class='otc-trust-cell'>报价有效期、预计到账、价格刷新</div>
+  </div>
+  <div class='otc-trust-row'>
+   <div class='otc-trust-cell'><strong>对手方风险</strong></div><div class='otc-trust-cell'>付款后是否放币</div><div class='otc-trust-cell'>商家是否可信</div><div class='otc-trust-cell'>KYC、成单率、放币速度、在线状态前置</div>
+  </div>
+  <div class='otc-trust-row'>
+   <div class='otc-trust-cell'><strong>结算争议</strong></div><div class='otc-trust-cell'>资金是否卡住</div><div class='otc-trust-cell'>谁负责下一步</div><div class='otc-trust-cell'>状态说明、责任方、倒计时、申诉入口</div>
+  </div>
+ </div>
+ <div class='otc-trust-grid'>
+  <div class='otc-trust-card'><b>状态可解释</b><span>把待付款、待放币、申诉中、已完成等状态讲清楚。</span></div>
+  <div class='otc-trust-card'><b>责任可归属</b><span>明确下一步由买方、卖方、平台还是链上网络处理。</span></div>
+  <div class='otc-trust-card'><b>异常可恢复</b><span>超时、凭证缺失、网络拥堵时给出可执行动作。</span></div>
+ </div>
+ <div class='otc-trust-quote'>核心价值：把订单详情从“信息汇总页”升级为“交易履约控制台”，降低大额交易中的不确定性和结算争议。</div>
+</div>
+
 <!-- ═══════════════════════ OVERVIEW ═══════════════════════ -->
 <div style='margin-bottom:6px'>
  <div class='pm-ey'>P2P 重构 1.0 · 五期需求总览</div>
@@ -6281,6 +7124,92 @@ const OTC_BODY_HTML = `
 function getOtcBodyHtml() {
   if (_lang !== 'en') return OTC_BODY_HTML;
   const replacements = [
+    ['信任履约系统', 'Trust Fulfillment'],
+    ['OTC P2P 重构 · 信任履约设计', 'OTC P2P Redesign · Trust Fulfillment Design'],
+    ['这次重构的重点不是单页优化，而是让用户在交易履约阶段看清资金状态、责任方和异常处理路径。', 'The key was not single-page polish, but helping users see fund status, responsibility, and recovery paths during trade fulfillment.'],
+    ['这部分补充说明 OTC P2P 重构的核心判断：它不只是页面改版，而是围绕交易履约阶段建立信任、解释风险，并给用户清晰的异常恢复路径。', 'This section explains the core thinking behind the OTC P2P redesign: it is not just a page update, but a trust, risk explanation, and recovery system for the transaction fulfillment stage.'],
+    ['价格不确定', 'Price uncertainty'],
+    ['报价、Gas、市场深度会影响最终到账。', 'Quote, gas, and market depth affect the final received amount.'],
+    ['从询价到付款存在时间差，价格、Gas、市场深度变化都会影响实际成交结果。', 'There is a time gap between quote and payment; price, gas, and market depth can all affect the final result.'],
+    ['对手方不确定', 'Counterparty uncertainty'],
+    ['用户需要快速判断商家是否可信、是否在线。', 'Users need to quickly judge whether the merchant is trustworthy and online.'],
+    ['用户不只比较价格，也会判断对方是否可靠、是否在线、是否有足够履约记录。', 'Users compare price, but also judge whether the counterparty is reliable, online, and backed by enough fulfillment history.'],
+    ['结算状态不确定', 'Settlement uncertainty'],
+    ['争议往往来自“不知道钱在哪、谁处理”。', 'Disputes often come from not knowing where the money is or who handles it.'],
+    ['最容易产生争议的不是失败，而是用户不知道钱在哪、下一步该谁处理。', 'Disputes often start when users do not know where the money is or who should act next.'],
+    ['把交易风险转化为界面问题', 'Turn trading risks into interface problems'],
+    ['风险', 'Risk'],
+    ['用户担心', 'User concern'],
+    ['界面应该回答', 'Interface answer'],
+    ['设计策略', 'Design strategy'],
+    ['价格波动', 'Price volatility'],
+    ['到账是否减少', 'Whether received amount decreases'],
+    ['最终到账是否减少', 'Whether the final received amount decreases'],
+    ['报价是否有效', 'Whether the quote is valid'],
+    ['报价是否仍有效，滑点是否超限', 'Whether the quote is still valid and slippage is within limit'],
+    ['报价有效期、预计到账、价格刷新', 'Quote validity, estimated received amount, and price refresh'],
+    ['报价有效期、预计到账、滑点阈值、价格刷新', 'Quote validity, estimated received amount, slippage threshold, and price refresh'],
+    ['对手方风险', 'Counterparty risk'],
+    ['付款后是否放币', 'Whether crypto is released after payment'],
+    ['付款后对方是否放币', 'Whether the counterparty releases crypto after payment'],
+    ['商家是否可信', 'Whether the merchant is trustworthy'],
+    ['商家是否可信，响应是否稳定', 'Whether the merchant is trustworthy and responsive'],
+    ['KYC、成单率、放币速度、在线状态前置', 'KYC, completion rate, release speed, and online status surfaced earlier'],
+    ['KYC、成单率、平均放币时间、在线状态前置', 'KYC, completion rate, average release time, and online status surfaced earlier'],
+    ['结算争议', 'Settlement dispute'],
+    ['资金是否卡住', 'Whether funds are stuck'],
+    ['资金是否卡住，下一步谁负责', 'Whether funds are stuck and who owns the next step'],
+    ['谁负责下一步', 'Who owns the next step'],
+    ['当前状态、责任方、超时后的处理路径', 'Current status, responsible party, and timeout handling path'],
+    ['状态说明、责任方、倒计时、申诉入口', 'Status explanation, owner, countdown, and appeal entry'],
+    ['状态机、责任方提示、倒计时、申诉证据链', 'State machine, responsibility cues, countdown, and appeal evidence chain'],
+    ['状态可解释', 'Explainable status'],
+    ['把待付款、待放币、申诉中、已完成等状态讲清楚。', 'Clarify states such as pending payment, pending release, appeal, and completed.'],
+    ['明确区分待付款、待放币、等待确认、申诉中、已完成、已取消，避免用笼统的“处理中”掩盖风险。', 'Clearly separate pending payment, pending release, confirming, appeal, completed, and cancelled states instead of hiding risk behind a vague processing state.'],
+    ['责任可归属', 'Clear responsibility'],
+    ['明确下一步由买方、卖方、平台还是链上网络处理。', 'Clarify whether the buyer, seller, platform, or network owns the next step.'],
+    ['每个阶段都说明下一步动作属于买方、卖方、平台还是链上网络，减少买卖双方互相扯皮。', 'Each stage clarifies whether the buyer, seller, platform, or network owns the next action.'],
+    ['异常可恢复', 'Recoverable exceptions'],
+    ['超时、凭证缺失、网络拥堵时给出可执行动作。', 'Give executable actions for timeout, missing proof, and network congestion.'],
+    ['超时、凭证缺失、网络拥堵、付款账户错误时，给出可执行动作，而不是只提供客服入口。', 'Timeouts, missing proof, network congestion, and wrong payment accounts need executable recovery actions, not just a support entry.'],
+    ['待询价', 'Quote pending'],
+    ['确认金额、报价、支付方式、价格有效期。', 'Confirm amount, quote, payment method, and quote validity.'],
+    ['买方确认', 'Buyer confirmation'],
+    ['买方确认付款意图，系统保留交易上下文。', 'The buyer confirms payment intent while the system keeps the trade context.'],
+    ['卖方确认', 'Seller confirmation'],
+    ['展示卖方响应状态和履约进度。', 'Show seller response status and fulfillment progress.'],
+    ['等待结算', 'Settlement pending'],
+    ['进入付款、放币或链上确认阶段。', 'Enter payment, release, or on-chain confirmation.'],
+    ['完成 / 异常', 'Completed / Exception'],
+    ['完成后说明资产去向；异常时提供恢复路径。', 'Explain where assets went after completion; provide recovery paths for exceptions.'],
+    ['用状态机梳理交易履约过程', 'Map fulfillment through a state machine'],
+    ['示例异常：付款超时、卖方迟迟不放币、Tx Hash 查不到、RPC 拥堵、凭证缺失。每个异常都需要对应解释、责任方和用户动作。', 'Example exceptions: payment timeout, delayed release, missing Tx Hash, RPC congestion, or missing proof. Each exception needs an explanation, responsible party, and user action.'],
+    ['基于这套理解可沉淀的设计输出', 'Design outputs based on this framework'],
+    ['可沉淀输出', 'Reusable outputs'],
+    ['多步交易状态机', 'Multi-step trade state machine'],
+    ['展示状态流转、倒计时、责任方和异常回滚。', 'Show state transitions, countdowns, responsible parties, and exception rollback.'],
+    ['滑点与 Gas 模拟器', 'Slippage and gas simulator'],
+    ['当风险超过阈值时，按钮从 CTA 变成风控闸门。', 'When risk exceeds the threshold, the CTA becomes a risk-control gate.'],
+    ['对手方信誉看板', 'Counterparty trust dashboard'],
+    ['KYC、成单率、放币速度、纠纷记录前置到交易决策。', 'KYC, completion rate, release speed, and dispute history are surfaced before the trade decision.'],
+    ['异常态交互规范', 'Exception-state interaction rules'],
+    ['定义 KYC 超时、Tx 查不到、RPC 拥堵等边界情况。', 'Define edge cases such as KYC timeout, missing transaction, and RPC congestion.'],
+    ['从页面优化到交易履约系统设计', 'From page optimization to fulfillment-system design'],
+    ['传统页面优化视角', 'Traditional page optimization view'],
+    ['优化订单详情页的信息层级', 'Improve order-detail information hierarchy'],
+    ['减少付款与放币过程中的跳转', 'Reduce jumps during payment and release'],
+    ['统一商家信息、倒计时和操作入口', 'Unify merchant info, countdown, and action entries'],
+    ['交易履约系统视角', 'Fulfillment-system view'],
+    ['拆解履约状态、责任方与异常路径', 'Break down fulfillment states, responsibility, and exception paths'],
+    ['让用户明确当前资金状态和下一步责任人', 'Clarify fund status and who owns the next step'],
+    ['用状态解释和风控提示降低结算争议', 'Reduce settlement disputes through status explanation and risk cues'],
+    ['核心设计价值', 'Core design value'],
+    ['核心价值：把订单详情从“信息汇总页”升级为“交易履约控制台”，降低大额交易中的不确定性和结算争议。', 'Core value: upgrade order detail from an information summary into a trade fulfillment console, reducing uncertainty and settlement disputes in high-value trades.'],
+    ['将订单详情页从“信息汇总页”升级为“交易履约控制台”，帮助用户理解资金状态、责任方与下一步动作。', 'Upgrade order detail from an information summary into a fulfillment console that explains fund status, responsibility, and next actions.'],
+    ['风控交互目标', 'Risk-control interaction goal'],
+    ['用状态解释、责任归属和异常恢复，降低大额交易中的不确定性和结算争议。', 'Reduce uncertainty and settlement disputes in high-value trades through status explanation, ownership, and recovery.'],
+    ['这部分用于补充说明我在 OTC 模块中的设计判断：我关注的不只是页面改版，而是交易履约阶段的信任、风控与异常恢复体验。', 'This supplement clarifies my design judgment in the OTC module: the focus is not only page redesign, but trust, risk control, and exception recovery during trade fulfillment.'],
+    ['我将 OTC 订单详情从“下单后的信息页”升级为“交易履约控制台”：通过状态解释、责任归属和异常恢复，降低用户在大额交易中的不确定性。', 'I reframed OTC order detail from a post-order information page into a trade fulfillment console: status explanation, responsibility, and recovery reduce uncertainty in high-value trades.'],
     ['P2P 重构 1.0 · 五期需求总览', 'P2P Redesign 1.0 · Five-phase Scope'],
     ['旧版 vs 新版 · P2P 交易链路全面升级', 'Legacy vs New · Full P2P Trading Flow Upgrade'],
     ['下单交易链路优化', 'Order Flow Optimization'],
@@ -6336,6 +7265,7 @@ function getOtcBodyHtml() {
     ['交易提醒', 'Trading reminder'],
     ['如您同意CoinW P2P条款即接受服务声明', 'By agreeing to CoinW P2P terms, you accept the service statement.'],
     ['0手续费购买 USDT', 'Buy USDT with zero fees'],
+    ['② 购买页（填写金额）', '② Buy Page · Enter Amount'],
     ['② Buy Page（填写金额）', '② Buy Page · Enter Amount'],
     ['② 出售页', '② Sell Page'],
     ['注册时间 2022/08/25', 'Registered on 2022/08/25'],
@@ -6377,6 +7307,8 @@ function getOtcBodyHtml() {
     ['聊天', 'Chat'],
     ['我已付款', 'I have paid'],
     ['确认出售', 'Confirm sell'],
+    ['④ 订单详情（倒计时）', '④ Order Detail · Countdown'],
+    ['④ 订单详情（等待付款）', '④ Order Detail · Waiting for Payment'],
     ['④ Order Detail（倒计时）', '④ Order Detail · Countdown'],
     ['④ Order Detail（等待付款）', '④ Order Detail · Waiting for Payment'],
     ['等待买家付款', 'Waiting for buyer payment'],
@@ -6559,7 +7491,9 @@ function getOtcBodyHtml() {
     ['主界面 / Buy Page / Order Detail / 交易完成全面重设计，核心变化：Order Detail从两步合并为一步，收款Account前置，主 CTA 语义从「去支付」改为「提醒放币」。', 'The main page, Buy Page, Order Detail, and Completion Page were redesigned end to end. The key shift: Order Detail was merged from two steps into one, payment account information was moved forward, and the primary CTA changed from “Pay” to “Remind to release”.'],
     ['五期需求的本质是一次「信任体系重建」。Order Detail合并减少了用户在关键付款时刻的页面跳转焦虑；神盾认证贯穿全程持续强化可信感；置顶 + 折扣为平台商业化提供支撑。每一步改动都在回答同一个问题：', 'At its core, the five-phase scope rebuilt the trust system. Merging Order Detail reduced jump anxiety at the critical payment moment; merchant verification reinforced credibility throughout the path; pinned and discount ads supported platform commercialization. Every change answers one question:']
   ];
-  return replacements.reduce((html, pair) => html.split(pair[0]).join(pair[1]), OTC_BODY_HTML);
+  return replacements
+    .sort((a, b) => b[0].length - a[0].length)
+    .reduce((html, pair) => html.split(pair[0]).join(pair[1]), OTC_BODY_HTML);
 }
 
 function normalizeModalScreenshots(container) {
@@ -6590,18 +7524,72 @@ function normalizeModalScreenshots(container) {
   });
 }
 
+function hydrateModalImages(card) {
+  const imgs = Array.from(card.querySelectorAll('img[data-modal-key], img[data-modal-src]'));
+  if (!imgs.length) return;
+
+  const load = (img) => {
+    if (!img || img.dataset.loaded === '1') return;
+    img.dataset.loaded = '1';
+    img.src = (window.__modalImageStore && window.__modalImageStore[img.dataset.modalKey]) || img.dataset.modalSrc;
+    img.removeAttribute('data-modal-key');
+    img.removeAttribute('data-modal-src');
+  };
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      imgs.slice(0, 2).forEach(load);
+    });
+  });
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        load(entry.target);
+        io.unobserve(entry.target);
+      });
+    }, {
+      root: card,
+      rootMargin: '640px 0px'
+    });
+    imgs.slice(2).forEach((img) => io.observe(img));
+    return;
+  }
+
+  requestAnimationFrame(() => imgs.slice(2).forEach(load));
+}
+
+function clearModalSectionTabs() {
+  document.querySelectorAll('.pm-section-tabs').forEach((nav) => nav.remove());
+}
+
+function clearProjectModalContent() {
+  clearModalSectionTabs();
+  const hdWrapEl = document.getElementById('proj-modal-hd-wrap');
+  const cardEl = document.getElementById('proj-modal-card');
+  if (hdWrapEl) hdWrapEl.innerHTML = '';
+  if (cardEl) {
+    cardEl.innerHTML = '';
+    cardEl.style.paddingTop = '';
+  }
+}
+
 function setupModalSectionTabs(card) {
+  clearModalSectionTabs();
   const body = card.querySelector('#proj-modal-body');
   const hdWrap = document.getElementById('proj-modal-hd-wrap');
   if (!body || !hdWrap) return null;
 
   const tabTitles = _lang === 'en'
     ? [
+      'Trust Fulfillment',
       'P2P Main Page', 'Buy Page', 'Order Detail', 'Completion Page',
       'Pinned & Discount Ads · Growth Exposure',
       'Merchant Rest Mode · New Operating Status'
     ]
     : [
+      '信任履约系统',
       'P2P 主界面', '购买页', '订单详情', '交易完成页',
       '置顶与优惠广告 · 增长曝光工具',
       '商家休息模式 · 新增营业状态'
@@ -6695,32 +7683,25 @@ function lockProjectPageScroll() {
   projectScrollLock.locked = true;
   document.documentElement.classList.add('project-modal-locked');
   document.body.classList.add('project-modal-locked');
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${projectScrollLock.y}px`;
-  document.body.style.left = '0';
-  document.body.style.right = '0';
-  document.body.style.width = '100%';
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
 }
 
 function unlockProjectPageScroll() {
   if (!projectScrollLock.locked) return;
-  const y = projectScrollLock.y;
   projectScrollLock.locked = false;
   document.documentElement.classList.remove('project-modal-locked');
   document.body.classList.remove('project-modal-locked');
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.right = '';
-  document.body.style.width = '';
+  document.documentElement.style.overflow = '';
   document.body.style.overflow = '';
-  window.scrollTo(0, y);
 }
 
 window.openProjectModal = function(key) {
   window.__currentProjectKey = key;
   const data = getProjectDisplayData(key);
   if (!data) return;
+  clearModalSectionTabs();
+  window.__modalImageStore = {};
   const modalLabels = _lang === 'en'
     ? { screenshots:'Screenshots', overview:'Overview', challenge:'Core Challenge', process:'Design Process', highlights:'Highlights', results:'Key Results', insight:'Design Insight' }
     : { screenshots:'设计截图', overview:'项目背景', challenge:'核心挑战', process:'设计过程', highlights:'设计亮点', results:'核心数据', insight:'设计洞察' };
@@ -6728,6 +7709,50 @@ window.openProjectModal = function(key) {
   const modal  = document.getElementById('proj-modal');
   const card   = document.getElementById('proj-modal-card');
   const hdWrap = document.getElementById('proj-modal-hd-wrap');
+
+  const renderToken = `${key}-${Date.now()}`;
+  window.__modalRenderToken = renderToken;
+  window.__modalCleanupToken = '';
+  modal.classList.remove('closing');
+  modal.classList.add('open');
+  window.__projectModalOpen = true;
+  card.scrollTop = 0;
+  card.style.paddingTop = '';
+  lockProjectPageScroll();
+  if (window.setGhostMode) window.setGhostMode('minimal');
+  hdWrap.innerHTML = `
+    <div class="modal-sticky-hd" id="modal-sticky-hd">
+      <p class="modal-hd-eyebrow" style="color:${data.accentColor};opacity:.85">${data.eyebrow}</p>
+      <h2 class="modal-hd-title">${data.title}</h2>
+      <button id="proj-modal-close" onclick="closeProjectModal()" aria-label="Close project">✕</button>
+    </div>`;
+  card.innerHTML = `<div id="proj-modal-body" style="min-height:100vh;padding:calc(72px + var(--modal-px)) var(--modal-px) var(--modal-px);display:grid;place-items:center">
+    <div style="width:44px;height:44px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)"></div>
+  </div>`;
+  const hint = document.getElementById('proj-modal-scroll-hint');
+  if (hint) hint.classList.add('hidden');
+  card.onscroll = () => {
+    const stickyHd = document.getElementById('modal-sticky-hd');
+    if (stickyHd) stickyHd.classList.toggle('scrolled', card.scrollTop > 40);
+  };
+  modal.onclick = (e) => { if (e.target === modal) closeProjectModal(); };
+  modal.onwheel = (e) => {
+    if (!e.target.closest('#proj-modal-card')) e.preventDefault();
+  };
+  modal.ontouchmove = (e) => {
+    if (!e.target.closest('#proj-modal-card')) e.preventDefault();
+  };
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      if (window.__modalRenderToken !== renderToken || !modal.classList.contains('open') || modal.classList.contains('closing')) return;
+      renderProjectModalContent();
+    }, 420);
+  });
+  return;
+
+  function renderProjectModalContent() {
+  if (window.__modalRenderToken !== renderToken || !modal.classList.contains('open') || modal.classList.contains('closing')) return;
+  window.__modalImageStore = {};
 
   const sectionLabel = (text) =>
     `<p style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
@@ -6789,9 +7814,14 @@ window.openProjectModal = function(key) {
       <p style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
                 color:rgba(255,255,255,0.45);margin:0 0 16px">${modalLabels.screenshots}</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
-        ${data.images.map(img => `
+        ${data.images.map((img, idx) => {
+          const imageKey = `project-${key}-${idx}`;
+          if (img.src) window.__modalImageStore[imageKey] = img.src;
+          return `
           <div style="border-radius:16px;overflow:hidden;aspect-ratio:375/812;position:relative;
-                      background:${img.src ? `url('${img.src}') center top / cover no-repeat` : img.bg}">
+                      background:${img.src ? 'rgba(255,255,255,0.025)' : img.bg}">
+            ${img.src ? `<img data-modal-key="${imageKey}" alt="${img.label || data.title}" loading="lazy" decoding="async"
+                         style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;display:block">` : ''}
             ${!img.src ? `<div style="position:absolute;inset:0;
                         background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),
                           linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);
@@ -6799,7 +7829,8 @@ window.openProjectModal = function(key) {
             ${img.label ? `<div style="position:absolute;bottom:0;left:0;right:0;
                            padding:12px 16px;background:linear-gradient(transparent,rgba(0,0,0,0.75));
                            font-size:11px;font-weight:500;color:rgba(255,255,255,0.7);letter-spacing:.03em">${img.label}</div>` : ''}
-          </div>`).join('')}
+          </div>`;
+        }).join('')}
       </div>
     </div>` : ''}
 
@@ -8113,10 +9144,8 @@ window.openProjectModal = function(key) {
   }
 
 
-  normalizeModalScreenshots(card);
-  const sectionTabs = setupModalSectionTabs(card);
-
   // open modal — card is the scroll container
+  let sectionTabs = null;
   modal.classList.remove('closing');
   modal.classList.add('open');
   window.__projectModalOpen = true;
@@ -8124,8 +9153,12 @@ window.openProjectModal = function(key) {
   lockProjectPageScroll();
   if (window.setGhostMode) window.setGhostMode('minimal');
 
-  // measure full header height, lock card padding-top — never changes again (no layout shift)
   requestAnimationFrame(() => {
+    if (!modal.classList.contains('open') || modal.classList.contains('closing')) return;
+    hydrateModalImages(card);
+    normalizeModalScreenshots(card);
+    sectionTabs = setupModalSectionTabs(card);
+    // measure full header height, lock card padding-top — never changes again (no layout shift)
     const hd = document.getElementById('modal-sticky-hd');
     if (hd) card.style.paddingTop = hd.offsetHeight + 'px';
   });
@@ -8149,6 +9182,7 @@ window.openProjectModal = function(key) {
   modal.ontouchmove = (e) => {
     if (!e.target.closest('#proj-modal-card')) e.preventDefault();
   };
+  }
 };
 
 window.closeProjectModal = function() {
@@ -8162,17 +9196,43 @@ window.closeProjectModal = function() {
 
   // Let the sheet leave downward without leaving a black overlay behind.
   modal.classList.add('closing');
-  setTimeout(() => {
+  clearModalSectionTabs();
+  const finishClose = () => {
+    const cleanupToken = `${Date.now()}`;
     modal.classList.remove('open', 'closing');
     card.style.paddingTop = '';
     card.onscroll = null;
-    const hdWrapEl = document.getElementById('proj-modal-hd-wrap');
-    if (hdWrapEl) hdWrapEl.innerHTML = '';
-    unlockProjectPageScroll();
     modal.onwheel = null;
     modal.ontouchmove = null;
     if (window.setGhostMode) window.setGhostMode('full');
-  }, 280);
+    window.__modalRenderToken = '';
+    window.__modalImageStore = {};
+    window.__modalCleanupToken = cleanupToken;
+    requestAnimationFrame(() => {
+      if (window.__modalCleanupToken === cleanupToken && !modal.classList.contains('open')) {
+        unlockProjectPageScroll();
+      }
+    });
+    const cleanup = () => {
+      if (window.__modalCleanupToken !== cleanupToken || modal.classList.contains('open')) return;
+      clearProjectModalContent();
+      window.__modalCleanupToken = '';
+    };
+    if ('requestIdleCallback' in window) requestIdleCallback(cleanup, { timeout: 1200 });
+    else setTimeout(cleanup, 240);
+  };
+
+  const onEnd = (e) => {
+    if (e.target === card && e.propertyName === 'transform') {
+      card.removeEventListener('transitionend', onEnd);
+      finishClose();
+    }
+  };
+  card.addEventListener('transitionend', onEnd);
+  setTimeout(() => {
+    card.removeEventListener('transitionend', onEnd);
+    if (modal.classList.contains('closing')) finishClose();
+  }, 420);
 };
 
 document.addEventListener('keydown', e => {
@@ -8194,8 +9254,8 @@ document.addEventListener('keydown', e => {
   const interactiveSelector = 'a, button, [role="button"], input, select, textarea, label, [href], .proj-card, .pcard';
 
   const spring = {
-    damping: 45,
-    stiffness: 400,
+    damping: 62,
+    stiffness: 720,
     mass: 1,
     restDelta: 0.001
   };
@@ -8219,6 +9279,7 @@ document.addEventListener('keydown', e => {
     lastX: 0,
     lastY: 0,
     lastTime: Date.now(),
+    hasPointer: false,
     raf: 0,
     scaleTimer: null
   };
@@ -8256,7 +9317,7 @@ document.addEventListener('keydown', e => {
     return diff;
   }
 
-  function setScale(value, delay = 150) {
+  function setScale(value, delay = 90) {
     state.scaleTarget = value;
     if (state.scaleTimer) clearTimeout(state.scaleTimer);
     if (delay > 0) {
@@ -8280,6 +9341,13 @@ document.addEventListener('keydown', e => {
     state.visible = true;
     state.targetX = currentX;
     state.targetY = currentY;
+    if (!state.hasPointer) {
+      state.x = currentX;
+      state.y = currentY;
+      state.lastX = currentX;
+      state.lastY = currentY;
+      state.hasPointer = true;
+    }
     state.vx = nextVx;
     state.vy = nextVy;
     state.lastX = currentX;
@@ -8295,7 +9363,7 @@ document.addEventListener('keydown', e => {
       state.accumulatedRotation += angleDiff;
       state.rotationTarget = state.accumulatedRotation;
       state.previousAngle = currentAngle;
-      setScale(0.95);
+      setScale(0.985);
     }
 
     setCursorOpacity();
@@ -8309,8 +9377,8 @@ document.addEventListener('keydown', e => {
     const damping = spring.damping / 100;
     state.x += (state.targetX - state.x) * stiffness;
     state.y += (state.targetY - state.y) * stiffness;
-    state.rotation += (state.rotationTarget - state.rotation) * 0.18;
-    state.scale += (state.scaleTarget - state.scale) * (1 - damping * 0.35);
+    state.rotation += (state.rotationTarget - state.rotation) * 0.28;
+    state.scale += (state.scaleTarget - state.scale) * (1 - damping * 0.18);
 
     cursorEl.style.transform =
       `translate3d(${state.x}px, ${state.y}px, 0) translate(-50%, -50%) rotate(${state.rotation.toFixed(2)}deg) scale(${state.scale.toFixed(3)})`;
@@ -8511,9 +9579,10 @@ function updateMouse(eX, eY) {
   mouse.tY = eY > size ? eY : size;
   mouse.tY -= mouse.controlsPadding;
 }
-window.addEventListener("mousemove", e => updateMouse(e.clientX, e.clientY));
-window.addEventListener("touchmove", e => updateMouse(e.targetTouches[0].clientX, e.targetTouches[0].clientY));
-window.addEventListener("click",     e => updateMouse(e.clientX, e.clientY));
+const canRunGhostPointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+if (canRunGhostPointer) {
+  window.addEventListener("mousemove", e => updateMouse(e.clientX, e.clientY), { passive: true });
+}
 
 const INTERACTIVE = 'a, button, [role="button"], input, select, textarea, label, [href], .proj-card';
 document.addEventListener("mouseover", e => {
@@ -8668,8 +9737,9 @@ window.toggleMobileMenu = function(){
     var landingOpen = isOpen(document.getElementById('landing-lightbox'));
     var contactOpen = isOpen(document.getElementById('contact-modal'));
     var gestureOpen = isOpen(document.getElementById('gesture-egg-modal'));
+    var archiveOpen = document.getElementById('archive-modal')?.classList.contains('is-open');
     var menuOpen = document.getElementById('mobile-menu')?.classList.contains('open');
-    if (!projectOpen && !landingOpen && !contactOpen && !gestureOpen && !menuOpen) {
+    if (!projectOpen && !landingOpen && !contactOpen && !gestureOpen && !archiveOpen && !menuOpen) {
       document.documentElement.style.overflow = '';
       document.documentElement.style.overflowY = 'auto';
       document.body.style.overflow = '';
@@ -8727,6 +9797,138 @@ window.toggleMobileMenu = function(){
     if(e.key === 'Escape' && modal.style.display !== 'none') hide();
   });
 })();
+
+
+// ── 2024 Archive Modal ──────────────────────────────────────────
+(function(){
+  const frames = Array.from({ length: 19 }, (_, i) => {
+    const frame = i + 3;
+    return {
+      frame,
+      src: `assets/archive-2024/frame-${String(frame).padStart(2, '0')}.png`
+    };
+  });
+  const groups = [
+    { key: 'trade', start: 3, end: 8, zh: '交易链路', en: 'Trading flows', metaZh: 'OTC / P2P / 资产 / 订单状态', metaEn: 'OTC / P2P / Assets / Order states' },
+    { key: 'trust', start: 9, end: 13, zh: '信任机制', en: 'Trust mechanisms', metaZh: '跟单 / KOL / 收益数据 / 风险提示', metaEn: 'Copy trading / KOL / PnL / Risk cues' },
+    { key: 'growth', start: 14, end: 17, zh: '增长链路', en: 'Growth loops', metaZh: '活动页 / 奖励任务 / 邀请转化', metaEn: 'Campaign pages / Rewards / Referral' },
+    { key: 'system', start: 18, end: 21, zh: '系统沉淀', en: 'System work', metaZh: '品牌规范 / 组件库 / 多端一致性', metaEn: 'Brand rules / Components / Cross-platform' },
+  ];
+  let index = 0;
+
+  function lang(){ return window._lang === 'en' ? 'en' : 'zh'; }
+  function frameToIndex(frame){ return Math.max(0, Math.min(frames.length - 1, frame - 3)); }
+  function currentGroup(frame){
+    return groups.find(g => frame >= g.start && frame <= g.end) || groups[0];
+  }
+  function renderGroups(){
+    const wrap = document.getElementById('archive-group-list');
+    if (!wrap) return;
+    const l = lang();
+    wrap.innerHTML = frames.map((item, i) => {
+      const pageNo = String(i + 1).padStart(2, '0');
+      const group = currentGroup(item.frame);
+      return `
+      <button class="archive-group-btn" type="button" data-archive-index="${i}" onclick="goArchiveIndex(${i})">
+        <span class="archive-group-index">Page ${pageNo}</span>
+        <span class="archive-group-name">${l === 'en' ? group.en : group.zh}</span>
+        <span class="archive-group-meta">${l === 'en' ? group.metaEn : group.metaZh}</span>
+      </button>`;
+    }).join('');
+  }
+  function renderThumbs(){
+    const wrap = document.getElementById('archive-thumbs');
+    if (!wrap) return;
+    wrap.innerHTML = frames.map((item, i) => {
+      const pageNo = String(i + 1).padStart(2, '0');
+      return `
+      <button class="archive-thumb" type="button" onclick="goArchiveIndex(${i})" aria-label="Open page ${pageNo}">
+        <img src="${item.src}" alt="2024 archive thumbnail page ${pageNo}" loading="lazy" decoding="async">
+        <span class="archive-thumb-no">${pageNo}</span>
+      </button>`;
+    }).join('');
+  }
+  function update(){
+    const item = frames[index];
+    const l = lang();
+    const group = currentGroup(item.frame);
+    const img = document.getElementById('archive-frame-image');
+    const title = document.getElementById('archive-frame-title');
+    const meta = document.getElementById('archive-frame-meta');
+    if (img) {
+      img.src = item.src;
+      img.alt = `2024 archive page ${String(index + 1).padStart(2, '0')}`;
+    }
+    if (title) title.textContent = l === 'en' ? group.en : group.zh;
+    if (meta) meta.textContent = `Page ${String(index + 1).padStart(2, '0')} / ${String(frames.length).padStart(2, '0')} · ${l === 'en' ? group.metaEn : group.metaZh}`;
+    document.querySelectorAll('.archive-thumb').forEach((el, i) => el.classList.toggle('is-active', i === index));
+    document.querySelectorAll('.archive-group-btn').forEach((el, i) => el.classList.toggle('is-active', i === index));
+    const activeThumb = document.querySelectorAll('.archive-thumb')[index];
+    if (activeThumb && activeThumb.parentElement) {
+      const rail = activeThumb.parentElement;
+      const target = activeThumb.offsetLeft - (rail.clientWidth - activeThumb.clientWidth) / 2;
+      rail.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+    }
+  }
+  function ensureRendered(){
+    renderGroups();
+    if (!document.getElementById('archive-thumbs')?.children.length) renderThumbs();
+    update();
+  }
+  window.openArchive2024 = function(){
+    const modal = document.getElementById('archive-modal');
+    if (!modal) return;
+    ensureRendered();
+    modal.classList.remove('is-closing');
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  };
+  window.closeArchive2024 = function(){
+    const modal = document.getElementById('archive-modal');
+    if (!modal) return;
+    if (!modal.classList.contains('is-open') || modal.classList.contains('is-closing')) return;
+    modal.classList.add('is-closing');
+    setTimeout(() => {
+      modal.classList.remove('is-open', 'is-closing');
+      modal.setAttribute('aria-hidden', 'true');
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      if (typeof restoreScrollIfIdle === 'function') restoreScrollIfIdle();
+    }, 280);
+  };
+  window.goArchiveIndex = function(nextIndex){
+    index = Math.max(0, Math.min(frames.length - 1, nextIndex));
+    update();
+  };
+  window.goArchiveFrame = function(frame){
+    index = frameToIndex(frame);
+    update();
+  };
+  window.prevArchiveFrame = function(){
+    index = (index + frames.length - 1) % frames.length;
+    update();
+  };
+  window.nextArchiveFrame = function(){
+    index = (index + 1) % frames.length;
+    update();
+  };
+  document.addEventListener('keydown', e => {
+    const modal = document.getElementById('archive-modal');
+    if (!modal || !modal.classList.contains('is-open')) return;
+    if (e.key === 'Escape') window.closeArchive2024();
+    if (e.key === 'ArrowLeft') window.prevArchiveFrame();
+    if (e.key === 'ArrowRight') window.nextArchiveFrame();
+  });
+  window.refreshArchiveLanguage = function(){
+    const modal = document.getElementById('archive-modal');
+    if (!modal) return;
+    renderGroups();
+    update();
+  };
+})();
+
 
 // ── Contact Modal ────────────────────────────────────────────────
 (function(){
@@ -8790,7 +9992,7 @@ const LANG_TRANSLATIONS = {
     'hero-trust':'UI 设计师 · Web3 & FinTech 产品','hero-sayhi':'打个招呼',
     'ds-desc':'完整嵌入 Design System spotlight 文件，保留原始交互与动效；外层仅按网页宽度等比缩放展示。',
     'works-label':'精选作品','works-title':'精选项目','works-desc':'Web3 产品设计，从 0 到 1 的全链路交付。','card-view':'查看案例 →','card-visual-placeholder':'设计稿主视觉',
-    'components-label':'组件系统','components-title':'Input / Button 组件','components-desc':'CoinW 交易产品中的输入框与按钮组件状态预览，保留原始组件颜色与交互。',
+    'components-label':'组件系统','components-title':'Input / Button 组件','components-desc':'Interactive component states based on the Figma Input and Button components.',
     'card-otc-badge':'P2P 场外','card-copy-badge':'跟单系统','card-community-badge':'社区改版','card-landing-badge':'落地页',
     'card-otc-title':'OTC 场外交易系统','card-otc-sub':'信任机制 · 流程优化 · 跨平台一致性',
     'card-otc-tag1':'信任设计','card-otc-tag2':'流程重构','card-otc-tag3':'跨平台',
@@ -8803,16 +10005,16 @@ const LANG_TRANSLATIONS = {
     'about-label':'关于我','about-h2':'在 Web3 与设计工艺<br>的交汇处创作',
     'about-p1':'湖南城市学院平面设计本科，深耕数字设计 10 年，其中 Web3 行业 4 年。擅长将复杂链上逻辑转化为直观界面，在快节奏 Web3 团队中兼顾品牌一致性与用户体验。',
     'about-p2':'曾参与加密交易所、DeFi 协议与 NFT 平台从 0 到 1 的产品设计，覆盖 PC 端与移动端双平台，建立过 200+ 组件的设计系统。',
-    'about-cta':'联系我 →','exp-label':'工作经历',
+    'about-cta':'联系我 →','archive-title':'2024 Web3 项目归档','archive-desc':'从单点 UI 交付扩展到 Web3 产品链路设计，覆盖交易、增长、社区与品牌系统。这里保留阶段性项目沉淀，不占用精选案例主线。','archive-open':'查看归档 →','archive-modal-title':'2024 Web3 Archive','archive-modal-desc':'共 19 页，已按 Page 01 到 Page 19 顺序排列。','exp-label':'工作经历',
     'edu-label':'毕业院校','edu-school':'湖南城市学院','edu-degree':'平面设计 · 本科',
-    'exp1-role':'UI 设计师','exp1-li1':'→ 主导落地页、OTC、跟单系统、社区四大模块全链路设计','exp1-li2':'→ 设计目标：提升注册转化率 & 降低新用户激活门槛','exp1-li3':'→ 设计方法：竞品拆解 → 用户旅程图 → 线框 → 高保真 → 可用性测试','exp1-li4':'→ 跟单系统上线后新用户激活率 +38%，OTC 交易完成率 +21%',
+    'exp1-role':'UI 设计师','exp1-date':'2025.07 — 至今','exp1-li1':'→ 主导落地页、OTC、跟单系统、社区四大模块全链路设计','exp1-li2':'→ 设计目标：提升注册转化率 & 降低新用户激活门槛','exp1-li3':'→ 设计方法：竞品拆解 → 用户旅程图 → 线框 → 高保真 → 可用性测试','exp1-li4':'→ 跟单系统上线后新用户激活率 +38%，OTC 交易完成率 +21%',
     'exp2-role':'高级产品设计师','exp2-company':'Web3 协议（DEX / 多链钱包）','exp2-li1':'→ 负责 DEX 交易界面与多链钱包 UX，覆盖桌面端与 App 双端','exp2-li2':'→ 设计方法：信息架构梳理 → 交互规范制定 → 工程协同交付','exp2-li3':'→ 从零搭建 200+ 组件设计系统，设计效率提升 40%',
     'exp3-role':'UI / UX 设计师','exp3-company':'区块链创业公司（NFT 市场 + 钱包）','exp3-li1':'→ 入门 Web3，主导 NFT 市场与钱包连接全流程设计','exp3-li2':'→ 设计目标：降低 Web3 新手的认知门槛','exp3-li3':'→ 输出品牌视觉体系 + Web & App 双端界面规范',
     'exp4-role':'视觉 / UI 设计师','exp4-company':'数字营销 & 互联网行业','exp4-desc':'平面设计转型交互设计，积累跨行业视觉叙事能力。',
     'skill-design-system':'设计系统','skill-component-lib':'组件库','skill-brand':'品牌','skill-mobile':'移动端',
     'stat-1':'Web3 从业年限','stat-2':'交付项目数','stat-3':'设计经验年限',
-    'journal-label':'','journal-title':'关于 AI','journal-viewall':'查看全部 →','journal-kicker':'WEB3 / 用户体验 / 系统',
-    'journal-ai-assisted':'AI 辅助','journal-ai-title':'关于<br>AI','journal-ai-desc':'用 AI 辅助研究、拆解复杂信息，并把想法转成可落地的产品界面。',
+    'journal-label':'','journal-title':'关于 AI','journal-viewall':'查看全部 →','journal-kicker':'',
+    'journal-ai-assisted':'AI 辅助','journal-ai-title':'关于 AI','journal-ai-desc':'用 AI 辅助研究、拆解复杂信息，并把想法转成可落地的产品界面。',
     'gesture-card-title':'手势实验室','gesture-card-sub':'手势适配交互 · 新网页打开',
     'gesture-modal-kicker':'小彩蛋','gesture-modal-title':'手势滤镜实验室','gesture-modal-desc':'一个用 vibe coding 做的小实验：用摄像头识别手势，把滤镜模块和贴纸变成可被手掌触发的互动界面。','gesture-modal-note':'这是嵌入的网页内容。点击确认后会打开新网页进行体验，页面可能会请求摄像头权限，用于手势识别。','gesture-modal-cancel':'先不打开','gesture-modal-open':'打开新网页 ↗',
     'journal-workflow-label':'AI 工作流','journal-workflow-title':'从模糊输入<br class="hidden md:block">到清晰界面',
@@ -8823,7 +10025,7 @@ const LANG_TRANSLATIONS = {
     'je-2':'复杂数据可视化设计：让链上数据变得可读',
     'je-3':'为什么 DeFi 产品总让普通用户感到困惑',
     'je-4':'设计系统在快节奏 Web3 团队中的实践价値',
-    'contact-title':'联系我','contact-copy':'复制','footer-marquee':'构建未来 •\u00a0','footer-label':'联系我','footer-h2':'一起创造<br>一些很棒的东西','footer-cta':'发起合作 ↗','footer-status':'开放合作中',
+    'contact-title':'联系我','contact-copy':'复制','footer-label':'联系我','footer-h2':'一起创造<br>一些很棒的东西','footer-cta':'发起合作 ↗','footer-status':'开放合作中',
   },
   en: {
     'nav-hero':'Hero','nav-foundation':'Foundation','nav-components':'Components','nav-featured':'Featured','nav-aboutme':'About','nav-other':'Other','nav-sayhi':'Say Hi',
@@ -8831,7 +10033,7 @@ const LANG_TRANSLATIONS = {
     'hero-trust':'UI Designer · Web3 & FinTech Products','hero-sayhi':'Say Hi',
     'ds-desc':'Embedded the Design System spotlight file with its original interactions and motion preserved; the outer page only scales it proportionally to the web layout.',
     'works-label':'Selected Work','works-title':'Featured projects','works-desc':'End-to-end Web3 product design, from 0 to 1.','card-view':'View Case →','card-visual-placeholder':'Design preview',
-    'components-label':'Components','components-title':'Input / Button Components','components-desc':'Interactive component states based on CoinW trading-product inputs and buttons, preserving original component colors and interactions.',
+    'components-label':'Components','components-title':'Input / Button Components','components-desc':'Interactive component states based on the Figma Input and Button components.',
     'card-otc-badge':'OTC Trading','card-copy-badge':'Copy Trading','card-community-badge':'Community','card-landing-badge':'Landing Page',
     'card-otc-title':'OTC P2P Redesign','card-otc-sub':'Trust · Flow Optimization · Cross-platform',
     'card-otc-tag1':'Trust Design','card-otc-tag2':'Flow Redesign','card-otc-tag3':'Cross-platform',
@@ -8844,15 +10046,15 @@ const LANG_TRANSLATIONS = {
     'about-label':'About','about-h2':'Designing at the intersection<br>of Web3 &amp; craft',
     'about-p1':'Graphic Design B.A., 10 years in digital design — 4 years in Web3. I translate complex on-chain logic into intuitive interfaces, balancing brand consistency and UX in fast-paced teams.',
     'about-p2':'Led product design for crypto exchanges, DeFi protocols, and NFT platforms from 0→1, across desktop and mobile. Built a 200+ component design system from scratch.',
-    'about-cta':'Get in touch →','exp-label':'Experience',
+    'about-cta':'Get in touch →','archive-title':'2024 Web3 Project Archive','archive-desc':'A compact archive of 2024 Web3 work, covering trading flows, growth loops, community, and brand systems without interrupting the featured 2026 case-study narrative.','archive-open':'View Archive →','archive-modal-title':'2024 Web3 Archive','archive-modal-desc':'All 19 pages are ordered from Page 01 to Page 19.','exp-label':'Experience',
     'edu-label':'Education','edu-school':'Hunan City University','edu-degree':'Graphic Design · B.A.',
-    'exp1-role':'UI Designer','exp1-li1':'→ Led end-to-end design for landing pages, OTC, copy trading, and community modules','exp1-li2':'→ Goal: improve registration conversion and reduce new-user activation friction','exp1-li3':'→ Method: competitor teardown → journey map → wireframe → high fidelity → usability test','exp1-li4':'→ Copy trading activation +38%, OTC completion rate +21% after launch',
+    'exp1-role':'UI Designer','exp1-date':'2025.07 — Present','exp1-li1':'→ Led end-to-end design for landing pages, OTC, copy trading, and community modules','exp1-li2':'→ Goal: improve registration conversion and reduce new-user activation friction','exp1-li3':'→ Method: competitor teardown → journey map → wireframe → high fidelity → usability test','exp1-li4':'→ Copy trading activation +38%, OTC completion rate +21% after launch',
     'exp2-role':'Senior Product Designer','exp2-company':'Web3 Protocol (DEX / Multi-chain Wallet)','exp2-li1':'→ Owned DEX trading UI and multi-chain wallet UX across desktop and app','exp2-li2':'→ Method: information architecture → interaction rules → engineering handoff','exp2-li3':'→ Built a 200+ component design system from scratch, improving design efficiency by 40%',
     'exp3-role':'UI / UX Designer','exp3-company':'Blockchain Startup (NFT Market + Wallet)','exp3-li1':'→ Entered Web3 by leading NFT marketplace and wallet connection flows','exp3-li2':'→ Goal: lower the cognitive barrier for Web3 beginners','exp3-li3':'→ Delivered brand visual system and Web & App interface guidelines',
     'exp4-role':'Visual / UI Designer','exp4-company':'Digital Marketing & Internet Industry','exp4-desc':'Moved from graphic design into interaction design, building cross-industry visual storytelling skills.',
     'skill-design-system':'Design System','skill-component-lib':'Component Lib','skill-brand':'Brand','skill-mobile':'Mobile',
     'stat-1':'Years in Web3','stat-2':'Projects Delivered','stat-3':'Years of Experience',
-    'journal-label':'','journal-title':'About AI','journal-viewall':'View all →','journal-kicker':'WEB3 / UX / SYSTEMS',
+    'journal-label':'','journal-title':'About AI','journal-viewall':'View all →','journal-kicker':'',
     'journal-ai-assisted':'AI Assisted','journal-ai-title':'ABOUT<br>AI','journal-ai-desc':'I use AI to support research, unpack complex information, and turn rough ideas into product interfaces that can actually ship.',
     'gesture-card-title':'Gesture Lab','gesture-card-sub':'Gesture interaction · opens a new page',
     'gesture-modal-kicker':'Little Easter Egg','gesture-modal-title':'Gesture Filter Lab','gesture-modal-desc':'A small vibe-coding experiment: use the camera to recognize hand gestures and turn filter modules and stickers into palm-triggered interactions.','gesture-modal-note':'This opens an embedded web experiment in a new page. It may request camera permission for gesture recognition.','gesture-modal-cancel':'Not now','gesture-modal-open':'Open page ↗',
@@ -8864,7 +10066,7 @@ const LANG_TRANSLATIONS = {
     'je-2':'Complex Data Viz: Making On-chain Data Readable',
     'je-3':'Why DeFi Products Always Confuse Regular Users',
     'je-4':'Practical Value of Design Systems in Fast-paced Web3 Teams',
-    'contact-title':'Get in Touch','contact-copy':'Copy','footer-marquee':'BUILDING THE FUTURE •\u00a0','footer-label':'GET IN TOUCH','footer-h2':"Let's create<br>something great",'footer-cta':'Get in touch ↗','footer-status':'Available for projects',
+    'contact-title':'Get in Touch','contact-copy':'Copy','footer-label':'GET IN TOUCH','footer-h2':"Let's create<br>something great",'footer-cta':'Get in touch ↗','footer-status':'Available for projects',
   }
 };
 
@@ -8896,6 +10098,7 @@ function applyLang(lang) {
   }
   _heroDescSplit();
   if (typeof window.refreshLandingLanguage === 'function') window.refreshLandingLanguage();
+  if (typeof window.refreshArchiveLanguage === 'function') window.refreshArchiveLanguage();
   const projectModal = document.getElementById('proj-modal');
   if (projectModal && window.__projectModalOpen && window.__currentProjectKey) {
     window.openProjectModal(window.__currentProjectKey);
@@ -9197,6 +10400,8 @@ document.addEventListener('DOMContentLoaded', function() {
   var currentLandingIdx = 0;
   var landingPreloadHost = null;
   var landingPreloadedNodes = {};
+  var landingCloseTimer = null;
+  var landingOpenToken = 0;
 
   function landingLang() {
     return window._lang || _lang || localStorage.getItem('portfolio-lang') || 'zh';
@@ -9215,7 +10420,7 @@ document.addEventListener('DOMContentLoaded', function() {
     landingPreloadHost = document.createElement('div');
     landingPreloadHost.id = 'landing-preload-host';
     landingPreloadHost.setAttribute('aria-hidden', 'true');
-    landingPreloadHost.style.cssText = 'position:fixed;left:0;top:0;width:1440px;height:900px;overflow:hidden;opacity:0.001;pointer-events:none;z-index:-1;transform:translateZ(0);';
+    landingPreloadHost.style.cssText = 'position:fixed;left:0;top:0;width:1440px;height:900px;overflow:hidden;opacity:0;pointer-events:none;z-index:-1;visibility:hidden;';
     document.body.appendChild(landingPreloadHost);
     return landingPreloadHost;
   }
@@ -9363,29 +10568,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
   window.openLandingLightbox = function(idx) {
     currentLandingIdx = idx || 0;
+    landingOpenToken += 1;
+    var openToken = landingOpenToken;
+    if (landingCloseTimer) {
+      clearTimeout(landingCloseTimer);
+      landingCloseTimer = null;
+    }
     buildNav();
     var lb = document.getElementById('landing-lightbox');
     lb.style.display = 'block';
+    lb.classList.remove('is-closing');
+    lb.classList.add('is-open');
     lb.style.pointerEvents = 'auto';
     lb.style.transitionDelay = '0s';
     lb.style.touchAction = 'pan-y';
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ lb.style.opacity = '1'; }); });
-    switchLandingPage(currentLandingIdx);
     document.body.style.overflow = 'hidden';
     setLandingCursorMode(true);
+    requestAnimationFrame(function() {
+      setTimeout(function() {
+        if (landingOpenToken !== openToken || !lb.classList.contains('is-open') || lb.classList.contains('is-closing')) return;
+        switchLandingPage(currentLandingIdx);
+      }, 40);
+    });
   };
 
   window.closeLandingLightbox = function() {
     var lb = document.getElementById('landing-lightbox');
+    if (!lb || lb.classList.contains('is-closing') || lb.style.display === 'none') return;
+    landingOpenToken += 1;
+    lb.classList.add('is-closing');
     lb.style.opacity = '0';
     lb.style.pointerEvents = 'none';
     lb.style.transitionDelay = '0s';
-    setTimeout(function(){
+    landingCloseTimer = setTimeout(function(){
+      var contentEl = document.getElementById('landing-lb-content');
+      if (contentEl) {
+        contentEl.innerHTML = '';
+        contentEl.removeAttribute('data-current-landing');
+      }
+      landingPreloadedNodes = {};
       lb.style.display = 'none';
       lb.style.touchAction = '';
+      lb.classList.remove('is-open', 'is-closing');
       document.body.style.overflow = '';
       setLandingCursorMode(false);
-    }, 300);
+      landingCloseTimer = null;
+    }, 260);
   };
 
   window.switchLandingPage = function(idx) {
