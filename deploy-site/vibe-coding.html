@@ -200,34 +200,55 @@
         --c-2: #5bb2ff;
         --loader-size: 12px;
         position: relative;
-        display: inline-flex;
+        display: flex;
         justify-content: center;
         align-items: center;
         min-width: max-content;
         line-height: 1;
-        isolation: isolate;
       }
 
       .loader::after {
         content: attr(data-text);
-        position: relative;
-        z-index: 1;
-        font-size: var(--loader-size);
-        font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", "Segoe UI Mono", Menlo, monospace;
-        font-weight: 900;
-        letter-spacing: .12em;
+        font-size: var(--loader-size, 25px);
+        font-family: "Segoe UI", Tahoma;
+        font-weight: 800;
         text-transform: uppercase;
-        color: #eaffff;
-        text-shadow:
-          -1px 0 0 var(--c-1),
-          1px 0 0 var(--c-2),
-          0 0 12px rgba(91,178,255,.35),
-          0 0 18px rgba(162,255,55,.18);
+        opacity: 0;
         pointer-events: none;
       }
 
       .layer {
-        display: none;
+        font-size: var(--loader-size, 25px);
+        font-family: "Segoe UI", Tahoma;
+        font-weight: 800;
+        text-transform: uppercase;
+        position: absolute;
+      }
+
+      .layer:nth-child(1) {
+        color: var(--c-1);
+        animation: kfs-3412 0.5s infinite;
+      }
+
+      .layer:nth-child(2) {
+        color: var(--c-2);
+        animation: kfs-3412 0.5s 0.25s infinite;
+      }
+
+      @keyframes kfs-3412 {
+        0% {
+          text-shadow: 0 0 30px var(--c-1);
+          transform: scaleY(0);
+          z-index: 2;
+        }
+        50% {
+          transform: scaleY(1.5);
+          z-index: 2;
+        }
+        100% {
+          transform: scaleY(1.5);
+          z-index: 0;
+        }
       }
 
       .site-nav__links a.vibe-nav-effect {
@@ -283,16 +304,16 @@
     </nav>
     <div id="app"></div>
     <section id="liquid" class="liquid-screen" aria-label="Liquid reveal shader experiment">
-      <iframe data-src="vibe-coding/liquid/index.html?v=20260706-3" title="Liquid Reveal Vibe Coding Experiment" loading="lazy"></iframe>
+      <iframe data-src="vibe-coding/liquid/index.html?v=20260706-8" title="Liquid Reveal Vibe Coding Experiment" loading="lazy"></iframe>
     </section>
     <section id="astrodither" class="astrodither-screen" aria-label="AstroDither experiment">
-      <iframe data-src="vibe-coding/astrodither/index.html?v=20260706-3" title="AstroDither Vibe Coding Experiment" loading="eager" allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
+      <iframe data-src="vibe-coding/astrodither/index.html?v=20260706-8" title="AstroDither Vibe Coding Experiment" loading="eager" allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
     </section>
     <section id="utopia" class="utopia-screen" aria-label="Utopia Tokyo experiment">
-      <iframe data-src="vibe-coding/utopia/index.html?v=20260706-3" title="Utopia Tokyo Nuo Opera Experiment" loading="lazy"></iframe>
+      <iframe data-src="vibe-coding/utopia/index.html?v=20260706-8" title="Utopia Tokyo Nuo Opera Experiment" loading="eager"></iframe>
     </section>
     <section id="widgets" class="widgets-screen" aria-label="iPhone widgets animation">
-      <iframe data-src="vibe-coding/widgets/index.html?v=20260706-3" title="iPhone Widgets Vibe Coding Experiment" loading="lazy"></iframe>
+      <iframe data-src="vibe-coding/widgets/index.html?v=20260706-8" title="iPhone Widgets Vibe Coding Experiment" loading="eager"></iframe>
     </section>
     <div id="fallback"></div>
 
@@ -393,7 +414,6 @@
         }
 
         function bindFrameNavigation(screen) {
-          if (screen === "liquid" || screen === "utopia" || screen === "widgets") return;
           const frame = screenFrames[screen];
           if (!frame || frame.dataset.navigationBound === "true") return;
           let frameDoc;
@@ -433,9 +453,9 @@
 
         applyScreenClass(activeScreen);
         window.setTimeout(() => preloadScreenFrame("liquid"), 120);
-        window.setTimeout(() => preloadScreenFrame("astrodither"), 700);
-        window.setTimeout(() => preloadScreenFrame("utopia"), 1300);
-        window.setTimeout(() => preloadScreenFrame("widgets"), 2100);
+        window.setTimeout(() => preloadScreenFrame("astrodither"), 360);
+        window.setTimeout(() => preloadScreenFrame("utopia"), 600);
+        window.setTimeout(() => preloadScreenFrame("widgets"), 840);
 
         [window, document, document.body].forEach((target) => {
           target.addEventListener("wheel", consumeWheel, { passive: false, capture: true });

@@ -719,10 +719,10 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:52px 90p
 
 <script>
 /* ═══════════ DATA ═══════════ */
-const FIG = 'https://www.figma.com/api/mcp/asset/';
+const FIG = 'dna-cards/';
 const DNA = [
   { id:'shark', zh:'老鲨鱼', en:'SHARK',
-    img: FIG+'ea75b3b3-49b1-4880-806f-a62e91261440',
+    img: FIG+'card-01.png',
     slogan:'你靠直冲进alpha的门缝里',
     traits:[60,35,30,25,12],  // [长持,激进,站内,数据派,猎手] (left%)
     traitNames:[['长持','短打'],['激进','稳健'],['站内','链上'],['数据派','行动派'],['猎手','共识']],
@@ -733,7 +733,7 @@ const DNA = [
     quote:'你不是在投资，你是在伏击',
     tagA:'结构交易', tagB:'分批建仓', ico:'🦈' },
   { id:'walker', zh:'遛链侠', en:'WALKER',
-    img: FIG+'0cc7ab11-faff-41f1-816a-bc3b2f2943a1',
+    img: FIG+'card-03.png',
     slogan:'你靠耐心等来了别人等不到的价格',
     traits:[72,62,88,82,78],
     traitNames:[['长持','短打'],['稳健','激进'],['链上','站内'],['行动派','数据派'],['共识','猎手']],
@@ -744,7 +744,7 @@ const DNA = [
     quote:'链上没有秘密，只有你没等到的时机',
     tagA:'链上研究', tagB:'轻仓出手', ico:'🔍' },
   { id:'perp', zh:'合约战神', en:'PERP-G',
-    img: FIG+'014304d8-23a7-4376-9769-140aa47472ea',
+    img: FIG+'card-05.png',
     slogan:'你靠读盘速度碾压市场',
     traits:[18,82,55,35,60],
     traitNames:[['短打','长持'],['激进','稳健'],['站内','链上'],['行动派','数据派'],['猎手','共识']],
@@ -755,7 +755,7 @@ const DNA = [
     quote:'每一次入场都是伏击，不是赌博',
     tagA:'快进快出', tagB:'结构交易', ico:'⚔️' },
   { id:'snipe', zh:'套利狙击手', en:'SNIPE',
-    img: FIG+'05fcc35c-64a5-48de-a630-22a6a5ecfa9c',
+    img: FIG+'card-06.png',
     slogan:'你靠精密计算让每一单都有利可图',
     traits:[32,48,50,88,72],
     traitNames:[['长持','短打'],['激进','稳健'],['站内','链上'],['数据派','行动派'],['猎手','共识']],
@@ -766,7 +766,7 @@ const DNA = [
     quote:'Gas费省一点，就是多赚一点',
     tagA:'规则执行', tagB:'精密套利', ico:'🎯' },
   { id:'earn', zh:'余额宝', en:'EARN',
-    img: FIG+'2e4efeaf-608a-4fba-a30b-4fcbe68ef32d',
+    img: FIG+'card-07.png',
     slogan:'你靠复利把时间变成最好的武器',
     traits:[88,78,82,65,70],
     traitNames:[['长持','短打'],['稳健','激进'],['链上','站内'],['行动派','数据派'],['共识','猎手']],
@@ -777,7 +777,7 @@ const DNA = [
     quote:'链上到处质押挖矿，年纪轻轻就过上收租生活',
     tagA:'复利增长', tagB:'稳健持仓', ico:'💰' },
   { id:'sir', zh:'老兵', en:'SIR',
-    img: FIG+'35b6d30f-3d40-418f-84a9-bf9de162d4db',
+    img: FIG+'card-11.png',
     slogan:'你靠经验让波动成为你的朋友',
     traits:[75,65,45,70,58],
     traitNames:[['长持','短打'],['稳健','激进'],['站内','链上'],['数据派','行动派'],['共识','猎手']],
@@ -788,7 +788,7 @@ const DNA = [
     quote:'见过的K线比你经历的市场都多',
     tagA:'老兵风格', tagB:'回撤控制', ico:'🎖️' },
   { id:'fomo', zh:'FOMO患者', en:'FOMO',
-    img: FIG+'be39ce1b-0e09-4db4-af38-ec42a5a9a896',
+    img: FIG+'card-02.png',
     slogan:'你靠情绪感知抓住了每一次热点',
     traits:[10,88,55,15,88],
     traitNames:[['短打','长持'],['激进','稳健'],['站内','链上'],['行动派','数据派'],['猎手','共识']],
@@ -1007,5 +1007,24 @@ const track=document.getElementById('carouselTrack');
 track.addEventListener('mouseenter',stopCarAuto);
 track.addEventListener('mouseleave',()=>{ if(!document.getElementById('page-home').classList.contains('page-hidden')) startCarAuto(); });
 </script>
+
+<script id="original-image-fallback">
+(function(){
+  var fallback = 'thumbs/ai-trader-dna-cover.png';
+  function bind(img){
+    if (!img || img.dataset.originalFallbackReady === '1') return;
+    img.dataset.originalFallbackReady = '1';
+    img.addEventListener('error', function(){
+      if (img.dataset.originalFallbackUsed === '1') return;
+      img.dataset.originalFallbackUsed = '1';
+      img.src = fallback;
+    });
+  }
+  function scan(){ Array.prototype.forEach.call(document.images || [], bind); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scan); else scan();
+  new MutationObserver(scan).observe(document.documentElement, {childList:true, subtree:true});
+})();
+</script>
+
 </body>
 </html>
