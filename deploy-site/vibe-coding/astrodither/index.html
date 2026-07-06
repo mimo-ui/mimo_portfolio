@@ -1,0 +1,149 @@
+<!DOCTYPE html><script>
+(function () {
+  var nativeRequestAnimationFrame = window.requestAnimationFrame.bind(window);
+  var nativeCancelAnimationFrame = window.cancelAnimationFrame.bind(window);
+  var callbacks = new Map();
+  var nextId = 1;
+  var pumpId = null;
+  var active = window.parent === window;
+
+  function pump(time) {
+    pumpId = null;
+    if (!active) return;
+    var queue = Array.from(callbacks.entries());
+    callbacks.clear();
+    queue.forEach(function (entry) {
+      entry[1](time);
+    });
+    if (callbacks.size > 0 && pumpId === null) {
+      pumpId = nativeRequestAnimationFrame(pump);
+    }
+  }
+
+  window.requestAnimationFrame = function (callback) {
+    var id = nextId++;
+    callbacks.set(id, callback);
+    if (active && pumpId === null) {
+      pumpId = nativeRequestAnimationFrame(pump);
+    }
+    return id;
+  };
+
+  window.cancelAnimationFrame = function (id) {
+    callbacks.delete(id);
+    if (callbacks.size === 0 && pumpId !== null) {
+      nativeCancelAnimationFrame(pumpId);
+      pumpId = null;
+    }
+  };
+
+  window.addEventListener("message", function (event) {
+    if (!event.data || event.data.type !== "vibe-frame-active") return;
+    active = Boolean(event.data.active);
+    if (active && callbacks.size > 0 && pumpId === null) {
+      pumpId = nativeRequestAnimationFrame(pump);
+    }
+  });
+})();
+</script><script type="module" src="./_astro/index.astro_astro_type_script_index_0_lang.DMYiZ7Wx.js"></script> <script type="module" src="./_astro/Layout.astro_astro_type_script_index_0_lang.CeuNaKB2.js"></script> <html lang="en" class="font-main" data-astro-cid-sckkx6r4> <head><!-- Google tag (gtag.js) --><meta charset="UTF-8"><meta name="theme-color" content="#080808"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="./favicon.svg"><meta name="generator" content="Astro v5.13.7"><title>ASTRODITHER — Robert Borghesi LAB — [SIGNAL. LOST. BEAUTY. FOUND. DIGITAL. CHAOS.]</title><link rel="canonical" href="https://astrodither.robertborghesi.is/"><meta name="description" content="[SIGNAL. LOST. BEAUTY. FOUND. DIGITAL. CHAOS.] — AstroDither, an audio reactive Threejs /WebGPU experiment by Robert Borghesi on dithering and fluid simulation with TSL."><meta name="robots" content="index, follow"><meta property="og:title" content="ASTRODITHER — Robert Borghesi LAB — [SIGNAL. LOST. BEAUTY. FOUND. DIGITAL. CHAOS.]"><meta property="og:type" content="website"><meta property="og:image" content="https://astrodither.robertborghesi.is/share.jpg"><meta property="og:url" content="https://astrodither.robertborghesi.is/"><meta name="twitter:creator" content="@dghez_"><link rel="icon" href="./favicon.svg" type="image/svg+xml"><link rel="manifest" href="./site.webmanifest"><meta name="twitter:image" content="https://astrodither.robertborghesi.is/share.jpg"><meta name="twitter:title" content="ASTRODITHER — Robert Borghesi LAB — [SIGNAL. LOST. BEAUTY. FOUND. DIGITAL. CHAOS.]"><meta name="twitter:description" content="[SIGNAL. LOST. BEAUTY. FOUND. DIGITAL. CHAOS.] — AstroDither, an audio reactive Threejs /WebGPU experiment by Robert Borghesi on dithering and fluid simulation with TSL."><script type="module" src="./_astro/Layout.astro_astro_type_script_index_2_lang.YdeKktAQ.js"></script><link rel="stylesheet" href="./_astro/index.pdvcenzl.css">
+<style id="codex-overrides">
+  .main-grid > div:has(a[href="https://robertborghesi.is/"]) a[href="https://robertborghesi.is/"],
+  .main-grid > div:has(a[href="https://robertborghesi.is/"]) a[href="https://robertborghesi.is/"] + .mx-10 {
+    display: none !important;
+  }
+
+  .site-max {
+    padding-left: var(--containerPadding) !important;
+    padding-right: var(--containerPadding) !important;
+  }
+
+  .main-grid > div:has(.js-header-title),
+  .main-grid > div:has(.js-change-speed) {
+    grid-column: 9 / -1 !important;
+    justify-self: end !important;
+  }
+
+  @media (max-width: 649px) {
+    .main-grid > div:has(.js-header-title),
+    .main-grid > div:has(.js-change-speed) {
+      grid-column: 4 / -1 !important;
+      justify-self: end !important;
+    }
+  }
+
+  .codex-audio-toggle {
+    position: fixed;
+    right: var(--containerPadding);
+    bottom: calc(var(--containerPadding) + 3.8rem);
+    z-index: 10;
+    font: inherit;
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--color-white);
+    text-transform: uppercase;
+    cursor: pointer;
+    pointer-events: auto;
+    user-select: none;
+  }
+
+  .codex-audio-toggle:hover {
+    opacity: .72;
+  }
+
+  .codex-audio-toggle[aria-pressed="true"] {
+    opacity: .58;
+  }
+
+  .js-learn {
+    font-size: 0 !important;
+  }
+
+  .js-learn::after {
+    content: "LEARN MORE";
+    font-size: var(--bodyFontSize);
+  }
+
+  .js-sidebar > :not(.js-sidebar-close) {
+    display: none !important;
+  }
+
+  .js-sidebar::before {
+    content: "empty";
+    display: block;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+
+</style></head> <body data-astro-cid-sckkx6r4>  <h1 class="sr-only">AstroDither — Robert Borghesi LAB</h1> <h2 class="sr-only">AstroDither, a Threejs /WebGPU experiment by Robert Borghesi on dithering and fluid simulation with TSL.</h2> <div class="invisible js-main-content"> <div class="site-max fixed w-full h-full l-0 t-0 py-22 sm:py-45 invisible z-1  pointer-events-none js-ui"> <div class="relative flex flex-col justify-between h-full"> <script type="module" src="./_astro/Header.astro_astro_type_script_index_0_lang.Cg3VPFMQ.js"></script> <div class="main-grid w-full z-2 top-22 sm:top-45 pointer-events-none"> <div class="col-start-1 col-span-4 sm:col-span-4"> <div class="flex"> <a class="pointer-events-auto" href="https://robertborghesi.is/" target="_blank"> <img class="w-80 sm:w-110 3xl:w-80" src="./images/logo.svg"> </a> <div class="mx-10 w-1 bg-white"></div> <div class="uppercase font-bold js-learn cursor-pointer pointer-events-auto">empty</div> </div> </div> <div class="col-start-5 col-span-2 justify-self-end sm:col-start-9 sm:col-span-4 sm:justify-self-start"> <div class="flex">
+ASTRO&nbsp;<span class="js-header-title">DITHER</span> </div> </div> </div>  <script type="module" src="./_astro/Bottom.astro_astro_type_script_index_0_lang.CVQmSQl-.js"></script> <div class="main-grid w-full z-1 bottom-22 justify-self-end sm:bottom-45 sm:justify-self-start pointer-events-none"> <div class="col-start-1 col-span-4"> <div class="flex"> <div class="js-t-m">00</div>:
+<div class="js-t-s">00</div>:
+<div class="js-t-ms">00</div> </div> </div> <div class="col-start-9 col-span-4"> <button class="codex-audio-toggle js-audio-toggle" type="button" aria-pressed="true" aria-label="Turn music on">SOUND OFF</button> <div class="relative inline-flex hover:font-bold pointer-events-auto has-hover:pointer-events-none cursor-pointer select-none js-change-speed"> <span class="hidden has-hover:inline-block">HOLD FOR SPEED</span> <span class="inline-block has-hover:hidden select-none">CLICK FOR SPEED</span> <div class="mx-10 w-1 bg-white"></div> <span class="js-change-speed-value tabular-nums">1:00</span>x
+</div> </div> </div>  <script type="module" src="./_astro/Info.astro_astro_type_script_index_0_lang.BHVEbzzx.js"></script> <div class="fixed w-800 h-800 top-0 left-0 z-1 pointer-events-none sidebar-bg js-sidebar-bg" data-astro-cid-edwrpnhe></div> <div class="absolute top-30 z-1 left-0 w-full py-30 sm:max-w-480 3xl:max-w-400 pointer-events-none" data-astro-cid-edwrpnhe> <div class="text-12 3xl:text-10 sidebar-info js-sidebar" data-astro-cid-edwrpnhe> <div class="font-bold uppercase mb-5" data-astro-cid-edwrpnhe>AstroDither, a webGPU & TSL experiment</div> <p class="mb-20" data-astro-cid-edwrpnhe>AstroDither is a audio reactive TSL & webGPU  experiment built with ThreeJS. This started after saw an online GIF i decided to recreate, trying to explore new tech like TSL with webGPU. <br data-astro-cid-edwrpnhe>Nothing fancy, just goooood old R&D.</p> <div class="font-bold uppercase mb-5" data-astro-cid-edwrpnhe>SOME RANDOM TECH</div> <p class="mb-20" data-astro-cid-edwrpnhe>Despite what you think, a lot is happening here. There is a custom dither on the model only, needed to mix with a generic scene and a custom fluid built from scratch in a single pass for performances. On top of that a dither+displacement in postprocessing and selective bloom without masks, just fancy tricks. Oh wait, did you see the aberration?</p> <p class="mb-20 font-bold uppercase" data-astro-cid-edwrpnhe>[signal. lost. beauty. found. digital. chaos.]</p> <div class="" data-astro-cid-edwrpnhe> <div class="flex mb-5" data-astro-cid-edwrpnhe> <div class="w-100 font-bold" data-astro-cid-edwrpnhe>X</div><a class="underline" href="https://x.com/dghez_" target="_blank" data-astro-cid-edwrpnhe>@dghez_</a> </div> <div class="flex mb-5" data-astro-cid-edwrpnhe> <div class="w-100 font-bold" data-astro-cid-edwrpnhe>WBST</div><a class="underline" href="https://robertborghesi.is/" target="_blank" data-astro-cid-edwrpnhe>robertborghesi.is</a> </div> <div class="flex" data-astro-cid-edwrpnhe> <div class="w-100 font-bold" data-astro-cid-edwrpnhe>INSPO</div><a class="underline" href="https://www.newyorker.com/magazine/2024/12/02/a-revolution-in-how-robots-learn" target="_blank" data-astro-cid-edwrpnhe>New Yorker article</a> </div> </div> <div class="w-full h-[1px] bg-white my-20 opacity-50" data-astro-cid-edwrpnhe></div> <div class="font-bold pointer-events-auto cursor-pointer js-sidebar-close" data-astro-cid-edwrpnhe>CLOSE</div> </div> </div>  </div> </div> <script type="module" src="./_astro/Enter.astro_astro_type_script_index_0_lang.CJU-psKb.js"></script> <div class="js-enter pointer-events-none fixed z-50 font-bold tracking-[-0.1em]"> <div class="absolute -top-10 left-0 -translate-x-1/2 -translate-y-1/2 bg-black/50 p-10 whitespace-nowrap">[:: CLICK TO ENTER + ENABLE AUDIO ::]</div> </div>  <div class="js-canvas-wrapper fixed inset-0"> <canvas class="js-canvas absolute"></canvas> </div> </div> <script type="module">
+  import { a as audioStore, h as howlerRuntime } from "./_astro/index.CfQnbYFJ.js";
+
+  const audioToggle = document.querySelector(".js-audio-toggle");
+  let isMuted = true;
+
+  const syncAudioToggle = () => {
+    if (!audioToggle) return;
+    audioToggle.textContent = isMuted ? "SOUND OFF" : "SOUND ON";
+    audioToggle.setAttribute("aria-pressed", String(isMuted));
+    audioToggle.setAttribute("aria-label", isMuted ? "Turn music on" : "Turn music off");
+  };
+
+  const setMuted = (value) => {
+    isMuted = value;
+    howlerRuntime.Howler.mute(isMuted);
+    audioStore.get("ambient")?.mute(isMuted);
+    syncAudioToggle();
+  };
+
+  audioToggle?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setMuted(!isMuted);
+  });
+
+  setMuted(true);
+</script> </body></html>

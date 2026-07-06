@@ -1,0 +1,1 @@
+import{e as C,E as P,g as e}from"./index.OnQ_ZlEu.js";const i=["BOOM","TACK","TICK","CLAP","SNAP","THUMP","POP","CLICK","TAP","BANG","CLACK","WHAM","BOP","CHIK","DUM","TSST","CHH","THUD","PING","POW"];let s=0;const A=t=>{t!==!1&&(document.title=e.utils.wrap(i,s++))};C.on(P.APP_AUDIO_KICK,A);

@@ -1,0 +1,1 @@
+import{e as o,E as t,g as a}from"./index.OnQ_ZlEu.js";import{q as n,A as i}from"./common.DNnWXwKG.js";const A=n(".js-ui"),E=n(".js-main-content"),r=()=>{a.to(E,{duration:1,autoAlpha:1})},e=s=>{s===i.OPENING&&a.to(A,{duration:2,autoAlpha:1,delay:1})};o.on(t.APP_STATE,e);o.on(t.WEBGL_APP_READY,r);

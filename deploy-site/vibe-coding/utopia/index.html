@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chinese Nuo Opera</title>
+  <style>
+    :root {
+      --red: #ff1919;
+      --ink: #111720;
+      --cream: #ece8dc;
+      --cyan: #00c8bb;
+      --display: "Arial Narrow", "HelveticaNeue-CondensedBold", Impact, sans-serif;
+      --mono: "Courier New", ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; }
+    html {
+      background: #100719;
+      overflow: hidden;
+    }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #100719;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      cursor: none;
+    }
+    a, button { color: inherit; font: inherit; cursor: none; }
+    body.cursor-standard,
+    body.cursor-standard a,
+    body.cursor-standard button {
+      cursor: auto;
+    }
+    button { border: 0; border-radius: 0; background: none; }
+    .screen {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      isolation: isolate;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate3d(0, 100%, 0);
+      transition: transform .86s cubic-bezier(.77, 0, .175, 1), opacity .42s ease;
+      will-change: transform, opacity;
+    }
+    .screen.is-current {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate3d(0, 0, 0);
+      z-index: 2;
+    }
+    .screen.is-before {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      z-index: 1;
+    }
+    .screen.is-after {
+      opacity: 1;
+      transform: translate3d(0, 100%, 0);
+      z-index: 1;
+    }
+    .screen.is-cover-exiting {
+      opacity: 1;
+      pointer-events: none;
+      transform: translate3d(0, 100%, 0);
+      z-index: 3;
+    }
+    .grid {
+      background:
+        linear-gradient(rgba(255,25,25,.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,25,25,.2) 1px, transparent 1px),
+        radial-gradient(circle, rgba(255,25,25,.86) 0 1px, transparent 1.2px),
+        linear-gradient(#141a24, #101620);
+      background-size: 96px 96px, 96px 96px, 48px 48px, auto;
+    }
+    .scan {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      opacity: .1;
+      background: repeating-linear-gradient(to bottom, rgba(255,255,255,.16) 0 1px, transparent 1px 4px);
+      mix-blend-mode: overlay;
+    }
+    .cursor {
+      pointer-events: none;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 50;
+      width: 38px;
+      height: 38px;
+      color: var(--red);
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      mix-blend-mode: normal;
+    }
+    .cursor.is-active { width: 52px; height: 52px; color: var(--red); }
+    body.cursor-standard .cursor { opacity: 0 !important; }
+    .cursor svg { width: 100%; height: 100%; display: block; }
+    .cursor path { fill: none; stroke: currentColor; stroke-width: 2; vector-effect: non-scaling-stroke; }
+    .cursor circle { fill: currentColor; }
+
+    .hero-mark {
+      position: absolute;
+      left: 21px;
+      top: 29px;
+      z-index: 4;
+      color: var(--red);
+      font-family: var(--display);
+      font-size: clamp(22px, 2.1vw, 31px);
+      font-weight: 900;
+      line-height: .8;
+      letter-spacing: -.035em;
+      text-transform: uppercase;
+    }
+    .hero-mark .outline {
+      display: inline-block;
+      margin-left: 10px;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--red);
+      text-stroke: 1px var(--red);
+    }
+    .hero-panel {
+      position: absolute;
+      left: 21px;
+      right: 21px;
+      top: 21px;
+      bottom: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(17,23,32,.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(17,23,32,.12) 1px, transparent 1px),
+        var(--red);
+      background-size: 96px 96px, 96px 96px, auto;
+      border: 1px solid rgba(17,23,32,.92);
+      border-radius: 0 0 11px 11px;
+      clip-path: polygon(0 6%, 19.5% 6%, 21.8% 0, 97.9% 0, 100% 4.8%, 100% 99.2%, 86.1% 99.2%, 85.4% 100%, 0 100%);
+    }
+    .line { position: absolute; background: var(--ink); opacity: .96; }
+    .hline { height: 1px; left: 0; right: 0; }
+    .top-rule { left: 326px; right: 32px; top: 68px; height: 2px; }
+    .title-rule { top: 264px; }
+    .row-1 { top: 350px; left: 0; width: 582px; }
+    .row-2 { top: 436px; left: 0; width: 582px; }
+    .row-3 { top: 522px; left: 0; width: 582px; }
+    .vline { top: 264px; bottom: 0; width: 1px; }
+    .v-left-mid { left: 582px; }
+    .v-gallery { left: 960px; }
+    .coords, .country {
+      position: absolute;
+      z-index: 2;
+      top: 44px;
+      font-family: var(--mono);
+      font-size: 14px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .coords { left: 326px; }
+    .country { right: 35px; }
+    .title {
+      position: absolute;
+      left: 33px;
+      top: 92px;
+      margin: 0;
+      z-index: 2;
+      color: var(--ink);
+      font-family: var(--display);
+      font-size: clamp(118px, 15.2vw, 184px);
+      font-weight: 900;
+      line-height: .82;
+      letter-spacing: -.06em;
+      white-space: nowrap;
+      transform: scaleX(1.42);
+      transform-origin: left top;
+      text-transform: uppercase;
+    }
+    .title .outline {
+      display: inline-block;
+      margin-left: .1em;
+      color: transparent;
+      -webkit-text-stroke: 2px var(--ink);
+      text-stroke: 2px var(--ink);
+    }
+    .word {
+      position: absolute;
+      left: 34px;
+      z-index: 2;
+      color: var(--ink);
+      font-family: var(--display);
+      font-size: clamp(65px, 7.7vw, 104px);
+      font-weight: 900;
+      line-height: .75;
+      letter-spacing: -.03em;
+      text-transform: uppercase;
+    }
+    .word.one { top: 272px; }
+    .word.two { top: 358px; }
+    .word.three { top: 444px; }
+    .command {
+      position: absolute;
+      left: 35px;
+      top: 548px;
+      z-index: 3;
+      width: 196px;
+      height: 55px;
+      display: flex;
+      align-items: center;
+      padding-left: 28px;
+      border: 1px solid rgba(17,23,32,.44);
+      background: rgba(17,23,32,.08);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .command::before, .command::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-color: var(--ink);
+      border-style: solid;
+    }
+    .command::before { left: -1px; top: -1px; border-width: 3px 0 0 3px; }
+    .command::after { right: -1px; bottom: -1px; border-width: 0 3px 3px 0; }
+    .command:hover { background: var(--ink); color: var(--red); }
+    .seal {
+      position: absolute;
+      left: 486px;
+      top: 610px;
+      z-index: 2;
+      width: 106px;
+      height: 106px;
+      border: 1px solid var(--ink);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 66px;
+      line-height: 1;
+    }
+    .gallery {
+      position: absolute;
+      left: 960px;
+      top: 264px;
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity .42s ease, transform .42s ease;
+      transform: translateX(4%);
+    }
+    .slide.is-active { opacity: 1; transform: translateX(0); }
+    .slide img {
+      position: absolute;
+      top: 126px;
+      width: 267px;
+      height: 300px;
+      object-fit: contain;
+      filter: saturate(1.08) contrast(1.04);
+    }
+    .slide img.left { left: -174px; opacity: .88; }
+    .slide img.main { left: 96px; z-index: 2; }
+    .slide img.right { right: -174px; opacity: .9; }
+    .slide-name {
+      position: absolute;
+      left: 70px;
+      top: 151px;
+      z-index: 4;
+      color: rgba(236,232,220,.88);
+      font-family: var(--display);
+      font-size: 70px;
+      font-weight: 900;
+      line-height: .8;
+      letter-spacing: -.055em;
+      text-transform: uppercase;
+    }
+    .ticks {
+      position: absolute;
+      left: 58px;
+      right: 46px;
+      bottom: 55px;
+      z-index: 4;
+      height: 44px;
+      --progress: 0;
+    }
+    .tick-line {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      pointer-events: none;
+    }
+    .ticks i {
+      width: 1px;
+      height: 22px;
+      display: block;
+      background: var(--ink);
+    }
+    .ticks i:nth-child(9) { height: 42px; }
+    .handle {
+      position: absolute;
+      left: calc(var(--progress) * (100% - 75px));
+      top: 1px;
+      width: 75px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      background: var(--ink);
+      color: var(--red);
+      border: 2px solid var(--red);
+      font-family: var(--mono);
+      font-size: 17px;
+      user-select: none;
+      touch-action: none;
+    }
+    .handle:active { transform: translateY(1px); }
+    .handle::before, .handle::after {
+      content: "";
+      position: absolute;
+      width: 13px;
+      height: 13px;
+      border-color: var(--ink);
+      border-style: solid;
+    }
+    .handle::before { left: -12px; top: -9px; border-width: 2px 0 0 2px; }
+    .handle::after { right: -12px; bottom: -9px; border-width: 0 2px 2px 0; }
+
+    .mask-card {
+      position: absolute;
+      width: 140px;
+      height: 158px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(236,232,220,.16);
+      background:
+        linear-gradient(var(--red), var(--red)) top left / 0 1px no-repeat,
+        linear-gradient(var(--red), var(--red)) top right / 1px 0 no-repeat,
+        linear-gradient(var(--red), var(--red)) bottom right / 0 1px no-repeat,
+        linear-gradient(var(--red), var(--red)) bottom left / 1px 0 no-repeat;
+      transform-origin: right center;
+    }
+    #screen-02 .mask-card,
+    #screen-02 .reticle,
+    #screen-02 .mask-label {
+      opacity: 0;
+      transform: translate3d(0, 24px, 0);
+      transition: opacity .34s ease, transform .58s cubic-bezier(.19, 1, .22, 1);
+      transition-delay: 0s;
+    }
+    #screen-02.is-current .mask-card,
+    #screen-02.is-current .reticle,
+    #screen-02.is-current .mask-label {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+      transition-delay: .34s;
+    }
+    #screen-02.is-exiting .mask-card,
+    #screen-02.is-exiting .reticle,
+    #screen-02.is-exiting .mask-label {
+      opacity: 0;
+      transform: translate3d(0, 18px, 0);
+      transition-delay: 0s;
+      transition-duration: .28s;
+    }
+    #screen-02.is-current .mask-card:nth-of-type(2) { transition-delay: .38s; }
+    #screen-02.is-current .mask-card:nth-of-type(3) { transition-delay: .42s; }
+    #screen-02.is-current .mask-card:nth-of-type(4) { transition-delay: .46s; }
+    #screen-02.is-current .mask-card:nth-of-type(5) { transition-delay: .5s; }
+    #screen-02.is-current .mask-card:nth-of-type(6) { transition-delay: .54s; }
+    #screen-02.is-current .mask-card:nth-of-type(7) { transition-delay: .58s; }
+    #screen-02.is-current .mask-card:nth-of-type(8) { transition-delay: .62s; }
+    #screen-02.is-current .mask-card:nth-of-type(9) { transition-delay: .66s; }
+    #screen-02.is-current .mask-card:nth-of-type(10) { transition-delay: .7s; }
+    #screen-02.is-current .mask-card:nth-of-type(11) { transition-delay: .74s; }
+    #screen-02.is-current .mask-card:nth-of-type(12) { transition-delay: .78s; }
+    #screen-02.is-current .mask-card:nth-of-type(13) { transition-delay: .82s; }
+    #screen-02.is-current .mask-card:nth-of-type(14) { transition-delay: .86s; }
+    #screen-02.is-current .mask-card:nth-of-type(15) { transition-delay: .9s; }
+    #screen-02.is-current .reticle,
+    #screen-02.is-current .mask-label { transition-delay: .72s; }
+    .mask-card:hover {
+      z-index: 10;
+      animation: orbit-border .68s linear forwards;
+    }
+    @keyframes orbit-border {
+      0% { background-size: 0 1px, 1px 0, 0 1px, 1px 0; }
+      25% { background-size: 100% 1px, 1px 0, 0 1px, 1px 0; }
+      50% { background-size: 100% 1px, 1px 100%, 0 1px, 1px 0; }
+      75% { background-size: 100% 1px, 1px 100%, 100% 1px, 1px 0; }
+      100% { background-size: 100% 1px, 1px 100%, 100% 1px, 1px 100%; }
+    }
+    .mask-card::before, .mask-card::after,
+    .mask-card span::before, .mask-card span::after {
+      content: "";
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      border-color: var(--cream);
+      border-style: solid;
+    }
+    .mask-card::before { left: -2px; top: -2px; border-width: 4px 0 0 4px; }
+    .mask-card::after { right: -2px; top: -2px; border-width: 4px 4px 0 0; }
+    .mask-card span::before { left: -2px; bottom: -2px; border-width: 0 0 4px 4px; }
+    .mask-card span::after { right: -2px; bottom: -2px; border-width: 0 4px 4px 0; }
+    .mask-card img {
+      width: 95%;
+      height: 95%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+    .mask-name {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      z-index: 3;
+      padding: 6px 7px 5px;
+      border: 1px solid var(--red);
+      background: rgba(17,23,32,.9);
+      color: var(--cream);
+      font-style: normal;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .18s ease, transform .18s ease;
+      pointer-events: none;
+    }
+    .mask-card:hover .mask-name {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .mask-name b,
+    .mask-name small {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mask-name b {
+      color: var(--red);
+      font-family: var(--display);
+      font-size: 18px;
+      line-height: .95;
+      letter-spacing: .03em;
+    }
+    .mask-name small {
+      margin-top: 4px;
+      color: rgba(236,232,220,.78);
+      font-family: var(--mono);
+      font-size: 9px;
+      line-height: 1;
+      letter-spacing: .02em;
+    }
+    .reticle {
+      position: absolute;
+      left: 79%;
+      top: 60.5%;
+      width: 28px;
+      height: 28px;
+      color: var(--red);
+      opacity: .75;
+    }
+    .reticle::before, .reticle::after {
+      content: "";
+      position: absolute;
+      inset: 7px;
+      border: 2px solid currentColor;
+    }
+    .reticle::after {
+      inset: 12px;
+      background: currentColor;
+      border: 0;
+    }
+    .mask-label {
+      position: absolute;
+      left: 24px;
+      bottom: 22px;
+      color: rgba(236,232,220,.72);
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .lines {
+      position: absolute;
+      inset: 0 25.8% 0 0;
+      display: grid;
+      grid-template-rows: 18% 22% 20% 22% 18%;
+      border-right: 1px solid var(--red);
+    }
+    .lines span { border-bottom: 1px solid var(--red); }
+    .giant {
+      position: absolute;
+      left: 50px;
+      top: -50px;
+      color: var(--red);
+      font-family: var(--display);
+      font-size: clamp(104px, 12.6vw, 178px);
+      font-weight: 900;
+      line-height: .96;
+      letter-spacing: -.045em;
+      text-transform: uppercase;
+    }
+    .feature {
+      position: absolute;
+      left: 57%;
+      top: 49%;
+      z-index: 3;
+      width: 430px;
+      transform: translate(-50%, -50%);
+      filter: saturate(1.08) contrast(1.06) drop-shadow(0 0 20px rgba(255,25,25,.55));
+    }
+    .kanji {
+      position: absolute;
+      right: 14px;
+      top: -18px;
+      color: transparent;
+      -webkit-text-stroke: 2px var(--red);
+      text-stroke: 2px var(--red);
+      font-family: var(--display), sans-serif;
+      font-size: clamp(190px, 28vw, 410px);
+      font-weight: 900;
+      line-height: .9;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      opacity: .92;
+    }
+    .tag {
+      position: absolute;
+      z-index: 4;
+      color: var(--red);
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+    }
+    .tag.cyan { color: var(--cyan); }
+    @media (max-width: 900px) {
+      body { overflow: auto; cursor: auto; }
+      a, button { cursor: pointer; }
+      .cursor { display: none; }
+      .screen { width: 1440px; height: 711px; transform: scale(calc(100vw / 1440)); transform-origin: left top; }
+    }
+  </style>
+</head>
+<body>
+  <section class="screen grid" id="screen-01">
+    <div class="hero-mark">CHINESE<span class="outline">NUO OPERA</span></div>
+    <div class="hero-panel" aria-label="Chinese Nuo Opera hero">
+      <div class="line top-rule"></div>
+      <div class="line hline title-rule"></div>
+      <div class="line hline row-1"></div>
+      <div class="line hline row-2"></div>
+      <div class="line hline row-3"></div>
+      <div class="line vline v-left-mid"></div>
+      <div class="line vline v-gallery"></div>
+      <div class="coords">27.6104° N / 111.7088° E</div>
+      <div class="country">CHINA</div>
+      <h1 class="title">NUO<span class="outline">CHINA</span></h1>
+      <div class="word one">Ritual.</div>
+      <div class="word two">Ward.</div>
+      <div class="word three">Nuo.</div>
+      <a class="command" href="#screen-02">&gt;_EXECUTE_CREATION</a>
+      <div class="seal">◇</div>
+      <div class="gallery">
+        <div class="slide is-active">
+          <img class="left" src="assets/nuo/04-wu-panguan-martial-judge.png" alt="">
+          <img class="main" src="assets/nuo/01-kaishan-jiangjun-mountain-opening-general.png" alt="">
+          <img class="right" src="assets/nuo/09-caishen-god-of-wealth.png" alt="">
+          <div class="slide-name">Nuo</div>
+        </div>
+        <div class="slide">
+          <img class="left" src="assets/nuo/06-yuchi-gong-black-warrior.png" alt="">
+          <img class="main" src="assets/nuo/13-huoshen-fire-god.png" alt="">
+          <img class="right" src="assets/nuo/14-niutou-ox-head.png" alt="">
+          <div class="slide-name">Ward</div>
+        </div>
+        <div class="slide">
+          <img class="left" src="assets/nuo/02-zhendian-yuanshuai-palace-guard-marshal.png" alt="">
+          <img class="main" src="assets/nuo/08-tudi-shen-earth-god.png" alt="">
+          <img class="right" src="assets/nuo/10-chenghuang-city-god.png" alt="">
+          <div class="slide-name">Ritual</div>
+        </div>
+        <div class="slide">
+          <img class="left" src="assets/nuo/11-leigong-thunder-god.png" alt="">
+          <img class="main" src="assets/nuo/15-mamian-horse-face.png" alt="">
+          <img class="right" src="assets/nuo/05-qin-shubao-door-god-general.png" alt="">
+          <div class="slide-name">Guard</div>
+        </div>
+        <div class="slide">
+          <img class="left" src="assets/nuo/12-shanshen-mountain-god.png" alt="">
+          <img class="main" src="assets/nuo/03-wen-panguan-civil-judge.png" alt="">
+          <img class="right" src="assets/nuo/07-zhong-kui-demon-queller.png" alt="">
+          <div class="slide-name">Opera</div>
+        </div>
+        <div class="ticks">
+          <div class="tick-line" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <button class="handle" type="button" aria-label="Drag to switch mask">III</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen grid" id="screen-02">
+    <div class="mask-card" style="left:436px;top:34px"><span></span><img src="assets/nuo/01-kaishan-jiangjun-mountain-opening-general.png" alt="开山将军"><em class="mask-name"><b>开山将军</b><small>Mountain-Opening General</small></em></div>
+    <div class="mask-card" style="left:724px;top:34px"><span></span><img src="assets/nuo/02-zhendian-yuanshuai-palace-guard-marshal.png" alt="镇殿元帅"><em class="mask-name"><b>镇殿元帅</b><small>Palace Guard Marshal</small></em></div>
+    <div class="mask-card" style="left:916px;top:34px"><span></span><img src="assets/nuo/03-wen-panguan-civil-judge.png" alt="文判官"><em class="mask-name"><b>文判官</b><small>Civil Judge</small></em></div>
+    <div class="mask-card" style="left:1108px;top:34px"><span></span><img src="assets/nuo/04-wu-panguan-martial-judge.png" alt="武判官"><em class="mask-name"><b>武判官</b><small>Martial Judge</small></em></div>
+    <div class="mask-card" style="left:52px;top:226px"><span></span><img src="assets/nuo/05-qin-shubao-door-god-general.png" alt="秦叔宝"><em class="mask-name"><b>秦叔宝</b><small>Door God General</small></em></div>
+    <div class="mask-card" style="left:244px;top:226px"><span></span><img src="assets/nuo/06-yuchi-gong-black-warrior.png" alt="尉迟恭"><em class="mask-name"><b>尉迟恭</b><small>Black Warrior General</small></em></div>
+    <div class="mask-card" style="left:532px;top:226px"><span></span><img src="assets/nuo/07-zhong-kui-demon-queller.png" alt="钟馗"><em class="mask-name"><b>钟馗</b><small>Demon Queller</small></em></div>
+    <div class="mask-card" style="left:724px;top:226px"><span></span><img src="assets/nuo/08-tudi-shen-earth-god.png" alt="土地神"><em class="mask-name"><b>土地神</b><small>Earth God</small></em></div>
+    <div class="mask-card" style="left:916px;top:226px"><span></span><img src="assets/nuo/09-caishen-god-of-wealth.png" alt="财神"><em class="mask-name"><b>财神</b><small>God of Wealth</small></em></div>
+    <div class="mask-card" style="left:1204px;top:226px"><span></span><img src="assets/nuo/10-chenghuang-city-god.png" alt="城隍"><em class="mask-name"><b>城隍</b><small>City God</small></em></div>
+    <div class="mask-card" style="left:436px;top:514px"><span></span><img src="assets/nuo/11-leigong-thunder-god.png" alt="雷公"><em class="mask-name"><b>雷公</b><small>Thunder God</small></em></div>
+    <div class="mask-card" style="left:628px;top:514px"><span></span><img src="assets/nuo/12-shanshen-mountain-god.png" alt="山神"><em class="mask-name"><b>山神</b><small>Mountain God</small></em></div>
+    <div class="mask-card" style="left:820px;top:514px"><span></span><img src="assets/nuo/13-huoshen-fire-god.png" alt="火神"><em class="mask-name"><b>火神</b><small>Fire God</small></em></div>
+    <div class="mask-card" style="left:1012px;top:514px"><span></span><img src="assets/nuo/14-niutou-ox-head.png" alt="牛头"><em class="mask-name"><b>牛头</b><small>Ox Head</small></em></div>
+    <div class="mask-card" style="left:1204px;top:514px"><span></span><img src="assets/nuo/15-mamian-horse-face.png" alt="马面"><em class="mask-name"><b>马面</b><small>Horse Face</small></em></div>
+    <div class="reticle" aria-hidden="true"></div>
+    <div class="mask-label">27.6104 N / 111.7088 E · CHINESE NUO OPERA</div>
+  </section>
+
+  <div class="scan"></div>
+  <div class="cursor" aria-hidden="true">
+    <svg viewBox="0 0 38 38"><path d="M7 13V7h6"/><path d="M25 7h6v6"/><path d="M31 25v6h-6"/><path d="M13 31H7v-6"/><circle cx="19" cy="19" r="2"/></svg>
+  </div>
+
+  <script>
+    const cursor = document.querySelector(".cursor");
+    window.addEventListener("pointermove", (event) => {
+      cursor.style.left = `${event.clientX}px`;
+      cursor.style.top = `${event.clientY}px`;
+      const target = document.elementFromPoint(event.clientX, event.clientY);
+      const isRedSurface = Boolean(target && target.closest(".hero-panel"));
+      document.body.classList.toggle("cursor-standard", isRedSurface);
+      cursor.style.opacity = isRedSurface ? "0" : "1";
+    }, { passive: true });
+
+    document.querySelectorAll("a, button, .mask-card").forEach((node) => {
+      node.addEventListener("mouseenter", () => cursor.classList.add("is-active"));
+      node.addEventListener("mouseleave", () => cursor.classList.remove("is-active"));
+    });
+
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const ticks = document.querySelector(".ticks");
+    const handle = document.querySelector(".handle");
+    let current = 0;
+    function setSlide(next) {
+      slides[current].classList.remove("is-active");
+      current = (next + slides.length) % slides.length;
+      slides[current].classList.add("is-active");
+      ticks.style.setProperty("--progress", slides.length === 1 ? 0 : current / (slides.length - 1));
+    }
+    function slideFromPointer(event) {
+      const rect = ticks.getBoundingClientRect();
+      const handleWidth = handle.offsetWidth || 75;
+      const usable = Math.max(1, rect.width - handleWidth);
+      const raw = (event.clientX - rect.left - handleWidth / 2) / usable;
+      const progress = Math.min(1, Math.max(0, raw));
+      setSlide(Math.round(progress * (slides.length - 1)));
+    }
+    let dragging = false;
+    handle.addEventListener("pointerdown", (event) => {
+      dragging = true;
+      handle.setPointerCapture(event.pointerId);
+      slideFromPointer(event);
+    });
+    handle.addEventListener("pointermove", (event) => {
+      if (dragging) slideFromPointer(event);
+    });
+    handle.addEventListener("pointerup", () => {
+      dragging = false;
+    });
+    handle.addEventListener("pointercancel", () => {
+      dragging = false;
+    });
+    ticks.addEventListener("pointerdown", slideFromPointer);
+
+    const screens = Array.from(document.querySelectorAll(".screen"));
+    let screenIndex = 0;
+    let wheelLocked = false;
+    function paintScreens(next) {
+      const clamped = Math.min(screens.length - 1, Math.max(0, next));
+      if (clamped === screenIndex && screens[clamped].classList.contains("is-current")) return;
+      screenIndex = clamped;
+      screens.forEach((screen, index) => {
+        screen.classList.remove("is-exiting");
+        screen.classList.remove("is-cover-exiting");
+        screen.classList.toggle("is-before", index < screenIndex);
+        screen.classList.toggle("is-current", index === screenIndex);
+        screen.classList.toggle("is-after", index > screenIndex);
+      });
+    }
+    function showScreen(next) {
+      const clamped = Math.min(screens.length - 1, Math.max(0, next));
+      if (clamped === screenIndex) return;
+      if (clamped < screenIndex) {
+        const leaving = screens[screenIndex];
+        leaving.classList.add("is-exiting");
+        window.setTimeout(() => {
+          leaving.classList.add("is-cover-exiting");
+          leaving.classList.remove("is-current");
+        }, 300);
+        window.setTimeout(() => paintScreens(clamped), 1160);
+        return;
+      }
+      paintScreens(clamped);
+    }
+    paintScreens(0);
+    function notifyParentStep(direction) {
+      if (window.parent === window) return;
+      window.parent.postMessage({ type: "vibe-screen-step", source: "utopia", direction }, "*");
+    }
+
+    window.addEventListener("wheel", (event) => {
+      if (Math.abs(event.deltaY) < 8 || wheelLocked) return;
+      event.preventDefault();
+      const direction = event.deltaY > 0 ? 1 : -1;
+      const next = Math.min(screens.length - 1, Math.max(0, screenIndex + direction));
+      if (next === screenIndex) {
+        if (direction < 0 && screenIndex === 0) {
+          wheelLocked = true;
+          notifyParentStep(-1);
+          window.setTimeout(() => { wheelLocked = false; }, 760);
+        }
+        if (direction > 0 && screenIndex === screens.length - 1) {
+          wheelLocked = true;
+          notifyParentStep(1);
+          window.setTimeout(() => { wheelLocked = false; }, 760);
+        }
+        return;
+      }
+      wheelLocked = true;
+      showScreen(next);
+      window.setTimeout(() => { wheelLocked = false; }, 1260);
+    }, { passive: false });
+    document.querySelectorAll('a[href^="#screen-"]').forEach((anchor) => {
+      anchor.addEventListener("click", (event) => {
+        const targetIndex = screens.findIndex((screen) => `#${screen.id}` === anchor.getAttribute("href"));
+        if (targetIndex < 0) return;
+        event.preventDefault();
+        showScreen(targetIndex);
+      });
+    });
+  </script>
+</body>
+</html>

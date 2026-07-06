@@ -148,6 +148,74 @@
     .hero-nav-link { transition: color 0.2s ease; }
     .hero-nav-link:hover { color: #5ed29c !important; }
 
+    /* ── vibe coding nav effect ─────────────────────────────────── */
+    .loader {
+      --c-1: #a2ff37;
+      --c-2: #5bb2ff;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loader::after {
+      content: attr(data-text);
+      font-size: var(--loader-size, 25px);
+      font-family: "Segoe UI", Tahoma;
+      font-weight: 800;
+      text-transform: uppercase;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .layer {
+      font-size: var(--loader-size, 25px);
+      font-family: "Segoe UI", Tahoma;
+      font-weight: 800;
+      text-transform: uppercase;
+      position: absolute;
+    }
+
+    .layer:nth-child(1) {
+      color: var(--c-1);
+      animation: kfs-3412 0.5s infinite;
+    }
+
+    .layer:nth-child(2) {
+      color: var(--c-2);
+      animation: kfs-3412 0.5s 0.25s infinite;
+    }
+
+    @keyframes kfs-3412 {
+      0% {
+        text-shadow: 0 0 30px var(--c-1);
+        transform: scaleY(0);
+        z-index: 2;
+      }
+      50% {
+        transform: scaleY(1.5);
+        z-index: 2;
+      }
+      100% {
+        transform: scaleY(1.5);
+        z-index: 0;
+      }
+    }
+
+    .vibe-nav-effect {
+      color: transparent !important;
+    }
+
+    .vibe-nav-effect .loader {
+      --loader-size: 11px;
+      min-width: max-content;
+      line-height: 1;
+    }
+
+    #mobile-menu .vibe-nav-effect .loader {
+      --loader-size: 24px;
+    }
+
     /* ── liquid glass card ──────────────────────────────────────── */
     .liquid-glass-card {
       width: 200px; height: 200px;
@@ -1556,6 +1624,149 @@ body.project-modal-locked {
 #proj-modal-close:hover {
   background: #ccff00 !important;
   color: #090a0c !important;
+}
+
+.works-all-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 7px 16px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  color: rgba(255,255,255,.64);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  transition: color .2s ease, border-color .2s ease, background .2s ease;
+}
+.works-all-link:hover {
+  color: #ccff00;
+  border-color: rgba(204,255,0,.35);
+  background: rgba(204,255,0,.06);
+}
+
+body.project-detail-active {
+  background: #090a0c;
+}
+body.project-detail-active #page > section {
+  display: none !important;
+}
+body.project-detail-active #page {
+  opacity: 1 !important;
+}
+body.project-detail-active #page > nav {
+  display: grid !important;
+}
+#proj-modal.as-page {
+  --project-page-w: min(1680px, calc(100% - 240px));
+  --project-tabs-top: 78px;
+  display: block !important;
+  position: relative !important;
+  inset: auto !important;
+  z-index: 1 !important;
+  min-height: 100vh !important;
+  padding: clamp(132px, 10vw, 148px) 0 0 !important;
+  overflow: visible !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  will-change: auto !important;
+  transition: none !important;
+  touch-action: auto !important;
+}
+#proj-modal.as-page #proj-modal-hd-wrap {
+  position: relative;
+  z-index: 3;
+}
+#proj-modal.as-page #proj-modal-card {
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow: visible !important;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  will-change: auto !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+#proj-modal.as-page .modal-sticky-hd {
+  position: sticky !important;
+  top: 80px !important;
+  width: var(--project-page-w) !important;
+  margin: 0 auto !important;
+  padding: 12px 0 !important;
+  background: transparent !important;
+  border-bottom-color: rgba(255,255,255,.08) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+#proj-modal.as-page .modal-sticky-hd.scrolled {
+  padding: 12px 0 !important;
+  background: transparent !important;
+}
+#proj-modal.as-page #proj-modal-body {
+  width: var(--project-page-w) !important;
+  margin: 0 auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+#proj-modal.as-page #proj-modal-close,
+#proj-modal.as-page #proj-modal-scroll-hint {
+  display: none !important;
+}
+#proj-modal.as-page .pm-section-tabs {
+  top: var(--project-tabs-top) !important;
+  left: max(120px, calc((100% - 1680px) / 2)) !important;
+  right: max(120px, calc((100% - 1680px) / 2)) !important;
+  padding: 10px 0 14px !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  z-index: 4;
+}
+.project-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: var(--project-page-w, min(1360px, calc(100% - 48px)));
+  margin: 0 auto 18px;
+  color: rgba(255,255,255,.42);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+.project-breadcrumb button {
+  color: rgba(255,255,255,.55);
+  transition: color .2s ease;
+}
+.project-breadcrumb button:hover {
+  color: #ccff00;
+}
+.project-breadcrumb-current {
+  color: rgba(255,255,255,.9);
+}
+@media (max-width: 1024px) {
+  #proj-modal.as-page {
+    --project-page-w: calc(100% - 32px);
+    --project-tabs-top: 68px;
+    padding-top: 118px !important;
+  }
+  #proj-modal.as-page .pm-section-tabs {
+    left: 16px !important;
+    right: 16px !important;
+    justify-content: flex-start !important;
+  }
 }
 
 /* Landing preview: use the same full-screen modal language as project cards. */
@@ -3910,6 +4121,14 @@ body.project-modal-locked {
          style="color:rgba(255,255,255,0.55)" data-i18n="nav-aboutme">关于我</a>
       <a href="#journal" class="hero-nav-link text-[11px] uppercase tracking-widest font-semibold"
          style="color:rgba(255,255,255,0.55)" data-i18n="nav-other">其他</a>
+      <a href="vibe-coding.html" target="_blank" rel="noopener"
+         class="hero-nav-link vibe-nav-effect text-[11px] uppercase tracking-widest font-semibold"
+         aria-label="Vibe Coding">
+        <span class="loader" data-text="Vibe Coding" aria-hidden="true">
+          <span class="layer">Vibe Coding</span>
+          <span class="layer">Vibe Coding</span>
+        </span>
+      </a>
     </div>
 
     <!-- right side -->
@@ -4146,7 +4365,7 @@ body.project-modal-locked {
         <button class="holo-nav next" id="holo-next" aria-label="Next">&#8250;</button>
         <div class="holo-mask">
           <div class="holo-track" id="holo-track">
-<div class="pcard otc" onclick="openProjectModal('otc')">
+<div class="pcard otc" onclick="openProjectPage('otc')">
               <div class="pcard-header">
                 <span class="pcard-date">2025 · CoinW</span>
                 <span class="pcard-badge" data-i18n="card-otc-badge">P2P 场外</span>
@@ -4176,7 +4395,7 @@ body.project-modal-locked {
                 <a class="pcard-btn" data-i18n="card-view">查看案例 →</a>
               </div>
             </div>
-<div class="pcard copy" onclick="openProjectModal('copy')">
+<div class="pcard copy" onclick="openProjectPage('copy')">
               <div class="pcard-header">
                 <span class="pcard-date">2025 · CoinW</span>
                 <span class="pcard-badge" data-i18n="card-copy-badge">跟单系统</span>
@@ -4206,7 +4425,7 @@ body.project-modal-locked {
                 <a class="pcard-btn" data-i18n="card-view">查看案例 →</a>
               </div>
             </div>
-<div class="pcard community" onclick="openProjectModal('community')">
+<div class="pcard community" onclick="openProjectPage('community')">
               <div class="pcard-header">
                 <span class="pcard-date">2024 · CoinW</span>
                 <span class="pcard-badge" data-i18n="card-community-badge">社区改版</span>
@@ -4236,7 +4455,7 @@ body.project-modal-locked {
                 <a class="pcard-btn" data-i18n="card-view">查看案例 →</a>
               </div>
             </div>
-<div class="pcard landing" onclick="openLandingLightbox(0)">
+<div class="pcard landing" onclick="openProjectPage('landing')">
               <div class="pcard-header">
                 <span class="pcard-date">2024 · CoinW</span>
                 <span class="pcard-badge" data-i18n="card-landing-badge">落地页</span>
@@ -4611,6 +4830,14 @@ body.project-modal-locked {
        class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-aboutme">关于我</a>
     <a href="#journal" onclick="toggleMobileMenu()"
        class="text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors" data-i18n="nav-other">其他</a>
+    <a href="vibe-coding.html" target="_blank" rel="noopener" onclick="toggleMobileMenu()"
+       class="vibe-nav-effect text-2xl font-bold uppercase tracking-widest text-white hover:text-[#5ed29c] transition-colors"
+       aria-label="Vibe Coding">
+      <span class="loader" data-text="Vibe Coding" aria-hidden="true">
+        <span class="layer">Vibe Coding</span>
+        <span class="layer">Vibe Coding</span>
+      </span>
+    </a>
     <button onclick="openContact();toggleMobileMenu();"
             class="mt-4 px-8 py-3 rounded-full font-bold uppercase text-sm"
             style="background:#5ed29c; color:#070b0a">
@@ -7109,6 +7336,11 @@ function setupModalSectionTabs(card) {
   const body = card.querySelector('#proj-modal-body');
   const hdWrap = document.getElementById('proj-modal-hd-wrap');
   if (!body || !hdWrap) return null;
+  const isPageMode = !!window.__projectPageMode;
+  const modal = document.getElementById('proj-modal');
+  const getPageTabTop = () => modal
+    ? (Number.parseFloat(getComputedStyle(modal).getPropertyValue('--project-tabs-top')) || 78)
+    : 78;
 
   const tabTitles = _lang === 'en'
     ? [
@@ -7149,12 +7381,20 @@ function setupModalSectionTabs(card) {
     button.textContent = section.dataset.tabTitle;
     button.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
     button.addEventListener('click', () => {
-      const cardRect = card.getBoundingClientRect();
       const header = document.getElementById('modal-sticky-hd');
       const stickyTop = header ? header.offsetHeight : 44;
-      const destination = card.scrollTop + section.getBoundingClientRect().top - cardRect.top
-        - stickyTop - nav.offsetHeight - 12;
-      card.scrollTo({ top: Math.max(0, destination), behavior: 'smooth' });
+      if (isPageMode) {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop || 0;
+        const pageTabOffset = getPageTabTop() + nav.offsetHeight + 16;
+        const destination = scrollTop + section.getBoundingClientRect().top
+          - pageTabOffset;
+        window.scrollTo({ top: Math.max(0, destination), behavior: 'smooth' });
+      } else {
+        const cardRect = card.getBoundingClientRect();
+        const destination = card.scrollTop + section.getBoundingClientRect().top - cardRect.top
+          - stickyTop - nav.offsetHeight - 12;
+        card.scrollTo({ top: Math.max(0, destination), behavior: 'smooth' });
+      }
     });
     nav.appendChild(button);
     return button;
@@ -7163,6 +7403,10 @@ function setupModalSectionTabs(card) {
   hdWrap.appendChild(nav);
 
   const syncPosition = () => {
+    if (isPageMode) {
+      nav.style.top = '';
+      return;
+    }
     const header = document.getElementById('modal-sticky-hd');
     if (header && nav.isConnected) nav.style.top = header.getBoundingClientRect().bottom + 'px';
   };
@@ -7170,13 +7414,13 @@ function setupModalSectionTabs(card) {
   if (header) header.addEventListener('transitionend', syncPosition);
 
   const update = () => {
-    const cardRect = card.getBoundingClientRect();
     const header = document.getElementById('modal-sticky-hd');
-    const headerBottom = header ? header.getBoundingClientRect().bottom : 44;
-    const isVisible = card.scrollTop > 40;
+    const headerBottom = isPageMode ? getPageTabTop() : (header ? header.getBoundingClientRect().bottom : 44);
+    const scrollTop = isPageMode ? (window.scrollY || document.documentElement.scrollTop || 0) : card.scrollTop;
+    const isVisible = isPageMode ? true : scrollTop > 40;
     nav.classList.toggle('is-visible', isVisible);
-    syncPosition();
-    const threshold = headerBottom + (isVisible ? nav.offsetHeight : 0) + 28;
+    if (!isPageMode) syncPosition();
+    const threshold = headerBottom + (isVisible ? nav.offsetHeight : 0) + (isPageMode ? 18 : 28);
     let activeIndex = 0;
     sections.forEach((section, index) => {
       if (section.getBoundingClientRect().top <= threshold) activeIndex = index;
@@ -7234,8 +7478,95 @@ function unlockProjectPageScroll() {
   window.scrollTo(0, y);
 }
 
-window.openProjectModal = function(key) {
+function projectPageText(key) {
+  const zh = {
+    home: '首页',
+    all: '全部',
+    otc: 'OTC 场外交易系统',
+    copy: '跟单交易系统',
+    community: '社区功能改版',
+    landing: '落地页矩阵'
+  };
+  const en = {
+    home: 'Home',
+    all: 'All',
+    otc: 'OTC P2P Redesign',
+    copy: 'Copy Trading',
+    community: 'Community Redesign',
+    landing: 'Landing Page Matrix'
+  };
+  return (_lang === 'en' ? en : zh)[key] || key;
+}
+
+function renderProjectBreadcrumb(data, key) {
+  const title = data && data.title ? data.title : projectPageText(key);
+  return `
+    <div class="project-breadcrumb" aria-label="Project breadcrumb">
+      <button type="button" onclick="closeProjectPage('home')">${projectPageText('home')}</button>
+      <span>/</span>
+      <span class="project-breadcrumb-current">${title}</span>
+    </div>`;
+}
+
+function resetProjectPageMode() {
+  const modal = document.getElementById('proj-modal');
+  const card = document.getElementById('proj-modal-card');
+  const hdWrap = document.getElementById('proj-modal-hd-wrap');
+  const hint = document.getElementById('proj-modal-scroll-hint');
+  if (window.__projectPageTabsCleanup) {
+    window.__projectPageTabsCleanup();
+    window.__projectPageTabsCleanup = null;
+  }
+  document.body.classList.remove('project-detail-active');
+  modal.classList.remove('open', 'closing', 'as-page');
+  window.__projectPageMode = false;
+  window.__projectModalOpen = false;
+  window.__modalRenderToken = '';
+  modal.onclick = null;
+  modal.onwheel = null;
+  modal.ontouchmove = null;
+  card.onscroll = null;
+  card.style.paddingTop = '';
+  if (hint) hint.classList.add('hidden');
+  if (window.setGhostMode) window.setGhostMode('full');
+  if (hdWrap) hdWrap.innerHTML = '';
+  if (card) card.innerHTML = '';
+}
+
+window.closeProjectPage = function(target) {
+  resetProjectPageMode();
+  const nextHash = target === 'all' ? '#works' : '#hero';
+  if (location.hash !== nextHash) history.pushState(null, '', nextHash);
+  requestAnimationFrame(() => {
+    const el = document.querySelector(nextHash);
+    if (el) el.scrollIntoView({ behavior: 'auto', block: 'start' });
+  });
+};
+
+window.openProjectPage = function(key) {
+  if (!getProjectDisplayData(key)) return;
+  const nextHash = `#/work/${key}`;
+  if (location.hash !== nextHash) history.pushState(null, '', nextHash);
+  window.openProjectModal(key, { page: true });
+  window.scrollTo({ top: 0, behavior: 'auto' });
+};
+
+function handleProjectHashRoute() {
+  const match = String(location.hash || '').match(/^#\/work\/([a-z-]+)$/);
+  if (match) {
+    window.openProjectModal(match[1], { page: true });
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  } else if (document.body.classList.contains('project-detail-active')) {
+    resetProjectPageMode();
+  }
+}
+
+window.addEventListener('hashchange', handleProjectHashRoute);
+requestAnimationFrame(handleProjectHashRoute);
+
+window.openProjectModal = function(key, options = {}) {
   window.__currentProjectKey = key;
+  const isPageMode = !!(options && options.page);
   const data = getProjectDisplayData(key);
   if (!data) return;
   window.__modalImageStore = {};
@@ -7250,19 +7581,28 @@ window.openProjectModal = function(key) {
   const renderToken = `${key}-${Date.now()}`;
   window.__modalRenderToken = renderToken;
   window.__modalCleanupToken = '';
+  window.__projectPageMode = isPageMode;
+  document.body.classList.toggle('project-detail-active', isPageMode);
+  modal.classList.toggle('as-page', isPageMode);
   modal.classList.remove('closing');
   modal.classList.add('open');
   window.__projectModalOpen = true;
   card.scrollTop = 0;
   card.style.paddingTop = '';
-  lockProjectPageScroll();
-  if (window.setGhostMode) window.setGhostMode('minimal');
+  if (isPageMode) unlockProjectPageScroll();
+  else lockProjectPageScroll();
+  if (window.setGhostMode) window.setGhostMode(isPageMode ? 'full' : 'minimal');
   hdWrap.innerHTML = `
+    ${isPageMode ? renderProjectBreadcrumb(data, key) : ''}
     <div class="modal-sticky-hd" id="modal-sticky-hd">
       <p class="modal-hd-eyebrow" style="color:${data.accentColor};opacity:.85">${data.eyebrow}</p>
       <h2 class="modal-hd-title">${data.title}</h2>
-      <button id="proj-modal-close" onclick="closeProjectModal()" aria-label="Close project">✕</button>
+      ${isPageMode ? '' : '<button id="proj-modal-close" onclick="closeProjectModal()" aria-label="Close project">✕</button>'}
     </div>`;
+  if (isPageMode) {
+    renderProjectModalContent();
+    return;
+  }
   card.innerHTML = `<div id="proj-modal-body" style="min-height:100vh;padding:calc(72px + var(--modal-px)) var(--modal-px) var(--modal-px);display:grid;place-items:center">
     <div style="width:44px;height:44px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)"></div>
   </div>`;
@@ -7272,18 +7612,18 @@ window.openProjectModal = function(key) {
     const stickyHd = document.getElementById('modal-sticky-hd');
     if (stickyHd) stickyHd.classList.toggle('scrolled', card.scrollTop > 40);
   };
-  modal.onclick = (e) => { if (e.target === modal) closeProjectModal(); };
-  modal.onwheel = (e) => {
+  modal.onclick = isPageMode ? null : (e) => { if (e.target === modal) closeProjectModal(); };
+  modal.onwheel = isPageMode ? null : (e) => {
     if (!e.target.closest('#proj-modal-card')) e.preventDefault();
   };
-  modal.ontouchmove = (e) => {
+  modal.ontouchmove = isPageMode ? null : (e) => {
     if (!e.target.closest('#proj-modal-card')) e.preventDefault();
   };
   requestAnimationFrame(() => {
     setTimeout(() => {
       if (window.__modalRenderToken !== renderToken || !modal.classList.contains('open') || modal.classList.contains('closing')) return;
       renderProjectModalContent();
-    }, 420);
+    }, isPageMode ? 0 : 420);
   });
   return;
 
@@ -7310,6 +7650,7 @@ window.openProjectModal = function(key) {
 
   // ── Header rendered OUTSIDE the card (sibling) — not clipped by card overflow
   hdWrap.innerHTML = `
+    ${isPageMode ? renderProjectBreadcrumb(data, key) : ''}
     <div class="modal-sticky-hd" id="modal-sticky-hd">
       <p class="modal-hd-eyebrow" style="color:${data.accentColor};opacity:.85">${data.eyebrow}</p>
       <h2 class="modal-hd-title">${data.title}</h2>
@@ -7323,7 +7664,7 @@ window.openProjectModal = function(key) {
           ${tags}
         </div>
       </div>
-      <button id="proj-modal-close" onclick="closeProjectModal()" aria-label="Close project">✕</button>
+      ${isPageMode ? '' : '<button id="proj-modal-close" onclick="closeProjectModal()" aria-label="Close project">✕</button>'}
     </div>`;
 
   // ── Card: banner + body only
@@ -8683,25 +9024,41 @@ window.openProjectModal = function(key) {
 
   // open modal — card is the scroll container
   let sectionTabs = null;
+  document.body.classList.toggle('project-detail-active', isPageMode);
+  modal.classList.toggle('as-page', isPageMode);
   modal.classList.remove('closing');
   modal.classList.add('open');
   window.__projectModalOpen = true;
   card.scrollTop = 0;
-  lockProjectPageScroll();
-  if (window.setGhostMode) window.setGhostMode('minimal');
+  if (isPageMode) unlockProjectPageScroll();
+  else lockProjectPageScroll();
+  if (window.setGhostMode) window.setGhostMode(isPageMode ? 'full' : 'minimal');
 
   requestAnimationFrame(() => {
     if (!modal.classList.contains('open') || modal.classList.contains('closing')) return;
     hydrateModalImages(card);
     normalizeModalScreenshots(card);
     sectionTabs = setupModalSectionTabs(card);
+    if (window.__projectPageTabsCleanup) {
+      window.__projectPageTabsCleanup();
+      window.__projectPageTabsCleanup = null;
+    }
+    if (isPageMode && sectionTabs) {
+      const syncTabs = () => sectionTabs.update();
+      window.addEventListener('scroll', syncTabs, { passive: true });
+      window.addEventListener('resize', syncTabs);
+      window.__projectPageTabsCleanup = () => {
+        window.removeEventListener('scroll', syncTabs);
+        window.removeEventListener('resize', syncTabs);
+      };
+    }
     // measure full header height, lock card padding-top — never changes again (no layout shift)
     const hd = document.getElementById('modal-sticky-hd');
-    if (hd) card.style.paddingTop = hd.offsetHeight + 'px';
+    if (hd && !isPageMode) card.style.paddingTop = hd.offsetHeight + 'px';
   });
 
   const hint = document.getElementById('proj-modal-scroll-hint');
-  if (hint) hint.classList.remove('hidden');
+  if (hint) hint.classList.toggle('hidden', isPageMode);
   card.onscroll = () => {
     const scrolled = card.scrollTop > 40;
     const stickyHd = document.getElementById('modal-sticky-hd');
@@ -8712,11 +9069,11 @@ window.openProjectModal = function(key) {
   };
 
   // click backdrop to close
-  modal.onclick = (e) => { if (e.target === modal) closeProjectModal(); };
-  modal.onwheel = (e) => {
+  modal.onclick = isPageMode ? null : (e) => { if (e.target === modal) closeProjectModal(); };
+  modal.onwheel = isPageMode ? null : (e) => {
     if (!e.target.closest('#proj-modal-card')) e.preventDefault();
   };
-  modal.ontouchmove = (e) => {
+  modal.ontouchmove = isPageMode ? null : (e) => {
     if (!e.target.closest('#proj-modal-card')) e.preventDefault();
   };
   }
@@ -8725,6 +9082,10 @@ window.openProjectModal = function(key) {
 window.closeProjectModal = function() {
   const modal = document.getElementById('proj-modal');
   const card  = document.getElementById('proj-modal-card');
+  if (modal.classList.contains('as-page')) {
+    closeProjectPage('home');
+    return;
+  }
   if (!modal.classList.contains('open') || modal.classList.contains('closing')) return;
   window.__projectModalOpen = false;
 
@@ -9389,11 +9750,11 @@ window.toggleMobileMenu = function(){
 
 const LANG_TRANSLATIONS = {
   zh: {
-    'nav-hero':'首页','nav-foundation':'设计系统','nav-components':'组件系统','nav-featured':'精选项目','nav-aboutme':'关于我','nav-other':'其他','nav-sayhi':'打个招呼',
+    'nav-hero':'首页','nav-foundation':'设计系统','nav-components':'组件系统','nav-featured':'精选项目','nav-aboutme':'关于我','nav-vibe':'Vibe Coding','nav-other':'其他','nav-sayhi':'打个招呼',
     'hero-desc':'专注 Web3 产品的端到端 UI/UX 设计——从复杂交易流程到 0→1 冷启动。调研驱动，像素精准，快速交付。',
     'hero-trust':'UI 设计师 · Web3 & FinTech 产品','hero-sayhi':'打个招呼',
     'ds-desc':'完整嵌入 Design System spotlight 文件，保留原始交互与动效；外层仅按网页宽度等比缩放展示。',
-    'works-label':'精选作品','works-title':'精选项目','works-desc':'Web3 产品设计，从 0 到 1 的全链路交付。','card-view':'查看案例 →','card-visual-placeholder':'设计稿主视觉',
+    'works-label':'精选作品','works-title':'精选项目','works-all':'全部','works-desc':'Web3 产品设计，从 0 到 1 的全链路交付。','card-view':'查看案例 →','card-visual-placeholder':'设计稿主视觉',
     'components-label':'组件系统','components-title':'Input / Button 组件','components-desc':'CoinW 交易产品中的输入框与按钮组件状态预览，保留原始组件颜色与交互。',
     'card-otc-badge':'P2P 场外','card-copy-badge':'跟单系统','card-community-badge':'社区改版','card-landing-badge':'落地页',
     'card-otc-title':'OTC 场外交易系统','card-otc-sub':'信任机制 · 流程优化 · 跨平台一致性',
@@ -9430,11 +9791,11 @@ const LANG_TRANSLATIONS = {
     'contact-title':'联系我','contact-copy':'复制','footer-marquee':'构建未来 •\u00a0','footer-label':'联系我','footer-h2':'一起创造<br>一些很棒的东西','footer-cta':'发起合作 ↗','footer-status':'开放合作中',
   },
   en: {
-    'nav-hero':'Hero','nav-foundation':'Foundation','nav-components':'Components','nav-featured':'Featured','nav-aboutme':'About','nav-other':'Other','nav-sayhi':'Say Hi',
+    'nav-hero':'Hero','nav-foundation':'Foundation','nav-components':'Components','nav-featured':'Featured','nav-aboutme':'About','nav-vibe':'Vibe Coding','nav-other':'Other','nav-sayhi':'Say Hi',
     'hero-desc':'End-to-end UI/UX for Web3 products — from complex trading flows to zero-to-one launches. Research-driven, pixel-precise, shipped fast.',
     'hero-trust':'UI Designer · Web3 & FinTech Products','hero-sayhi':'Say Hi',
     'ds-desc':'Embedded the Design System spotlight file with its original interactions and motion preserved; the outer page only scales it proportionally to the web layout.',
-    'works-label':'Selected Work','works-title':'Featured projects','works-desc':'End-to-end Web3 product design, from 0 to 1.','card-view':'View Case →','card-visual-placeholder':'Design preview',
+    'works-label':'Selected Work','works-title':'Featured projects','works-all':'All','works-desc':'End-to-end Web3 product design, from 0 to 1.','card-view':'View Case →','card-visual-placeholder':'Design preview',
     'components-label':'Components','components-title':'Input / Button Components','components-desc':'Interactive component states based on CoinW trading-product inputs and buttons, preserving original component colors and interactions.',
     'card-otc-badge':'OTC Trading','card-copy-badge':'Copy Trading','card-community-badge':'Community','card-landing-badge':'Landing Page',
     'card-otc-title':'OTC P2P Redesign','card-otc-sub':'Trust · Flow Optimization · Cross-platform',
@@ -9502,7 +9863,7 @@ function applyLang(lang) {
   if (typeof window.refreshLandingLanguage === 'function') window.refreshLandingLanguage();
   const projectModal = document.getElementById('proj-modal');
   if (projectModal && window.__projectModalOpen && window.__currentProjectKey) {
-    window.openProjectModal(window.__currentProjectKey);
+    window.openProjectModal(window.__currentProjectKey, { page: projectModal.classList.contains('as-page') });
   }
 }
 
