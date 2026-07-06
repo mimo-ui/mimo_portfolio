@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoinW | AI Agent 专区</title>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="preconnect" href="https://prod.spline.design" crossorigin>
+<script type="module" src="https://unpkg.com/@splinetool/viewer@0.9.506/build/spline-viewer.js"></script>
+<style>
+/* ==================== RESET ==================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: #111116;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
+               'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  overflow-x: hidden;
+  line-height: 1.5;
+  min-width: 1440px; /* design width — prevents layout from collapsing below design */
+}
+
+/* ==================== PARTICLE CANVAS ==================== */
+#ptc {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ==================== NAV ==================== */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 72px;
+  background: rgba(17, 17, 22, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center;
+  padding: 0 24px 0 20px;
+  z-index: 998;
+  gap: 0;
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 17px; font-weight: 700;
+  text-decoration: none; color: #fff;
+  flex-shrink: 0;
+}
+.nav-logo-mark {
+  width: 32px; height: 32px;
+  background: #6C4FFF;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.nav-logo-mark svg { width: 20px; height: 20px; }
+.nav-dd { width: 10px; height: 10px; display: inline-block; vertical-align: middle; flex-shrink: 0; opacity: 0.55; }
+.btn-nav-wallet { display: flex; align-items: center; gap: 5px; }
+.nav-icon svg { width: 18px; height: 18px; }
+.nav-links {
+  display: flex; align-items: center; list-style: none;
+  gap: 2px; margin-left: 28px; flex: 1;
+}
+.nav-links a {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none; font-size: 13.5px;
+  padding: 6px 10px; border-radius: 6px;
+  transition: color 0.18s, background 0.18s;
+  white-space: nowrap; display: flex; align-items: center; gap: 4px;
+}
+.nav-links a:hover { color: #fff; background: rgba(255,255,255,0.06); }
+.badge-green {
+  display: inline-block;
+  background: #B4F000; color: #000;
+  font-size: 9.5px; font-weight: 700;
+  padding: 1px 5px; border-radius: 4px;
+  line-height: 1.4;
+}
+.nav-r { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.btn-nav-wallet {
+  padding: 7px 16px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 8px; color: #fff; font-size: 13px;
+  cursor: pointer; transition: all 0.18s; font-family: inherit;
+}
+.btn-nav-wallet:hover { background: rgba(255,255,255,0.06); }
+.btn-nav-deposit {
+  padding: 7px 20px;
+  background: #6C4FFF; border: none;
+  border-radius: 8px; color: #fff; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.18s; font-family: inherit;
+}
+.btn-nav-deposit:hover { background: #7B62FF; }
+.nav-icons { display: flex; align-items: center; gap: 4px; }
+.nav-icon {
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 8px; color: rgba(255,255,255,0.6); font-size: 15px;
+  cursor: pointer; transition: background 0.15s;
+}
+.nav-icon:hover { background: rgba(255,255,255,0.07); }
+
+/* ==================== HERO ==================== */
+.hero {
+  padding-top: 72px;
+  position: relative;
+  overflow: hidden;
+  background: #111116;
+}
+
+/* Robot + Arc zone */
+.hero-robot-zone {
+  position: relative;
+  height: 520px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+
+/* Spline viewer web component */
+.hero-spline {
+  position: relative; z-index: 2;
+  width: 700px; height: 500px;
+  contain: layout paint;
+  isolation: isolate;
+}
+.hero-spline spline-viewer {
+  width: 100%; height: 100%;
+  display: block;
+}
+
+/* Coin badges */
+.coin {
+  position: absolute; z-index: 3;
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  animation: coinFloat var(--dur,4s) ease-in-out infinite;
+  animation-delay: var(--dl,0s);
+  pointer-events: none;
+}
+.coin-inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: radial-gradient(135deg, #3a3a4a 0%, #1e1e2c 60%, #2a2a38 100%);
+  border: 1.5px solid rgba(255,255,255,0.18);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.15),
+              0 0 20px rgba(108,79,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700;
+  color: rgba(255,255,255,0.85);
+}
+.coin-btc  { top: 80px; left: calc(50% - 320px); --dur:4.2s; --dl:0s; }
+.coin-eth  { top: 80px; right: calc(50% - 320px); --dur:3.8s; --dl:0.6s; }
+.coin-sol  { bottom: 95px; left: calc(50% - 300px); --dur:4.5s; --dl:1.1s; }
+.coin-usdt { bottom: 95px; right: calc(50% - 300px); --dur:3.6s; --dl:0.3s; }
+
+.coin-btc .coin-inner  { color: #F7931A; }
+.coin-eth .coin-inner  { color: #627EEA; }
+.coin-sol .coin-inner  { color: #9945FF; }
+.coin-usdt .coin-inner { color: #26A17B; }
+
+@keyframes coinFloat {
+  0%,100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-16px) rotate(3deg); }
+}
+
+/* Hero text */
+.hero-text {
+  text-align: center;
+  padding: 0 90px 56px;
+  position: relative; z-index: 4;
+}
+.hero-title {
+  font-size: 52px; font-weight: 700;
+  color: #fff; letter-spacing: -0.5px;
+  line-height: 1.2; margin-bottom: 20px;
+}
+.hero-sub {
+  font-size: 16px; color: rgba(255,255,255,0.6);
+  line-height: 1.6; margin-bottom: 32px;
+}
+.hero-btns { display: flex; gap: 12px; justify-content: center; }
+.btn-start {
+  padding: 14px 28px;
+  background: #6C4FFF; border: none;
+  border-radius: 10px; color: #fff;
+  font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  font-family: inherit;
+}
+.btn-start:hover { background: #7B62FF; transform: translateY(-1px); }
+.btn-api {
+  padding: 14px 28px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 10px; color: #fff;
+  font-size: 15px; cursor: pointer;
+  transition: all 0.2s; font-family: inherit;
+}
+.btn-api:hover { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
+
+/* ==================== TERMINAL SECTION ==================== */
+.terminal-sect {
+  padding: 0 90px 96px;
+  background: #111116;
+}
+.term-heading {
+  text-align: center;
+  font-size: 40px; font-weight: 700;
+  margin-bottom: 40px; color: #fff;
+}
+.term-wrap {
+  max-width: 926px; margin: 0 auto;
+  border-radius: 12px; overflow: hidden;
+  background: #1A1A24;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08),
+              0 8px 40px rgba(0,0,0,0.5);
+}
+.term-bar {
+  display: flex; align-items: center;
+  padding: 10px 16px;
+  background: #222230;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  gap: 6px;
+}
+.td { width: 12px; height: 12px; border-radius: 50%; }
+.td-r { background: #FF5F57; }
+.td-y { background: #FFBD2E; }
+.td-g { background: #28C840; }
+.term-title-label {
+  flex: 1; text-align: center;
+  font-size: 10.5px; color: rgba(255,255,255,0.3);
+  letter-spacing: 0.8px; font-family: 'Courier New', monospace;
+}
+.copy-btn {
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: rgba(255,255,255,0.4);
+  transition: color 0.2s; border-radius: 4px;
+  border: none; background: transparent;
+}
+.copy-btn:hover { color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.07); }
+.copy-btn.flash { color: #28C840; }
+.copy-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+.term-body {
+  padding: 20px 24px 24px;
+  font-family: 'Courier New', 'SF Mono', monospace;
+  font-size: 14px;
+}
+.term-line { display: flex; align-items: center; gap: 10px; }
+.term-ps { color: rgba(255,255,255,0.45); font-weight: 500; }
+.term-cmd { color: #E8E8FF; }
+.term-pkg { color: #8B72FF; }
+.term-subcmd { color: #F0A050; }
+.term-cursor {
+  display: inline-block; width: 7px; height: 16px;
+  background: rgba(255,255,255,0.7); margin-left: 1px;
+  vertical-align: middle; border-radius: 1px;
+  animation: blink 1.1s step-end infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ==================== LAYOUT HELPERS ==================== */
+.sect { padding: 96px 0; }
+.inner { max-width: 1260px; margin: 0 auto; padding: 0 90px; }
+.s-title {
+  font-size: 40px; font-weight: 700;
+  text-align: center; color: #fff;
+  margin-bottom: 14px;
+}
+.s-sub {
+  text-align: center; font-size: 15px;
+  color: rgba(255,255,255,0.55); line-height: 1.7;
+  margin-bottom: 52px;
+}
+
+/* ==================== SCENARIOS ==================== */
+#scenarios { padding: 96px 0; background: #111116; }
+
+/*
+  Figma-exact layout: total 1440px
+  ┌──78──┬────────────────840px────────────────┬─24─┬───420───┬──78──┐
+  │ pad  │  sc-main (left 458 + AI preview 334) │gap │ sc-right│ pad  │
+  └──────┴──────────────────────────────────────┴────┴─────────┴──────┘
+
+  Inside sc-main (840px):
+  ┌───458───┬─24─┬──334──┬─24─┐
+  │left txt │gap │AI prev│ mr │
+  └─────────┴────┴───────┴────┘
+*/
+.scenes-inner {
+  width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  padding: 0 78px;
+  box-sizing: border-box;
+  align-items: flex-start;
+}
+
+/* ── Main combined card: 840px ── */
+.sc-main {
+  flex: 0 0 840px; width: 840px;
+  height: 292px;
+  background: #1A1A24;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  display: flex; align-items: flex-start;
+  position: relative; overflow: hidden;
+  cursor: default;
+}
+.sc-main:hover {
+  border-color: rgba(108,79,255,0.15);
+  box-shadow: 0 6px 32px rgba(108,79,255,0.08);
+}
+
+/* ── 3D TILT (curvy-earwig-22 style) ── */
+.tilt-card {
+  transition: transform 0.4s cubic-bezier(0.03,0.98,0.52,0.99), box-shadow 0.4s;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+.card-shine {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 10;
+}
+
+/* Left content area — Figma: 458px inside sc-main */
+.sc-left-content {
+  flex: 0 0 458px; width: 458px;
+  height: 100%;
+  padding: 24px;
+  display: flex; flex-direction: column;
+  position: relative;
+}
+.sc-left-head {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px;
+}
+.sc-left-title { font-size: 22px; font-weight: 700; color: #fff; }
+.chip-tag {
+  display: inline-flex; align-items: center;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 11.5px; color: rgba(255,255,255,0.55);
+  white-space: nowrap; flex-shrink: 0;
+}
+.sc-left-desc {
+  font-size: 13.5px; color: rgba(255,255,255,0.55);
+  line-height: 1.65; margin-bottom: 20px;
+}
+.sc-copy-box {
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 10px 14px;
+  font-size: 12.5px; color: rgba(255,255,255,0.4);
+  margin-bottom: 20px; gap: 8px;
+  cursor: pointer; transition: background 0.2s;
+}
+.sc-copy-box:hover { background: rgba(255,255,255,0.07); }
+.sc-copy-box svg { width: 16px; height: 16px; stroke: rgba(255,255,255,0.4); fill: none; stroke-width: 1.8; flex-shrink: 0; }
+.btn-try {
+  display: inline-flex; align-items: center;
+  padding: 12px 24px;
+  background: #6C4FFF; border: none;
+  border-radius: 8px; color: #fff;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; font-family: inherit;
+  width: fit-content;
+}
+.btn-try:hover { background: #7B62FF; }
+
+/* AI preview card — nested inside sc-main, Figma: x=482 y=24 w=334 h=244 */
+.sc-ai-preview-wrap {
+  flex: 0 0 334px; width: 334px;
+  height: 244px;
+  margin: 24px 24px 0 24px;
+  border-radius: 12px;
+  position: relative;
+  align-self: flex-start;
+  isolation: isolate;
+}
+
+/* === Uiverse-style layered conic-gradient border === */
+/* Layer 1: outer glow — large, very blurred, extends beyond card */
+.sc-ai-glow {
+  position: absolute;
+  inset: -15px;
+  border-radius: 18px;
+  overflow: hidden;
+  z-index: 0;
+  filter: blur(30px);
+  opacity: 0.4;
+}
+.sc-ai-glow::before {
+  content: '';
+  position: absolute;
+  width: 999px; height: 999px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(60deg);
+  background-image: conic-gradient(
+    #000, #402fb5 5%, #000 38%, #000 50%, #cf30aa 60%, #000 87%
+  );
+  transition: transform 2s;
+}
+
+/* Layer 2: dark tinted border base */
+.sc-ai-dark-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 1;
+}
+.sc-ai-dark-bg::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(82deg);
+  background-image: conic-gradient(
+    rgba(0,0,0,0), #18116a, rgba(0,0,0,0) 10%,
+    rgba(0,0,0,0) 50%, #6e1b60, rgba(0,0,0,0) 60%
+  );
+  transition: transform 2s;
+}
+
+/* Layer 3: soft shimmer */
+.sc-ai-white-layer {
+  position: absolute;
+  inset: 3px;
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 2;
+  filter: blur(2px);
+}
+.sc-ai-white-layer::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(83deg);
+  filter: brightness(1.4);
+  background-image: conic-gradient(
+    rgba(0,0,0,0) 0%, #a099d8, rgba(0,0,0,0) 8%,
+    rgba(0,0,0,0) 50%, #dfa2da, rgba(0,0,0,0) 58%
+  );
+  transition: transform 2s;
+}
+
+/* Layer 4: crisp border line */
+.sc-ai-border-line {
+  position: absolute;
+  inset: 2px;
+  border-radius: 11px;
+  overflow: hidden;
+  z-index: 3;
+  filter: blur(0.5px);
+}
+.sc-ai-border-line::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(70deg);
+  filter: brightness(1.3);
+  background-image: conic-gradient(
+    #1c191c, #402fb5 5%, #1c191c 14%,
+    #1c191c 50%, #cf30aa 60%, #1c191c 64%
+  );
+  transition: transform 2s;
+}
+
+/* Hover: all layers rotate to new position */
+.sc-ai-preview-wrap:hover .sc-ai-glow::before        { transform: translate(-50%, -50%) rotate(-120deg); }
+.sc-ai-preview-wrap:hover .sc-ai-dark-bg::before     { transform: translate(-50%, -50%) rotate(-98deg); }
+.sc-ai-preview-wrap:hover .sc-ai-white-layer::before { transform: translate(-50%, -50%) rotate(-97deg); }
+.sc-ai-preview-wrap:hover .sc-ai-border-line::before { transform: translate(-50%, -50%) rotate(-110deg); }
+
+/* Content — sits above all border layers */
+.sc-ai-preview {
+  position: absolute;
+  inset: 2px;
+  z-index: 4;
+  background: #1C1B2E;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.sc-ai-icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, #C840FF 0%, #8B4FFF 100%);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 16px rgba(139,79,255,0.5);
+  flex-shrink: 0;
+}
+.sc-ai-icon svg { width: 24px; height: 24px; }
+.sc-ai-line {
+  font-size: 13px; color: rgba(255,255,255,0.65);
+  margin-bottom: 16px; display: flex; gap: 5px; flex-wrap: wrap;
+}
+.sc-ai-label { color: rgba(255,255,255,0.4); font-weight: 600; }
+.sc-ai-text  { color: rgba(255,255,255,0.65); }
+.sc-bullets { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.sc-bullet {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 12.5px; color: rgba(255,255,255,0.6);
+  line-height: 1.5;
+}
+.sc-bullet-dot { width: 6px; height: 6px; border-radius: 50%; background: #28C840; margin-top: 5px; flex-shrink: 0; }
+.sc-bullet-hi { color: #9E7AFF; }
+.sc-divider { height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 12px; }
+.sc-summary { font-size: 12.5px; color: rgba(255,255,255,0.45); font-style: italic; }
+
+/* Right column — Figma: x=942, main ends at 78+840=918, gap=942-918=24px */
+.sc-right { display: flex; flex-direction: column; gap: 0; margin-left: 24px; flex: 0 0 420px; width: 420px; }
+.sc-mini {
+  height: 136px;
+  background: #1A1A24;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  display: flex; align-items: center;
+  cursor: default;
+  position: relative; overflow: hidden;
+}
+.sc-mini + .sc-mini { margin-top: 19px; } /* Figma: 155.5 - 136.5 = 19px */
+.sc-mini:hover {
+  border-color: rgba(108,79,255,0.25);
+  box-shadow: 0 6px 28px rgba(108,79,255,0.1);
+}
+.sc-mini-icon {
+  width: 88px; height: 88px; flex-shrink: 0;
+  margin: 0 0 0 24px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.sc-mini-icon svg { width: 100%; height: 100%; }
+.sc-mini-body { margin-left: 16px; }
+.sc-mini-title { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+.sc-mini-desc  { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5; max-width: 260px; }
+
+/* ==================== WHY COINW ==================== */
+#why { background: #111116; padding: 96px 0; }
+
+.why-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+  align-items: start;
+}
+.why-card {
+  background: #1A1A24;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 24px;
+  padding-bottom: 24px;
+  position: relative; overflow: hidden;
+  transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, padding-bottom 0.35s ease, transform 0.35s ease;
+  cursor: default;
+}
+
+/* 底部紫色渐变光晕层 — 默认不可见，hover 时淡入 */
+.why-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 56px;
+  background: linear-gradient(to top, rgba(108,79,255,0.5), transparent);
+  border-radius: 0 0 12px 12px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+/* Hover 状态 — 全部卡片通用 */
+.why-card:hover {
+  background: linear-gradient(180deg, #1A1A24 55%, rgba(72,44,170,0.32) 100%);
+  border-color: rgba(108,79,255,0.35);
+  box-shadow: 0 8px 40px rgba(108,79,255,0.12);
+  padding-bottom: 48px;
+  transform: translateY(-4px);
+}
+.why-card:hover::after {
+  opacity: 1;
+}
+
+.why-icon-box {
+  width: 40px; height: 40px;
+  background: #3B3770;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+}
+.why-icon-box svg { width: 22px; height: 22px; }
+.why-card-title { font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 10px; }
+.why-card-desc  { font-size: 13.5px; color: rgba(255,255,255,0.55); line-height: 1.65; }
+
+/* Completion line */
+.completion-bar {
+  display: flex; flex-direction: column; gap: 12px;
+  align-items: flex-start;
+  width: 465px; margin: 0 auto;
+}
+.completion-row1 {
+  display: flex; align-items: center; gap: 10px; width: 100%;
+}
+.completion-label {
+  font-size: 13px; color: rgba(255,255,255,0.35);
+  white-space: nowrap; font-family: 'Courier New', monospace;
+}
+.completion-line {
+  flex: 1; height: 1px; background: rgba(255,255,255,0.12);
+}
+.completion-text {
+  font-size: 13px; color: rgba(255,255,255,0.4);
+  font-family: 'Courier New', monospace;
+}
+
+/* ==================== AI SKILLS ==================== */
+#skills { background: #111116; padding: 96px 0; }
+
+.skills-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.skill-card {
+  background: #1A1A24;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px; padding: 24px;
+  display: flex; flex-direction: column;
+  cursor: default; position: relative; overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.skill-card:hover {
+  border-color: rgba(108,79,255,0.25);
+  box-shadow: 0 4px 32px rgba(108,79,255,0.08);
+}
+.skill-icon-area {
+  width: 100px; height: 100px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+}
+.skill-card-title { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+.skill-card-desc  { font-size: 13.5px; color: rgba(255,255,255,0.55); line-height: 1.65; margin-bottom: 24px; flex: 1; }
+.skill-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 14px; color: #6C4FFF; font-weight: 500;
+  text-decoration: none; transition: gap 0.2s;
+  align-self: flex-end;
+}
+.skill-link:hover { gap: 10px; color: #8B72FF; }
+.skill-link svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+/* ==================== DISCLAIMER ==================== */
+#disclaimer {
+  background: linear-gradient(180deg, #111116 0%, #18122A 100%);
+  padding: 80px 0 96px;
+}
+.disc-title { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 28px; }
+.disc-list { list-style: none; display: flex; flex-direction: column; gap: 14px; counter-reset: disc; }
+.disc-item {
+  display: flex; gap: 10px;
+  font-size: 13px; color: rgba(255,255,255,0.4);
+  line-height: 1.7; counter-increment: disc;
+}
+.disc-num {
+  flex-shrink: 0;
+  color: rgba(255,255,255,0.3); font-weight: 600; min-width: 16px;
+}
+
+/* ==================== FOOTER ==================== */
+footer {
+  background: #111116;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 48px 0 0;
+}
+.footer-inner { max-width: 1440px; margin: 0 auto; padding: 0 90px; }
+.footer-top {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 0;
+  margin-bottom: 0;
+  padding-bottom: 48px;
+}
+.footer-brand {}
+.footer-brand-logo {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 16px; font-weight: 700; color: #fff;
+  margin-bottom: 28px; text-decoration: none;
+}
+.footer-brand-logo .nm { font-size: 18px; font-weight: 700; }
+.footer-dl { font-size: 13.5px; font-weight: 600; color: #fff; margin-bottom: 14px; }
+.footer-app-btns { display: flex; flex-direction: column; gap: 10px; }
+.app-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px;
+  background: #6C4FFF; border: none;
+  border-radius: 8px; color: #fff;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background 0.2s; font-family: inherit;
+  width: 160px; justify-content: center;
+}
+.app-btn:hover { background: #7B62FF; }
+.app-btn svg { width: 16px; height: 16px; fill: #fff; flex-shrink: 0; }
+
+.footer-cols {
+  display: grid;
+  grid-template-columns: 104px 145px 159px 140px;
+  gap: 0; padding-left: 348px; /* align to Company col start at 538px - 190px brand */
+}
+.footer-col {}
+.footer-col h4 {
+  font-size: 14px; font-weight: 600; color: #fff;
+  margin-bottom: 22px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+.footer-col a {
+  color: rgba(255,255,255,0.5); text-decoration: none;
+  font-size: 13px; transition: color 0.18s;
+  display: flex; align-items: center; gap: 6px;
+}
+.footer-col a:hover { color: rgba(255,255,255,0.85); }
+.badge-new {
+  background: #B4F000; color: #000;
+  font-size: 9.5px; font-weight: 700;
+  padding: 1px 5px; border-radius: 4px;
+}
+
+.footer-disclaimer {
+  text-align: center;
+  padding: 24px 90px;
+  font-size: 13px; color: rgba(255,255,255,0.4);
+  line-height: 1.6;
+}
+.footer-disclaimer a { color: #6C4FFF; text-decoration: none; }
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.07);
+  padding: 20px 90px;
+  display: flex; align-items: center;
+}
+.footer-copy { font-size: 13px; color: rgba(255,255,255,0.35); }
+.footer-socials {
+  display: flex; align-items: center; gap: 16px;
+  margin: 0 auto; /* center between copyright and language */
+}
+.social-circle {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: rgba(255,255,255,0.65);
+  cursor: pointer; transition: all 0.18s; text-decoration: none;
+}
+.social-circle:hover { border-color: rgba(255,255,255,0.4); color: #fff; background: rgba(255,255,255,0.05); }
+.lang-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 8px; color: rgba(255,255,255,0.7);
+  font-size: 13px; cursor: pointer; transition: all 0.18s; font-family: inherit;
+  white-space: nowrap;
+}
+.lang-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+/* ==================== FADE IN ==================== */
+.fi {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.fi.in { opacity: 1; transform: none; }
+
+/* ==================== SCROLLBAR ==================== */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #111116; }
+::-webkit-scrollbar-thumb { background: rgba(108,79,255,0.35); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- Particle Canvas -->
+<canvas id="ptc"></canvas>
+
+<!-- ==================== NAV ==================== -->
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <div class="nav-logo-mark">
+      <!-- CoinW brand mark — C-bracket -->
+      <svg viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 4H8C7.45 4 7 4.45 7 5v12c0 .55.45 1 1 1h10"
+              stroke="white" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span>CoinW</span>
+  </a>
+
+  <!-- ── Nav links ── -->
+  <ul class="nav-links">
+    <li><a href="#">Buy crypto
+      <svg class="nav-dd" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a></li>
+    <li><a href="#">Trade
+      <svg class="nav-dd" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a></li>
+    <li><a href="#">Markets</a></li>
+    <li><a href="#">Copy trading
+      <svg class="nav-dd" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a></li>
+    <li><a href="#">Bots <span class="badge-green">New</span>
+      <svg class="nav-dd" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a></li>
+    <li><a href="#">Finance
+      <svg class="nav-dd" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a></li>
+    <li><a href="#">Lucky HODL</a></li>
+    <li><a href="#">More
+      <svg class="nav-dd" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a></li>
+  </ul>
+
+  <!-- ── Right actions ── -->
+  <div class="nav-r">
+    <!-- Wallet -->
+    <button class="btn-nav-wallet">Wallet
+      <svg class="nav-dd" viewBox="0 0 10 10" fill="none"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="btn-nav-deposit">Deposit</button>
+    <!-- Icons: person · bell · globe · moon -->
+    <div class="nav-icons">
+      <div class="nav-icon">
+        <!-- Person / Account -->
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="7" r="3.2" stroke-linejoin="round"/>
+          <path d="M3.5 18c0-3.59 2.91-6.5 6.5-6.5s6.5 2.91 6.5 6.5"/>
+        </svg>
+      </div>
+      <div class="nav-icon">
+        <!-- Bell / Notification -->
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 2.5C7.24 2.5 5 4.74 5 7.5v3.5l-1.5 2h13L15 11V7.5C15 4.74 12.76 2.5 10 2.5z"/>
+          <path d="M8.5 15.5a1.5 1.5 0 0 0 3 0"/>
+        </svg>
+      </div>
+      <div class="nav-icon">
+        <!-- Globe / Network -->
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="10" r="7.5"/>
+          <path d="M10 2.5C8.5 5.2 7.5 7.5 7.5 10s1 4.8 2.5 7.5"/>
+          <path d="M10 2.5c1.5 2.7 2.5 5 2.5 7.5s-1 4.8-2.5 7.5"/>
+          <line x1="2.5" y1="10" x2="17.5" y2="10"/>
+          <line x1="3.2" y1="6.5" x2="16.8" y2="6.5"/>
+          <line x1="3.2" y1="13.5" x2="16.8" y2="13.5"/>
+        </svg>
+      </div>
+      <div class="nav-icon">
+        <!-- Moon / Dark mode -->
+        <svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10.5 3A7 7 0 1 0 17 9.5a5 5 0 0 1-6.5-6.5z" opacity=".85"/>
+        </svg>
+      </div>
+    </div>
+    <!-- Language toggle (added for bilingual feature) -->
+    <button class="lang-btn" id="langToggle" onclick="toggleLang()">EN</button>
+  </div>
+</nav>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+  <!-- Robot + Coins zone -->
+  <div class="hero-robot-zone">
+    <!-- Crypto coins floating around robot -->
+    <div class="coin coin-btc">
+      <div class="coin-inner">₿</div>
+    </div>
+    <div class="coin coin-eth">
+      <div class="coin-inner">Ξ</div>
+    </div>
+    <div class="coin coin-sol">
+      <div class="coin-inner" style="font-size:20px;letter-spacing:-1px;">≡</div>
+    </div>
+    <div class="coin coin-usdt">
+      <div class="coin-inner">₮</div>
+    </div>
+
+    <!-- Spline Robot: loaded after first paint for faster perceived speed -->
+    <div class="hero-spline">
+      <spline-viewer url="https://prod.spline.design/lrqWVkTwFmP9Xn4m/scene.splinecode"></spline-viewer>
+    </div>
+  </div>
+
+  <!-- Hero text -->
+  <div class="hero-text fi">
+    <h1 class="hero-title" data-i18n="hero-title">用 AI Agent 重新定义交易方式</h1>
+    <p class="hero-sub" data-i18n="hero-sub">从"人操作工具" → "AI 直接执行交易"。让 AI 直接连接交易能力，从分析、决策到执行，一步完成。</p>
+    <div class="hero-btns">
+      <button class="btn-start" data-i18n="btn-start">立即开始</button>
+      <button class="btn-api" data-i18n="btn-api">API文档</button>
+    </div>
+  </div>
+
+  <!-- ==================== TERMINAL ==================== -->
+  <div class="terminal-sect">
+    <h2 class="term-heading fi" data-i18n="term-heading">快速开始，一键安装</h2>
+    <div class="term-wrap fi">
+      <div class="term-bar">
+        <div class="td td-r"></div>
+        <div class="td td-y"></div>
+        <div class="td td-g"></div>
+        <span class="term-title-label">QUICK START TERMINAL</span>
+        <button class="copy-btn" id="cpyBtn" onclick="doCopy()" title="Copy">
+          <svg viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+        </button>
+      </div>
+      <div class="term-body">
+        <div class="term-line">
+          <span class="term-ps">$</span>
+          <span id="termText" class="term-cmd"></span>
+          <span class="term-cursor" id="termCursor"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SCENARIOS ==================== -->
+<section id="scenarios" class="sect">
+  <div style="text-align:center; margin-bottom:52px;">
+    <h2 class="s-title fi" data-i18n="sc-title">常用场景</h2>
+    <p class="s-sub fi" style="margin-bottom:0" data-i18n="sc-sub">AI Agent 不只是执行，更是你的智能交易副驾。探索基于 Neural Architect 的多样化应用场景。</p>
+  </div>
+
+  <div class="scenes-inner fi">
+    <!-- Main combined card: 840px — left scenario info + nested AI preview -->
+    <div class="sc-main tilt-card" onmousemove="cardTilt(event,this)" onmouseleave="cardUntilt(this)">
+      <span class="card-shine"></span>
+
+      <!-- Left portion: 生成加密货币日报 (458px) -->
+      <div class="sc-left-content">
+        <div class="sc-left-head">
+          <span class="sc-left-title" data-i18n="sc-left-title">生成加密货币日报</span>
+          <span class="chip-tag" data-i18n="chip-tag">推荐场景</span>
+        </div>
+        <p class="sc-left-desc" data-i18n="sc-left-desc">一键唤醒 AI 获取全球市场动态。AI 将自动扫描主流币种波动、热门社交媒体情绪、重要链上数据与宏观新闻，输出结构化的中文研报，助你开启每日交易。</p>
+        <div class="sc-copy-box" onclick="copyChatContent()">
+          <span data-i18n="sc-copy-span">点击复制内容、发送给你的 agent 即可体验</span>
+          <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </div>
+        <button class="btn-try" data-i18n="btn-try">立即试用</button>
+      </div>
+
+      <!-- Right portion: AI preview card with uiverse-style border (334px, nested) -->
+      <div class="sc-ai-preview-wrap">
+        <!-- Border layers (uiverse curvy-earwig-22 style) -->
+        <div class="sc-ai-glow"></div>
+        <div class="sc-ai-dark-bg"></div>
+        <div class="sc-ai-white-layer"></div>
+        <div class="sc-ai-border-line"></div>
+        <!-- Actual content -->
+        <div class="sc-ai-preview">
+          <div class="sc-ai-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2.5C12 2.5 12.8 7.5 14.5 9.5C16.2 11.5 21 12 21 12C21 12 16.2 12.5 14.5 14.5C12.8 16.5 12 21.5 12 21.5C12 21.5 11.2 16.5 9.5 14.5C7.8 12.5 3 12 3 12C3 12 7.8 11.5 9.5 9.5C11.2 7.5 12 2.5 12 2.5Z" fill="white"/>
+            </svg>
+          </div>
+          <div class="sc-ai-line">
+            <span class="sc-ai-label">AI:</span>
+            <span class="sc-ai-text" data-i18n="sc-ai-text">正在分析 BTC, ETH, SOL 的 24h 数据...</span>
+          </div>
+          <div class="sc-bullets">
+            <div class="sc-bullet"><div class="sc-bullet-dot"></div><span data-i18n="sc-b1"><span class="sc-bullet-hi">BTC 上涨 3.2%</span>，支撑位巩固</span></div>
+            <div class="sc-bullet"><div class="sc-bullet-dot"></div><span data-i18n="sc-b2">社交情绪偏向看涨 (0.78)</span></div>
+            <div class="sc-bullet"><div class="sc-bullet-dot"></div><span data-i18n="sc-b3">发现 3 笔巨鲸转入交易所...</span></div>
+          </div>
+          <div class="sc-divider"></div>
+          <div class="sc-summary" data-i18n="sc-summary">"总结：今日市场波动率较高，建议关注..."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Two mini cards with real SVG icons -->
+    <div class="sc-right">
+      <!-- 实时行情监控 -->
+      <div class="sc-mini tilt-card" onmousemove="cardTilt(event,this)" onmouseleave="cardUntilt(this)">
+        <span class="card-shine"></span>
+        <div class="sc-mini-icon">
+          <!-- Bar chart icon — matches Figma: purple/blue bg with white chart -->
+          <svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#7B5CE5"/>
+                <stop offset="100%" stop-color="#3E2FAA"/>
+              </linearGradient>
+              <clipPath id="clip1"><rect width="88" height="88" rx="16"/></clipPath>
+            </defs>
+            <rect width="88" height="88" rx="16" fill="url(#g1)"/>
+            <!-- highlight overlay top-left -->
+            <rect width="88" height="44" rx="16" fill="rgba(255,255,255,0.04)" clip-path="url(#clip1)"/>
+            <!-- Bars -->
+            <rect x="18" y="52" width="12" height="22" rx="3" fill="rgba(255,255,255,0.45)"/>
+            <rect x="36" y="40" width="12" height="34" rx="3" fill="rgba(255,255,255,0.65)"/>
+            <rect x="54" y="24" width="12" height="50" rx="3" fill="rgba(255,255,255,0.9)"/>
+            <!-- Trend line -->
+            <polyline points="24,54 42,43 60,28" stroke="rgba(255,255,255,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Arrow head -->
+            <polyline points="55,22 62,20 64,27" stroke="rgba(255,255,255,0.95)" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="sc-mini-body">
+          <div class="sc-mini-title" data-i18n="sc-mini-t1">实时行情监控</div>
+          <div class="sc-mini-desc" data-i18n="sc-mini-d1">24/7 监控市场行情，大涨大跌及时知晓</div>
+        </div>
+      </div>
+
+      <!-- Agent自动化交易 -->
+      <div class="sc-mini tilt-card" onmousemove="cardTilt(event,this)" onmouseleave="cardUntilt(this)">
+        <span class="card-shine"></span>
+        <div class="sc-mini-icon">
+          <!-- Robot gear head — matches Figma: purple/blue bg with white head+gear -->
+          <svg viewBox="0 0 88 88" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#7B5CE5"/>
+                <stop offset="100%" stop-color="#3E2FAA"/>
+              </linearGradient>
+              <clipPath id="clip2"><rect width="88" height="88" rx="16"/></clipPath>
+            </defs>
+            <rect width="88" height="88" rx="16" fill="url(#g2)"/>
+            <rect width="88" height="44" rx="16" fill="rgba(255,255,255,0.04)" clip-path="url(#clip2)"/>
+            <!-- Head silhouette (profile) -->
+            <path d="M44 18 C34 18 26 26 26 36 C26 43 30 49 36 52 L36 58 C36 61 38 63 41 63 L47 63 C50 63 52 61 52 58 L52 52 C58 49 62 43 62 36 C62 26 54 18 44 18 Z" fill="rgba(255,255,255,0.85)"/>
+            <!-- Gear overlay on head -->
+            <g transform="translate(33,24)">
+              <circle cx="11" cy="11" r="4.5" fill="#5540CC" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"/>
+              <path d="M11 4.5 L12.3 2 L9.7 2 Z M11 17.5 L12.3 20 L9.7 20 Z M4.5 11 L2 12.3 L2 9.7 Z M17.5 11 L20 12.3 L20 9.7 Z M6.4 6.4 L4.6 4.6 L3.2 6 Z M15.6 15.6 L17.4 17.4 L18.8 16 Z M6.4 15.6 L4.6 17.4 L3.2 16 Z M15.6 6.4 L17.4 4.6 L18.8 6 Z" fill="rgba(255,255,255,0.6)"/>
+            </g>
+            <!-- Shoulders/body base -->
+            <path d="M22 78 Q22 66 44 66 Q66 66 66 78" fill="rgba(255,255,255,0.65)" opacity="0.8"/>
+          </svg>
+        </div>
+        <div class="sc-mini-body">
+          <div class="sc-mini-title" data-i18n="sc-mini-t2">Agent 自动化交易</div>
+          <div class="sc-mini-desc" data-i18n="sc-mini-d2">如需使用交易功能，请先创建 API Key</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WHY COINW ==================== -->
+<section id="why" class="sect">
+  <div class="inner">
+    <h2 class="s-title fi" data-i18n="why-title">为什么 CoinW 要构建 AI Agent Skills？</h2>
+    <p class="s-sub fi" style="max-width:800px;margin-left:auto;margin-right:auto;" data-i18n="why-sub">过去十年，数字资产交易经历了从手动交易到工具化交易的演进。从K线分析、量化策略，到自动化执行，交易效率不断提升。 CoinW 认为，未来的交易平台不只是撮合交易的场所，而是可被 AI 调用的"交易基础设施"。</p>
+
+    <div class="why-cards fi">
+      <!-- Card 1 -->
+      <div class="why-card">
+        <div class="why-icon-box">
+          <!-- ri:speak-ai-fill style: head profile + sparkle star -->
+          <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/>
+            <path d="M3 18.5C3 15.46 6.13 13 10 13c1.6 0 3.08.43 4.27 1.16"/>
+            <path d="M19 12l.7 1.6 1.6.7-1.6.7L19 16.7l-.7-1.7-1.6-.7 1.6-.7z"/>
+            <path d="M21.5 7l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4z" opacity="0.75"/>
+          </svg>
+        </div>
+        <div class="why-card-title" data-i18n="why-c1-title">让交易能力被 AI 调用</div>
+        <div class="why-card-desc" data-i18n="why-c1-desc">将行情、交易、账户等能力模块化，开放给 AI Agent，实现深度集成。</div>
+      </div>
+
+      <!-- Card 2 — hover state (purple bottom glow) -->
+      <div class="why-card">
+        <div class="why-icon-box">
+          <!-- Archive/filter box icon: rect top bar + tapered body -->
+          <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 4H3a1 1 0 0 0-.8 1.6L10 15.67V20a1 1 0 0 0 .55.89l3 1.5A1 1 0 0 0 15 21.5v-5.83L21.8 5.6A1 1 0 0 0 21 4z"/>
+          </svg>
+        </div>
+        <div class="why-card-title" data-i18n="why-c2-title">降低交易门槛</div>
+        <div class="why-card-desc" data-i18n="why-c2-desc">用户无需复杂操作，通过自然语言即可完成原本繁琐的交易与分析流程。</div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="why-card">
+        <div class="why-icon-box">
+          <!-- Apps 2×2 grid + star: ri:apps-2-ai-fill style -->
+          <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="9" height="9" rx="2"/>
+            <rect x="13" y="2" width="9" height="9" rx="2"/>
+            <rect x="2" y="13" width="9" height="9" rx="2"/>
+            <!-- 4th tile with star inside -->
+            <rect x="13" y="13" width="9" height="9" rx="2"/>
+            <path d="M17.5 14.3l.5 1.1 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5z" fill="#3B3770"/>
+          </svg>
+        </div>
+        <div class="why-card-title" data-i18n="why-c3-title">构建开放生态</div>
+        <div class="why-card-desc" data-i18n="why-c3-desc">开发者可以构建 Skill，共同丰富 AI 交易能力，推动 Web3 智能化。</div>
+      </div>
+    </div>
+
+    <!-- Completion bar -->
+    <div class="completion-bar fi">
+      <div class="completion-row1">
+        <span class="completion-label">// - Completion</span>
+        <div class="completion-line"></div>
+      </div>
+      <div class="completion-text" data-i18n="completion-text">important type { CoinW 正在从"交易平台"，进化为"AI 原生交易基础设施" }</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== AI SKILLS ==================== -->
+<section id="skills" class="sect">
+  <div class="inner">
+    <h2 class="s-title fi" data-i18n="skills-title">探索 AI Skills 生态</h2>
+    <p class="s-sub fi" data-i18n="skills-sub">AI 调用的不只是接口，而是整个交易系统。从研究、策略到风控的全链路闭环。</p>
+
+    <div class="skills-grid fi">
+      <!-- Contract -->
+      <div class="skill-card tilt-card" onmousemove="cardTilt(event,this)" onmouseleave="cardUntilt(this)">
+        <span class="card-shine"></span>
+        <div class="skill-icon-area">
+          <!-- Contract: 3D candlestick chart — pink/rose candles + silver metallic platform (Figma) -->
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Silver metallic platform -->
+              <linearGradient id="cp-top" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#D8D8E8"/>
+                <stop offset="40%" stop-color="#B0AEBE"/>
+                <stop offset="100%" stop-color="#8888A0"/>
+              </linearGradient>
+              <linearGradient id="cp-side" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#7A7890"/>
+                <stop offset="100%" stop-color="#555570"/>
+              </linearGradient>
+              <!-- Pink/rose candle bodies -->
+              <linearGradient id="cc1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#F4AABB"/>
+                <stop offset="100%" stop-color="#C4607A"/>
+              </linearGradient>
+              <linearGradient id="cc2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#E898A8"/>
+                <stop offset="100%" stop-color="#B45068"/>
+              </linearGradient>
+              <linearGradient id="cc3" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#DC8898"/>
+                <stop offset="100%" stop-color="#A04060"/>
+              </linearGradient>
+              <!-- Ambient glow -->
+              <radialGradient id="cglow" cx="50%" cy="100%" r="60%">
+                <stop offset="0%" stop-color="#9070C0" stop-opacity="0.45"/>
+                <stop offset="100%" stop-color="#9070C0" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- Ambient glow beneath disc -->
+            <ellipse cx="50" cy="90" rx="34" ry="8" fill="url(#cglow)"/>
+
+            <!-- Platform disc — side wall (3D depth) -->
+            <path d="M16 76 Q50 88 84 76 L84 81 Q50 93 16 81 Z" fill="url(#cp-side)"/>
+            <!-- Platform disc — top face -->
+            <ellipse cx="50" cy="76" rx="34" ry="9.5" fill="url(#cp-top)"/>
+            <!-- Specular highlight on disc -->
+            <ellipse cx="43" cy="73" rx="13" ry="3.5" fill="rgba(255,255,255,0.32)"/>
+
+            <!-- Candle 1 — left, tallest -->
+            <line x1="29" y1="28" x2="29" y2="38" stroke="#E090A0" stroke-width="1.8" stroke-linecap="round"/>
+            <rect x="24" y="38" width="10" height="28" rx="2" fill="url(#cc1)"/>
+            <rect x="25.5" y="39.5" width="3.5" height="25" rx="1" fill="rgba(255,255,255,0.22)"/>
+            <line x1="29" y1="66" x2="29" y2="74" stroke="#E090A0" stroke-width="1.8" stroke-linecap="round"/>
+
+            <!-- Candle 2 — center, medium body -->
+            <line x1="50" y1="22" x2="50" y2="32" stroke="#D07888" stroke-width="1.8" stroke-linecap="round"/>
+            <rect x="45" y="32" width="10" height="22" rx="2" fill="url(#cc2)"/>
+            <rect x="46.5" y="33.5" width="3.5" height="19" rx="1" fill="rgba(255,255,255,0.2)"/>
+            <line x1="50" y1="54" x2="50" y2="72" stroke="#D07888" stroke-width="1.8" stroke-linecap="round"/>
+
+            <!-- Candle 3 — right, short body -->
+            <line x1="71" y1="34" x2="71" y2="44" stroke="#C07080" stroke-width="1.8" stroke-linecap="round"/>
+            <rect x="66" y="44" width="10" height="18" rx="2" fill="url(#cc3)"/>
+            <rect x="67.5" y="45.5" width="3.5" height="15" rx="1" fill="rgba(255,255,255,0.18)"/>
+            <line x1="71" y1="62" x2="71" y2="72" stroke="#C07080" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="skill-card-title">Contract</div>
+        <p class="skill-card-desc" data-i18n="contract-desc">合约专用 skill：涵盖市场数据、下单/取消订单、止盈/止损、持仓和订单查询、账户资产、持仓模式和杠杆查询</p>
+        <a href="#" class="skill-link">
+          <span data-i18n="contract-link">了解详情</span>
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <!-- Spot -->
+      <div class="skill-card tilt-card" onmousemove="cardTilt(event,this)" onmouseleave="cardUntilt(this)">
+        <span class="card-shine"></span>
+        <div class="skill-icon-area">
+          <!-- Spot: 3D bar chart — lavender bars + blue neon platform + dashed trendline (Figma) -->
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <!-- Blue-indigo neon platform -->
+              <linearGradient id="sp-top" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#6A6AE8"/>
+                <stop offset="50%" stop-color="#4848C8"/>
+                <stop offset="100%" stop-color="#3030A8"/>
+              </linearGradient>
+              <linearGradient id="sp-side" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2828A0"/>
+                <stop offset="100%" stop-color="#181880"/>
+              </linearGradient>
+              <!-- Lavender/light-purple bar fronts -->
+              <linearGradient id="sb1" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#E0D8FF"/>
+                <stop offset="100%" stop-color="#9888E0"/>
+              </linearGradient>
+              <linearGradient id="sb2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#D4CCFE"/>
+                <stop offset="100%" stop-color="#8878D8"/>
+              </linearGradient>
+              <linearGradient id="sb3" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#C8C0FC"/>
+                <stop offset="100%" stop-color="#7868D0"/>
+              </linearGradient>
+              <!-- Neon glow radial -->
+              <radialGradient id="sglow" cx="50%" cy="100%" r="60%">
+                <stop offset="0%" stop-color="#5050E8" stop-opacity="0.6"/>
+                <stop offset="100%" stop-color="#5050E8" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <!-- Neon glow beneath platform -->
+            <ellipse cx="50" cy="90" rx="34" ry="8" fill="url(#sglow)"/>
+
+            <!-- Platform disc — side wall -->
+            <path d="M16 77 Q50 89 84 77 L84 82 Q50 94 16 82 Z" fill="url(#sp-side)"/>
+            <!-- Platform disc — top face -->
+            <ellipse cx="50" cy="77" rx="34" ry="9.5" fill="url(#sp-top)"/>
+            <!-- Specular highlight -->
+            <ellipse cx="43" cy="74" rx="12" ry="3" fill="rgba(180,180,255,0.30)"/>
+            <!-- Neon rim glow -->
+            <ellipse cx="50" cy="77" rx="34" ry="9.5" fill="none" stroke="#7070FF" stroke-width="1" opacity="0.5"/>
+
+            <!-- Bar 1 — short, left -->
+            <!-- Front face -->
+            <rect x="19" y="62" width="13" height="15" rx="1.5" fill="url(#sb1)"/>
+            <!-- Top face (parallelogram) -->
+            <polygon points="19,62 25,57.5 32,62 26,66.5" fill="#EEE8FF"/>
+            <!-- Right side face -->
+            <polygon points="32,62 32,77 26,81.5 26,66.5" fill="#7060B8"/>
+
+            <!-- Bar 2 — medium, center -->
+            <rect x="43" y="46" width="13" height="31" rx="1.5" fill="url(#sb2)"/>
+            <polygon points="43,46 49,41.5 56,46 50,50.5" fill="#E2DAFE"/>
+            <polygon points="56,46 56,77 50,81.5 50,50.5" fill="#6050A8"/>
+
+            <!-- Bar 3 — tall, right -->
+            <rect x="67" y="28" width="13" height="49" rx="1.5" fill="url(#sb3)"/>
+            <polygon points="67,28 73,23.5 80,28 74,32.5" fill="#D8D2FC"/>
+            <polygon points="80,28 80,77 74,81.5 74,32.5" fill="#5040A0"/>
+
+            <!-- Dashed trend line (bottom-left → upper-right) -->
+            <line x1="22" y1="72" x2="76" y2="28"
+                  stroke="rgba(255,255,255,0.7)" stroke-width="2"
+                  stroke-dasharray="5,3.5" stroke-linecap="round"/>
+            <!-- Arrow head at trend line end -->
+            <polyline points="71,24 76,28 72,33"
+                      stroke="rgba(255,255,255,0.7)" stroke-width="2"
+                      fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="skill-card-title">Spot</div>
+        <p class="skill-card-desc" data-i18n="spot-desc">现货专用 skill：涵盖市场数据、下单/取消订单、订单查询、账户余额和资金划转</p>
+        <a href="#" class="skill-link">
+          <span data-i18n="spot-link">了解详情</span>
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== DISCLAIMER ==================== -->
+<section id="disclaimer">
+  <div class="inner">
+    <div class="disc-title">免责声明</div>
+    <ol class="disc-list">
+      <li class="disc-item"><span class="disc-num">1.</span><span>CoinW Skills 仅作为信息查询工具，其发出的任何行动、交易建议或"信号"类内容均不构成投资建议。如发生损失、盈利、滑点或其他任何执行相关风险，CoinW 不承担任何责任。</span></li>
+      <li class="disc-item"><span class="disc-num">2.</span><span>使用 CoinW Skills 及其相关功能前，用户应充分了解加密货币交易的固有风险，CoinW 不以任何方式保证 AI 生成内容的准确性、及时性或盈利性。</span></li>
+      <li class="disc-item"><span class="disc-num">3.</span><span>开发者在接入 CoinW-Skills 之前，必须遵守 CoinW 平台服务条款，CoinW 保留随时修改或终止任何 Skills 功能的权利，用户须自行承担因此产生的所有风险。</span></li>
+      <li class="disc-item"><span class="disc-num">4.</span><span>以上信息不构成要约，CoinW 有权对所有 Agent 内容进行审查，如发现违反平台规定的行为，CoinW 将采取相应措施，包括但不限于暂停或永久终止相关 Agent 的使用权限。</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <!-- Brand + Download -->
+      <div class="footer-brand">
+        <a href="#" class="footer-brand-logo">
+          <div class="nav-logo-mark" style="width:28px;height:28px;border-radius:7px;">
+            <svg viewBox="0 0 20 20" style="width:16px;height:16px;fill:#fff;"><path d="M10 2C5.58 2 2 5.58 2 10s3.58 8 8 8c1.8 0 3.46-.6 4.8-1.58l-1.6-1.6A5.97 5.97 0 0 1 10 16a6 6 0 1 1 5.08-9.17l1.62-1.62A7.96 7.96 0 0 0 10 2z"/></svg>
+          </div>
+          <span class="nm">CoinW</span>
+        </a>
+        <div class="footer-dl">Download app</div>
+        <div class="footer-app-btns">
+          <button class="app-btn">
+            <svg viewBox="0 0 24 24"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.1 22C7.78 22.05 6.8 20.68 5.96 19.47C4.25 17 2.94 12.45 4.7 9.39C5.57 7.87 7.13 6.91 8.82 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+            App Store
+          </button>
+          <button class="app-btn">
+            <svg viewBox="0 0 24 24"><path d="M3.18 23.76a2 2 0 0 0 2.25-.43l.06-.06L14.62 14H6.36L3.18 23.76zM.26 1.5A1.99 1.99 0 0 0 0 2.5v19a2 2 0 0 0 .26 1l13.08-11-13.08-11zM20.49 10.17L17.24 8.26l-3.08 2.6L17.24 13.5l3.27-1.94a2 2 0 0 0 0-3.4zM5.43.67L5.37.61A2 2 0 0 0 3.12.18L14.62 10h8.26L5.43.67z"/></svg>
+            Google Play
+          </button>
+        </div>
+      </div>
+
+      <!-- Nav columns -->
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">News</a></li>
+            <li><a href="#">CoinW verity</a></li>
+            <li><a href="#">Fee rate</a></li>
+            <li><a href="#">Risk statement</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Products</h4>
+          <ul>
+            <li><a href="#">Buy crypto</a></li>
+            <li><a href="#">Spot trading</a></li>
+            <li><a href="#">ETF trading</a></li>
+            <li><a href="#">Futures</a></li>
+            <li><a href="#">Copy-trading <span class="badge-new">New</span></a></li>
+            <li><a href="#">CoinW earn</a></li>
+            <li><a href="#">CoinW ventures</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Services</h4>
+          <ul>
+            <li><a href="#">Listing application</a></li>
+            <li><a href="#">T&amp;C of Listing</a></li>
+            <li><a href="#">Become the merchant</a></li>
+            <li><a href="#">VIP Program</a></li>
+            <li><a href="#">APIs</a></li>
+            <li><a href="#">Invite Friends</a></li>
+            <li><a href="#">Bug Bounty</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Learn</h4>
+          <ul>
+            <li><a href="#">Novice Camp</a></li>
+            <li><a href="#">Futures Academy</a></li>
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Crypto Introduction</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disclaimer text -->
+    <div class="footer-disclaimer">
+      <a href="#">Disclaimer:</a> Cryptocurrency trading is subject to market risks.<br>
+      Please trade responsibly and ensure you fully understand the risks before making any investment decisions.
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="footer-bottom">
+      <span class="footer-copy">CopyRight © 2017 - 2023 CoinW.com. All Rights Reserved.</span>
+      <div class="footer-socials">
+        <a class="social-circle" href="#">f</a>
+        <a class="social-circle" href="#">𝕏</a>
+        <a class="social-circle" href="#">📷</a>
+        <a class="social-circle" href="#">▶</a>
+        <a class="social-circle" href="#">G</a>
+        <a class="social-circle" href="#">in</a>
+        <a class="social-circle" href="#">♪</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+
+/* ── 1. PARTICLE MOUSE TRAIL ── */
+(function(){
+  const c = document.getElementById('ptc');
+  const x = c.getContext('2d');
+  let W, H, pts = [];
+  function resize(){ W = c.width = innerWidth; H = c.height = innerHeight; }
+  resize(); addEventListener('resize', resize);
+
+  addEventListener('mousemove', e => {
+    for(let i=0;i<3;i++){
+      const ang = Math.random()*Math.PI*2;
+      const spd = .4 + Math.random()*1.1;
+      pts.push({
+        x: e.clientX + (Math.random()-.5)*8,
+        y: e.clientY + (Math.random()-.5)*8,
+        vx: Math.cos(ang)*spd,
+        vy: Math.sin(ang)*spd - .5,
+        r: 1.5 + Math.random()*2.5,
+        a: .8,
+        dec: .018 + Math.random()*.018,
+        h: 245 + Math.random()*50
+      });
+    }
+  });
+
+  (function loop(){
+    x.clearRect(0,0,W,H);
+    pts = pts.filter(p=>p.a>0);
+    pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.r*=.976; p.a-=p.dec;
+      x.save(); x.globalAlpha=p.a;
+      const g = x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*2.2);
+      g.addColorStop(0,`hsla(${p.h},80%,70%,1)`);
+      g.addColorStop(1,`hsla(${p.h},80%,55%,0)`);
+      x.beginPath(); x.arc(p.x,p.y,p.r*2.2,0,Math.PI*2);
+      x.fillStyle=g; x.fill(); x.restore();
+    });
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ── 2. TERMINAL TYPING ── */
+(function(){
+  const CMD = 'pip install coinw-sdk && coinw run daily-report';
+  const el  = document.getElementById('termText');
+  const cur = document.getElementById('termCursor');
+
+  // Color segments: [text, cssClass]
+  const segs = [
+    ['pip install ', ''],
+    ['coinw-sdk', 'term-pkg'],
+    [' && coinw run ', ''],
+    ['daily-report', 'term-subcmd'],
+  ];
+
+  let charIdx = 0;
+  function render(){
+    let html = '', count = 0;
+    for(const [t,cls] of segs){
+      const slice = CMD.slice(count, count+t.length);
+      const typed = CMD.slice(charIdx, charIdx) || '';
+      const n = Math.max(0, charIdx - count);
+      const part = t.slice(0, n);
+      if(part){
+        html += cls ? `<span class="${cls}">${part}</span>` : part;
+      }
+      count += t.length;
+    }
+    el.innerHTML = html;
+  }
+
+  function type(){
+    if(charIdx <= CMD.length){
+      // rebuild colored html up to charIdx
+      let html='', pos=0;
+      for(const [t,cls] of segs){
+        const show = t.slice(0, Math.max(0, charIdx-pos));
+        if(show) html += cls ? `<span class="${cls}">${show}</span>` : show;
+        pos += t.length;
+      }
+      el.innerHTML = html;
+      charIdx++;
+      if(charIdx <= CMD.length+1) setTimeout(type, 42+Math.random()*30);
+    }
+  }
+
+  // Start when section scrolls into view
+  let started = false;
+  const obs = new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting && !started){ started=true; setTimeout(type,600); }
+  },{threshold:0.3});
+  obs.observe(document.querySelector('.terminal-sect'));
+})();
+
+/* ── 3. COPY COMMAND ── */
+function doCopy(){
+  navigator.clipboard.writeText('pip install coinw-sdk && coinw run daily-report').catch(()=>{});
+  const btn = document.getElementById('cpyBtn');
+  btn.classList.add('flash');
+  setTimeout(()=>btn.classList.remove('flash'), 1500);
+}
+function copyChatContent(){
+  navigator.clipboard.writeText('请帮我生成今日加密货币日报').catch(()=>{});
+}
+
+/* ── 4. 3D CARD TILT (curvy-earwig-22 style) ── */
+function cardTilt(e, card) {
+  const r = card.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  const y = e.clientY - r.top;
+  const cx = r.width / 2, cy = r.height / 2;
+  // Rotation: max ±12deg
+  const rotX = ((y - cy) / cy) * -10;
+  const rotY = ((x - cx) / cx) * 10;
+  card.style.transform =
+    `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.025,1.025,1.025)`;
+  // Shine highlight follows cursor
+  const shine = card.querySelector('.card-shine');
+  if (shine) {
+    const px = ((x / r.width) * 100).toFixed(1);
+    const py = ((y / r.height) * 100).toFixed(1);
+    shine.style.background =
+      `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.04) 40%, transparent 70%)`;
+    shine.style.opacity = '1';
+  }
+}
+function cardUntilt(card) {
+  card.style.transform =
+    'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1,1,1)';
+  const shine = card.querySelector('.card-shine');
+  if (shine) shine.style.opacity = '0';
+}
+
+/* ── 5. SCROLL FADE-IN ── */
+(function(){
+  const els = document.querySelectorAll('.fi');
+  const io = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }});
+  },{threshold:0.1, rootMargin:'0px 0px -30px 0px'});
+  els.forEach(el=>io.observe(el));
+})();
+
+// ==================== BILINGUAL ====================
+const LANGS = {
+  zh: {
+    'hero-title': '用 AI Agent 重新定义交易方式',
+    'hero-sub': '从"人操作工具" → "AI 直接执行交易"。让 AI 直接连接交易能力，从分析、决策到执行，一步完成。',
+    'btn-start': '立即开始',
+    'btn-api': 'API 文档',
+    'term-heading': '快速开始，一键安装',
+    'sc-title': '常用场景',
+    'sc-sub': 'AI Agent 不只是执行，更是你的智能交易副驾。探索基于 Neural Architect 的多样化应用场景。',
+    'sc-left-title': '生成加密货币日报',
+    'chip-tag': '推荐场景',
+    'sc-left-desc': '一键唤醒 AI 获取全球市场动态。AI 将自动扫描主流币种波动、热门社交媒体情绪、重要链上数据与宏观新闻，输出结构化的中文研报，助你开启每日交易。',
+    'sc-copy-span': '点击复制内容、发送给你的 agent 即可体验',
+    'btn-try': '立即试用',
+    'sc-ai-text': '正在分析 BTC, ETH, SOL 的 24h 数据...',
+    'sc-b1': '<span class="sc-bullet-hi">BTC 上涨 3.2%</span>，支撑位巩固',
+    'sc-b2': '社交情绪偏向看涨 (0.78)',
+    'sc-b3': '发现 3 笔巨鲸转入交易所...',
+    'sc-summary': '"总结：今日市场波动率较高，建议关注..."',
+    'sc-mini-t1': '实时行情监控',
+    'sc-mini-d1': '24/7 监控市场行情，大涨大跌及时知晓',
+    'sc-mini-t2': 'Agent 自动化交易',
+    'sc-mini-d2': '如需使用交易功能，请先创建 API Key',
+    'why-title': '为什么 CoinW 要构建 AI Agent Skills？',
+    'why-sub': '过去十年，数字资产交易经历了从手动交易到工具化交易的演进。从K线分析、量化策略，到自动化执行，交易效率不断提升。CoinW 认为，未来的交易平台不只是撮合交易的场所，而是可被 AI 调用的"交易基础设施"。',
+    'why-c1-title': '让交易能力被 AI 调用',
+    'why-c1-desc': '将行情、交易、账户等能力模块化，开放给 AI Agent，实现深度集成。',
+    'why-c2-title': '降低交易门槛',
+    'why-c2-desc': '用户无需复杂操作，通过自然语言即可完成原本繁琐的交易与分析流程。',
+    'why-c3-title': '构建开放生态',
+    'why-c3-desc': '开发者可以构建 Skill，共同丰富 AI 交易能力，推动 Web3 智能化。',
+    'completion-text': 'important type { CoinW 正在从"交易平台"，进化为"AI 原生交易基础设施" }',
+    'skills-title': '探索 AI Skills 生态',
+    'skills-sub': 'AI 调用的不只是接口，而是整个交易系统。从研究、策略到风控的全链路闭环。',
+    'contract-desc': '合约专用 skill：涵盖市场数据、下单/取消订单、止盈/止损、持仓和订单查询、账户资产、持仓模式和杠杆查询',
+    'contract-link': '了解详情',
+    'spot-desc': '现货专用 skill：涵盖市场数据、下单/取消订单、订单查询、账户余额和资金划转',
+    'spot-link': '了解详情',
+  },
+  en: {
+    'hero-title': 'Redefine Trading with AI Agent',
+    'hero-sub': 'From "human operates tools" → "AI executes trades directly". Let AI connect trading capabilities — analyze, decide, and execute in one step.',
+    'btn-start': 'Get Started',
+    'btn-api': 'API Docs',
+    'term-heading': 'Quick Start, One-Click Install',
+    'sc-title': 'Common Scenarios',
+    'sc-sub': 'AI Agent is not just execution — it\'s your intelligent trading co-pilot. Explore diverse scenarios powered by Neural Architect.',
+    'sc-left-title': 'Generate Crypto Daily Report',
+    'chip-tag': 'Recommended',
+    'sc-left-desc': 'One-click AI wake-up to fetch global market updates. AI automatically scans major coin movements, social media sentiment, on-chain data, and macro news — delivering a structured daily report to kick off your trading day.',
+    'sc-copy-span': 'Click to copy and send to your agent',
+    'btn-try': 'Try Now',
+    'sc-ai-text': 'Analyzing BTC, ETH, SOL 24h data...',
+    'sc-b1': '<span class="sc-bullet-hi">BTC up 3.2%</span>, support level holding',
+    'sc-b2': 'Social sentiment bullish (0.78)',
+    'sc-b3': '3 whale transfers to exchanges detected...',
+    'sc-summary': '"Summary: High market volatility today, stay alert..."',
+    'sc-mini-t1': 'Real-time Market Monitor',
+    'sc-mini-d1': '24/7 market monitoring — get alerted on major moves',
+    'sc-mini-t2': 'Agent Auto Trading',
+    'sc-mini-d2': 'Create an API Key to enable trading features',
+    'why-title': 'Why CoinW Builds AI Agent Skills?',
+    'why-sub': 'Over the past decade, digital asset trading evolved from manual trading to tool-driven trading. From candlestick analysis and quant strategies to automated execution, efficiency keeps rising. CoinW believes the next trading platform is not just a matching engine — it\'s "trading infrastructure" callable by AI.',
+    'why-c1-title': 'Make Trading Callable by AI',
+    'why-c1-desc': 'Modularize market data, trading, and account capabilities, expose them to AI Agent for deep integration.',
+    'why-c2-title': 'Lower the Trading Barrier',
+    'why-c2-desc': 'No complex operations needed. Users complete sophisticated trades and analysis flows through natural language.',
+    'why-c3-title': 'Build an Open Ecosystem',
+    'why-c3-desc': 'Developers can build Skills, collectively enriching AI trading capabilities and driving Web3 intelligence.',
+    'completion-text': 'important type { CoinW is evolving from a "trading platform" to an "AI-native trading infrastructure" }',
+    'skills-title': 'Explore AI Skills Ecosystem',
+    'skills-sub': 'AI doesn\'t just call APIs — it orchestrates the entire trading system. A full loop from research and strategy to risk control.',
+    'contract-desc': 'Contract-specific skill: covers market data, order placement/cancellation, take-profit/stop-loss, position and order queries, account assets, position mode and leverage queries.',
+    'contract-link': 'Learn More',
+    'spot-desc': 'Spot-specific skill: covers market data, order placement/cancellation, order queries, account balance and fund transfers.',
+    'spot-link': 'Learn More',
+  }
+};
+
+let currentLang = 'zh';
+
+function toggleLang() {
+  currentLang = currentLang === 'zh' ? 'en' : 'zh';
+  applyLang();
+}
+
+function applyLang() {
+  const dict = LANGS[currentLang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key] !== undefined) el.innerHTML = dict[key];
+  });
+  const btn = document.getElementById('langToggle');
+  if (btn) btn.textContent = currentLang === 'zh' ? 'EN' : '中文';
+  document.documentElement.lang = currentLang;
+}
+
+// Init with zh
+applyLang();
+</script>
+</body>
+</html>
