@@ -198,54 +198,36 @@
       .loader {
         --c-1: #a2ff37;
         --c-2: #5bb2ff;
+        --loader-size: 12px;
         position: relative;
-        display: flex;
+        display: inline-flex;
         justify-content: center;
         align-items: center;
+        min-width: max-content;
+        line-height: 1;
+        isolation: isolate;
       }
 
       .loader::after {
         content: attr(data-text);
-        font-size: var(--loader-size, 25px);
-        font-family: "Segoe UI", Tahoma;
-        font-weight: 800;
+        position: relative;
+        z-index: 1;
+        font-size: var(--loader-size);
+        font-family: ui-monospace, "SFMono-Regular", "Cascadia Code", "Segoe UI Mono", Menlo, monospace;
+        font-weight: 900;
+        letter-spacing: .12em;
         text-transform: uppercase;
-        opacity: 0;
+        color: #eaffff;
+        text-shadow:
+          -1px 0 0 var(--c-1),
+          1px 0 0 var(--c-2),
+          0 0 12px rgba(91,178,255,.35),
+          0 0 18px rgba(162,255,55,.18);
         pointer-events: none;
       }
 
       .layer {
-        font-size: var(--loader-size, 25px);
-        font-family: "Segoe UI", Tahoma;
-        font-weight: 800;
-        text-transform: uppercase;
-        position: absolute;
-      }
-
-      .layer:nth-child(1) {
-        color: var(--c-1);
-        animation: kfs-3412 0.5s infinite;
-      }
-
-      .layer:nth-child(2) {
-        color: var(--c-2);
-        animation: kfs-3412 0.5s 0.25s infinite;
-      }
-
-      @keyframes kfs-3412 {
-        0% {
-          text-shadow: 0 0 30px var(--c-1);
-          transform: scaleY(0);
-          z-index: 2;
-        }
-        50% {
-          transform: scaleY(1.5);
-          z-index: 2;
-        }
-        100% {
-          transform: scaleY(1.5);
-          z-index: 0;
-        }
+        display: none;
       }
 
       .site-nav__links a.vibe-nav-effect {
@@ -254,8 +236,6 @@
 
       .site-nav__links .vibe-nav-effect .loader {
         --loader-size: 12px;
-        min-width: max-content;
-        line-height: 1;
       }
 
       @media (max-width: 760px) {
