@@ -76,17 +76,17 @@
   </head>
   <body>
     <section class="animation">
-      <img class="iphone" src="assets/iphone-14.svg" alt="" />
-      <img id="app-store" class="widgets" src="assets/appstore-widget.svg" alt="" />
-      <img id="screen-time" class="widgets" src="assets/screen-time-widget.svg" alt="" />
-      <img id="weather" class="widgets" src="assets/weather-widget.svg" alt="" />
-      <img id="stocks" class="widgets" src="assets/stocks-widget.svg" alt="" />
-      <img id="calendar" class="widgets" src="assets/calendar-widget.svg" alt="" />
-      <img id="fitness" class="widgets" src="assets/fitness-widget.svg" alt="" />
-      <img id="find-my" class="widgets" src="assets/find-my-widget.svg" alt="" />
-      <img id="sleep" class="widgets" src="assets/sleep-widget.svg" alt="" />
-      <img id="apple-tv" class="widgets" src="assets/apple-tv.svg" alt="" />
-      <img id="wallet" class="widgets" src="assets/wallet.svg" alt="" />
+      <img class="iphone" src="https://assets.codepen.io/8292695/iphone-14.svg" alt="" />
+      <img id="app-store" class="widgets" src="https://assets.codepen.io/8292695/appstore-widget.svg" alt="" />
+      <img id="screen-time" class="widgets" src="https://assets.codepen.io/8292695/screen-time-widget.svg" alt="" />
+      <img id="weather" class="widgets" src="https://assets.codepen.io/8292695/weather-widget.svg" alt="" />
+      <img id="stocks" class="widgets" src="https://assets.codepen.io/8292695/stocks-widget.svg" alt="" />
+      <img id="calendar" class="widgets" src="https://assets.codepen.io/8292695/calendar-widget.svg" alt="" />
+      <img id="fitness" class="widgets" src="https://assets.codepen.io/8292695/fitness-widget.svg" alt="" />
+      <img id="find-my" class="widgets" src="https://assets.codepen.io/8292695/find-my-widget.svg" alt="" />
+      <img id="sleep" class="widgets" src="https://assets.codepen.io/8292695/sleep-widget.svg" alt="" />
+      <img id="apple-tv" class="widgets" src="https://assets.codepen.io/8292695/apple-tv.svg" alt="" />
+      <img id="wallet" class="widgets" src="https://assets.codepen.io/8292695/wallet.svg" alt="" />
       <div id="socials" class="widgets">
         <a href="https://twitter.com/GibsonSMurray" target="_blank" title="𝕏 account">
           <span>𝕏</span>
@@ -99,28 +99,10 @@
 
     <script src="vendor/gsap.min.js"></script>
     <script>
-
       const iphone = document.querySelector(".iphone");
-      const widgets = document.querySelectorAll(".widgets");
+      const widgets = Array.from(document.querySelectorAll(".widgets"));
       let isActive = window.parent === window;
       let wheelLocked = false;
-
-      gsap.set(iphone, { x: -450, rotation: 90 });
-      gsap.set(widgets, { opacity: 0, scale: 0 });
-
-      function iPhoneAnimation() {
-        const tl = gsap.timeline({ defaults: { duration: 1 } });
-        tl.to(iphone, { x: 0 })
-          .to(iphone, { rotation: 0, scale: 0.9 })
-          .to(iphone, { duration: 3, scale: 1 });
-        return tl;
-      }
-
-      function widgetAnimation() {
-        const tl = gsap.timeline();
-        tl.to(widgets, { duration: 0, opacity: 1 });
-        return tl;
-      }
 
       const animations = [
         {
@@ -129,7 +111,7 @@
           scale: 0.9,
           x: 500,
           y: 100,
-          ease: Power4.easeOut
+          ease: "power4.out"
         },
         {
           selector: "#screen-time",
@@ -137,7 +119,7 @@
           scale: 0.9,
           x: -500,
           y: -300,
-          ease: Power2.easeOut
+          ease: "power2.out"
         },
         {
           selector: "#weather",
@@ -145,7 +127,7 @@
           scale: 1.1,
           x: -400,
           y: 350,
-          ease: Power4.easeOut
+          ease: "power4.out"
         },
         {
           selector: "#stocks",
@@ -153,7 +135,7 @@
           scale: 0.9,
           x: 530,
           y: -170,
-          ease: Power4.easeOut
+          ease: "power4.out"
         },
         {
           selector: "#fitness",
@@ -161,7 +143,7 @@
           scale: 1.1,
           x: -350,
           y: -100,
-          ease: Power2.easeOut
+          ease: "power2.out"
         },
         {
           selector: "#find-my",
@@ -169,7 +151,7 @@
           scale: 1.1,
           x: 400,
           y: -360,
-          ease: Power4.easeOut
+          ease: "power4.out"
         },
         {
           selector: "#calendar",
@@ -177,7 +159,7 @@
           scale: 0.9,
           x: -630,
           y: 0,
-          ease: Power2.easeOut
+          ease: "power2.out"
         },
 
         {
@@ -186,7 +168,7 @@
           scale: 1,
           x: -280,
           y: 100,
-          ease: Power4.easeOut
+          ease: "power4.out"
         },
         {
           selector: "#apple-tv",
@@ -194,7 +176,7 @@
           scale: 1,
           x: 500,
           y: 300,
-          ease: Power4.easeOut
+          ease: "power4.out"
         },
         {
           selector: "#sleep",
@@ -202,7 +184,7 @@
           scale: 0.9,
           x: 270,
           y: -50,
-          ease: Power2.easeOut
+          ease: "power2.out"
         },
         {
           selector: "#socials",
@@ -210,22 +192,107 @@
           scale: 1,
           x: 330,
           y: 120,
-          ease: Power2.easeOut
+          ease: "power2.out"
         }
       ];
       const startTime = 2;
-      const masterTimeline = gsap.timeline({ paused: true });
-      window.masterTimeline = masterTimeline;
-      masterTimeline.add(iPhoneAnimation()).add(widgetAnimation(), startTime);
+      const maxTimelineTime = startTime + 4;
+      const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+      const easeOut = (value) => 1 - Math.pow(1 - clamp(value), 3);
 
-      animations.forEach((animation, index) => {
-        const { selector, duration, scale, x, y, ease } = animation;
-        const element = document.querySelector(selector);
-        masterTimeline.add(
-          gsap.to(element, { duration, scale, x, y, ease }),
-          startTime + (index % 3) / 2
-        );
-      });
+      function createNativeTimeline() {
+        let currentProgress = 0;
+
+        function setTransform(element, x, y, scale, rotation = 0) {
+          element.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg) scale(${scale})`;
+        }
+
+        function apply(progress) {
+          currentProgress = clamp(progress);
+          const time = currentProgress * maxTimelineTime;
+
+          const intro = clamp(time / 1);
+          const rotateIn = clamp((time - 1) / 1);
+          const settle = clamp((time - 2) / 3);
+          const phoneX = -450 + 450 * easeOut(intro);
+          const phoneRotation = 90 - 90 * easeOut(rotateIn);
+          const phoneScale = time < 2 ? 1 - 0.1 * easeOut(rotateIn) : 0.9 + 0.1 * easeOut(settle);
+          setTransform(iphone, phoneX, 0, phoneScale, phoneRotation);
+
+          widgets.forEach((widget) => {
+            widget.style.opacity = time >= startTime ? "1" : "0";
+            setTransform(widget, 0, 0, 0);
+          });
+
+          animations.forEach((animation, index) => {
+            const element = document.querySelector(animation.selector);
+            if (!element) return;
+            const localTime = clamp((time - (startTime + (index % 3) / 2)) / animation.duration);
+            const eased = easeOut(localTime);
+            const opacity = time >= startTime ? 1 : 0;
+            element.style.opacity = String(opacity);
+            setTransform(
+              element,
+              animation.x * eased,
+              animation.y * eased,
+              animation.scale * eased
+            );
+          });
+        }
+
+        apply(0);
+        return {
+          progress(value) {
+            if (typeof value === "number") {
+              apply(value);
+              return this;
+            }
+            return currentProgress;
+          },
+          pause() {
+            return this;
+          },
+          duration() {
+            return maxTimelineTime;
+          }
+        };
+      }
+
+      function createGsapTimeline() {
+        gsap.set(iphone, { x: -450, rotation: 90 });
+        gsap.set(widgets, { opacity: 0, scale: 0 });
+
+        function iPhoneAnimation() {
+          const tl = gsap.timeline({ defaults: { duration: 1 } });
+          tl.to(iphone, { x: 0 })
+            .to(iphone, { rotation: 0, scale: 0.9 })
+            .to(iphone, { duration: 3, scale: 1 });
+          return tl;
+        }
+
+        function widgetAnimation() {
+          const tl = gsap.timeline();
+          tl.to(widgets, { duration: 0, opacity: 1 });
+          return tl;
+        }
+
+        const timeline = gsap.timeline({ paused: true });
+        timeline.add(iPhoneAnimation()).add(widgetAnimation(), startTime);
+
+        animations.forEach((animation, index) => {
+          const { selector, duration, scale, x, y, ease } = animation;
+          const element = document.querySelector(selector);
+          timeline.add(
+            gsap.to(element, { duration, scale, x, y, ease }),
+            startTime + (index % 3) / 2
+          );
+        });
+
+        return timeline;
+      }
+
+      const masterTimeline = window.gsap ? createGsapTimeline() : createNativeTimeline();
+      window.masterTimeline = masterTimeline;
 
       function setActive(active) {
         isActive = active;
