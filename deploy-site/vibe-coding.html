@@ -8,7 +8,7 @@
     <script>
       /* file-protocol-local-server-redirect */
       if (window.location.protocol === "file:") {
-        window.location.replace("http://127.0.0.1:8021/vibe-coding.html?from=file&v=20260707-2");
+        window.location.replace("http://127.0.0.1:8021/vibe-coding.html?from=file&v=20260707-3");
       }
     </script>
     <link rel="icon" href="assets/cat-favicon-512.png" />
@@ -145,6 +145,7 @@
 
       body.active-utopia .vibe-wheel-capture,
       body.active-widgets .vibe-wheel-capture {
+        display: none;
         pointer-events: none;
       }
 
@@ -326,16 +327,16 @@
     <div class="vibe-wheel-capture" aria-hidden="true"></div>
     <div id="app"></div>
     <section id="liquid" class="liquid-screen" aria-label="Liquid reveal shader experiment">
-      <iframe data-src="vibe-coding/liquid/index.html?v=20260707-2" title="Liquid Reveal Vibe Coding Experiment" loading="lazy"></iframe>
+      <iframe data-src="vibe-coding/liquid/index.html?v=20260707-3" title="Liquid Reveal Vibe Coding Experiment" loading="lazy"></iframe>
     </section>
     <section id="astrodither" class="astrodither-screen" aria-label="AstroDither experiment">
-      <iframe data-src="vibe-coding/astrodither/index.html?v=20260707-2" title="AstroDither Vibe Coding Experiment" loading="eager" allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
+      <iframe data-src="vibe-coding/astrodither/index.html?v=20260707-3" title="AstroDither Vibe Coding Experiment" loading="eager" allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
     </section>
     <section id="utopia" class="utopia-screen" aria-label="Utopia Tokyo experiment">
-      <iframe data-src="vibe-coding/utopia/index.html?v=20260707-2" title="Utopia Tokyo Nuo Opera Experiment" loading="eager"></iframe>
+      <iframe data-src="vibe-coding/utopia/index.html?v=20260707-3" title="Utopia Tokyo Nuo Opera Experiment" loading="eager"></iframe>
     </section>
     <section id="widgets" class="widgets-screen" aria-label="iPhone widgets animation">
-      <iframe data-src="vibe-coding/widgets/index.html?v=20260707-2" title="iPhone Widgets Vibe Coding Experiment" loading="eager"></iframe>
+      <iframe data-src="vibe-coding/widgets/index.html?v=20260707-3" title="iPhone Widgets Vibe Coding Experiment" loading="eager"></iframe>
     </section>
     <div id="fallback"></div>
 
@@ -436,6 +437,7 @@
         }
 
         function bindFrameNavigation(screen) {
+          if (screen === "utopia" || screen === "widgets") return;
           const frame = screenFrames[screen];
           if (!frame || frame.dataset.navigationBound === "true") return;
           let frameDoc;
