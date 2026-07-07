@@ -127,6 +127,20 @@
         pointer-events: none;
       }
 
+      .vibe-wheel-capture {
+        position: fixed;
+        inset: 76px 0 0;
+        z-index: 18;
+        background: transparent;
+        pointer-events: auto;
+        touch-action: none;
+      }
+
+      body.active-utopia .vibe-wheel-capture,
+      body.active-widgets .vibe-wheel-capture {
+        pointer-events: none;
+      }
+
       #fallback {
         position: fixed;
         inset: 0;
@@ -302,18 +316,19 @@
         </a>
       </div>
     </nav>
+    <div class="vibe-wheel-capture" aria-hidden="true"></div>
     <div id="app"></div>
     <section id="liquid" class="liquid-screen" aria-label="Liquid reveal shader experiment">
-      <iframe data-src="vibe-coding/liquid/index.html?v=20260706-8" title="Liquid Reveal Vibe Coding Experiment" loading="lazy"></iframe>
+      <iframe data-src="vibe-coding/liquid/index.html?v=20260707-1" title="Liquid Reveal Vibe Coding Experiment" loading="lazy"></iframe>
     </section>
     <section id="astrodither" class="astrodither-screen" aria-label="AstroDither experiment">
-      <iframe data-src="vibe-coding/astrodither/index.html?v=20260706-8" title="AstroDither Vibe Coding Experiment" loading="eager" allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
+      <iframe data-src="vibe-coding/astrodither/index.html?v=20260707-1" title="AstroDither Vibe Coding Experiment" loading="eager" allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
     </section>
     <section id="utopia" class="utopia-screen" aria-label="Utopia Tokyo experiment">
-      <iframe data-src="vibe-coding/utopia/index.html?v=20260706-8" title="Utopia Tokyo Nuo Opera Experiment" loading="eager"></iframe>
+      <iframe data-src="vibe-coding/utopia/index.html?v=20260707-1" title="Utopia Tokyo Nuo Opera Experiment" loading="eager"></iframe>
     </section>
     <section id="widgets" class="widgets-screen" aria-label="iPhone widgets animation">
-      <iframe data-src="vibe-coding/widgets/index.html?v=20260706-8" title="iPhone Widgets Vibe Coding Experiment" loading="eager"></iframe>
+      <iframe data-src="vibe-coding/widgets/index.html?v=20260707-1" title="iPhone Widgets Vibe Coding Experiment" loading="eager"></iframe>
     </section>
     <div id="fallback"></div>
 
@@ -461,6 +476,25 @@
           target.addEventListener("wheel", consumeWheel, { passive: false, capture: true });
           target.addEventListener("mousewheel", consumeWheel, { passive: false, capture: true });
         });
+
+        const wheelCapture = document.querySelector(".vibe-wheel-capture");
+        if (wheelCapture) {
+          wheelCapture.addEventListener("wheel", consumeWheel, { passive: false, capture: true });
+          wheelCapture.addEventListener("mousewheel", consumeWheel, { passive: false, capture: true });
+          let captureTouchStartY = 0;
+          wheelCapture.addEventListener("touchstart", (event) => {
+            captureTouchStartY = event.touches[0] ? event.touches[0].clientY : 0;
+          }, { passive: true, capture: true });
+          wheelCapture.addEventListener("touchmove", (event) => {
+            const currentY = event.touches[0] ? event.touches[0].clientY : captureTouchStartY;
+            const delta = captureTouchStartY - currentY;
+            if (Math.abs(delta) < 24) return;
+            event.preventDefault();
+            event.stopPropagation();
+            if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+            stepScreen(delta > 0 ? 1 : -1);
+          }, { passive: false, capture: true });
+        }
 
         window.addEventListener("message", (event) => {
           if (!event.data || event.data.type !== "vibe-screen-step") return;
