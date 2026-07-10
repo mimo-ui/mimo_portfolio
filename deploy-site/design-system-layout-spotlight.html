@@ -1013,7 +1013,28 @@
     const colorTooltipSwatch = colorTooltip.querySelector("span");
     const colorTooltipText = colorTooltip.querySelector("strong");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const previewMode = new URLSearchParams(window.location.search).get("preview") === "1";
     let activeTimer;
+    let previewTimer;
+
+    function clearPreviewSpotlight() {
+      pages.forEach((item) => item.classList.remove("is-hovered"));
+      board.classList.remove("is-spotlighting");
+    }
+
+    function startPreviewSpotlight() {
+      if (!previewMode || reduceMotion.matches || !pages.length) return;
+      let index = 0;
+      const cycle = () => {
+        clearPreviewSpotlight();
+        const page = pages[index % pages.length];
+        board.classList.add("is-spotlighting");
+        page.classList.add("is-hovered");
+        index += 1;
+      };
+      cycle();
+      previewTimer = window.setInterval(cycle, 1550);
+    }
 
     pages.forEach((page) => {
       page.addEventListener("click", () => {
@@ -1034,6 +1055,7 @@
 
       page.addEventListener("pointerenter", () => {
         if (reduceMotion.matches) return;
+        if (previewTimer) window.clearInterval(previewTimer);
         board.classList.add("is-spotlighting");
         page.classList.add("is-hovered");
       });
@@ -1043,7 +1065,16 @@
         if (!pages.some((item) => item.classList.contains("is-hovered"))) {
           board.classList.remove("is-spotlighting");
         }
+        startPreviewSpotlight();
       });
+    });
+
+    startPreviewSpotlight();
+
+    reduceMotion.addEventListener?.("change", () => {
+      if (previewTimer) window.clearInterval(previewTimer);
+      clearPreviewSpotlight();
+      startPreviewSpotlight();
     });
 
     document.querySelectorAll(".swatch-line span[data-color]").forEach((swatch) => {

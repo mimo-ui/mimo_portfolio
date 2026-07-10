@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Fintech Design System Gallery</title>
+  <style>
+    :root{color-scheme:dark;--bg:#171819;--card:#222324;--line:rgba(255,255,255,.07);--muted:#9b9b9f;--accent:#b57af2;--cyan:#36c9c9}
+    *{box-sizing:border-box}
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f6f6f7}
+    body{display:grid;place-items:center}
+    .canvas{position:relative;width:1920px;height:1200px;overflow:hidden;background:
+      radial-gradient(720px 540px at 53% -8%,rgba(139,76,48,.38),transparent 70%),
+      radial-gradient(760px 690px at 99% 14%,rgba(35,128,118,.34),transparent 72%),
+      linear-gradient(180deg,#191a1b 0%,#1b1c1d 100%);transform-origin:center}
+    .canvas::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.012) 1px,transparent 1px);background-size:80px 80px;mask-image:linear-gradient(to bottom,black,transparent 72%)}
+    .page{position:absolute;inset:0;display:none;padding:76px 96px 70px;z-index:1}
+    .page.active{display:block}
+    header{height:112px;display:flex;align-items:flex-start;justify-content:space-between}
+    .eyebrow{display:flex;align-items:center;gap:13px;font-size:17px;font-weight:700;letter-spacing:.01em}
+    .mark{display:grid;grid-template-columns:repeat(2,9px);grid-template-rows:repeat(2,9px);gap:3px;transform:rotate(45deg);margin:2px 4px}
+    .mark i{width:9px;height:9px;border:2px solid var(--accent);border-radius:2px}
+    h1{font-size:50px;line-height:1.05;margin:18px 0 0;letter-spacing:-.045em}
+    .counter{font-size:15px;color:#77797d;padding-top:8px;letter-spacing:.12em}
+    .grid{display:grid;gap:24px;height:910px}
+    .card{position:relative;min-width:0;min-height:0;overflow:hidden;border:1px solid var(--line);border-radius:28px;background:linear-gradient(145deg,rgba(42,42,43,.94),rgba(29,30,31,.98));box-shadow:0 28px 80px rgba(0,0,0,.2)}
+    .card::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,transparent 45%,rgba(94,196,181,.035))}
+    .card-head{position:absolute;left:28px;right:28px;top:22px;display:flex;align-items:center;justify-content:space-between;z-index:2}
+    .card-title{display:flex;gap:12px;align-items:center;font-size:19px;font-weight:650}
+    .card-title .mark{transform:scale(.62) rotate(45deg);margin:0}
+    .platform{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#77797c}
+    .media{position:absolute;inset:68px 22px 22px;display:grid;place-items:center;border-radius:18px;overflow:hidden;background:rgba(12,13,14,.38)}
+    .media img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
+    .media.focus-top{align-items:start}
+    .media.focus-top img{height:auto;min-height:100%;object-fit:cover;object-position:top center}
+    img.load-error{display:none}
+    .media.error::after{content:"Image unavailable";color:#8f9093;font-size:14px;border:1px dashed #55575a;border-radius:12px;padding:16px 22px}
+    .four{grid-template-columns:1.16fr 1fr 1fr .9fr}
+    .four .card:nth-child(1){grid-row:span 2}.four .card:nth-child(2){grid-row:span 2}.four .card:nth-child(3),.four .card:nth-child(4){height:443px}
+    .web-components{grid-template-columns:1.25fr .75fr}.web-components .card:first-child{grid-row:span 2}.web-components .card:last-child{grid-row:span 2}
+    .app-components{grid-template-columns:1fr 1.12fr 1.08fr}
+    .trading-web{grid-template-columns:1.1fr 1.55fr .86fr;grid-template-rows:1fr 1fr}
+    .trading-web .card:nth-child(1){grid-row:1}.trading-web .card:nth-child(2){grid-column:2;grid-row:1 / span 2}.trading-web .card:nth-child(3){grid-column:3;grid-row:1 / span 2}.trading-web .card:nth-child(4){grid-column:1;grid-row:2}
+    .trading-app{grid-template-columns:.95fr 1.12fr 1.18fr .9fr}
+    .trading-app .card:nth-child(1),.trading-app .card:nth-child(3){margin-top:70px;margin-bottom:70px}
+    .browser-grid{grid-template-columns:1fr 1fr;gap:30px}
+    .browser{padding-top:42px;background:#202122;border-radius:26px}
+    .browser::before{content:"";position:absolute;left:26px;top:20px;width:10px;height:10px;border-radius:50%;background:#ff6b5f;box-shadow:18px 0 #f6bd4f,36px 0 #61c854}
+    .browser .media{inset:42px 12px 12px;background:#101112;border-radius:12px}
+    .browser-label{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:12px;color:#777;z-index:3}
+    .device-grid{display:flex;justify-content:center;align-items:center;gap:150px;height:910px}
+    .device-wrap{height:880px;display:flex;flex-direction:column;align-items:center;gap:16px}
+    .device{position:relative;width:406px;flex:1;min-height:0;padding:14px;border-radius:54px;background:#090a0a;border:1px solid #3a3b3d;box-shadow:0 35px 80px rgba(0,0,0,.45)}
+    .device::before{content:"";position:absolute;z-index:3;left:50%;top:17px;transform:translateX(-50%);width:112px;height:26px;border-radius:18px;background:#050606}
+    .device .media{inset:14px;border-radius:41px;background:#111}
+    .device img{object-position:top center}
+    .device-label{font-size:15px;color:#a6a7aa;letter-spacing:.03em}
+    .note{position:absolute;left:96px;bottom:28px;color:#66686b;font-size:12px;letter-spacing:.06em}
+    @media(max-aspect-ratio:8/5){.canvas{transform:scale(calc(100vw / 1920))}}
+    @media(min-aspect-ratio:8/5){.canvas{transform:scale(calc(100vh / 1200))}}
+  </style>
+</head>
+<body>
+<main class="canvas">
+  <section class="page" data-page="1">
+    <header><div><div class="eyebrow"><span class="mark"><i></i><i></i><i></i><i></i></span>Foundations 2.0</div><h1>Variables & Foundations</h1></div><div class="counter">01 / 07</div></header>
+    <div class="grid four">
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Typography</div><span class="platform">Foundation</span></div><div class="media"><img src="assets/design-system/gallery/source/foundation-typography.png" alt="Typography variables"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Color Palette</div><span class="platform">Foundation</span></div><div class="media"><img src="assets/design-system/gallery/source/foundation-color.png" alt="Color variables"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Spacing</div><span class="platform">Foundation</span></div><div class="media"><img src="assets/design-system/gallery/source/foundation-spacing.png" alt="Spacing variables"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Radius</div><span class="platform">Foundation</span></div><div class="media"><img src="assets/design-system/gallery/source/foundation-radius.png" alt="Radius variables"></div></article>
+    </div>
+  </section>
+  <section class="page" data-page="2">
+    <header><div><div class="eyebrow"><span class="mark"><i></i><i></i><i></i><i></i></span>Web Components 2.0</div><h1>Core Web Components</h1></div><div class="counter">02 / 07</div></header>
+    <div class="grid web-components">
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Input Web</div><span class="platform">Web</span></div><div class="media focus-top"><img src="assets/design-system/gallery/source/web-input.png" alt="Web input components"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Button</div><span class="platform">Web</span></div><div class="media focus-top"><img src="assets/design-system/gallery/source/web-button.png" alt="Web button components"></div></article>
+    </div>
+  </section>
+  <section class="page" data-page="3">
+    <header><div><div class="eyebrow"><span class="mark"><i></i><i></i><i></i><i></i></span>App Components 2.0</div><h1>Core App Components</h1></div><div class="counter">03 / 07</div></header>
+    <div class="grid app-components">
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Navigation</div><span class="platform">App</span></div><div class="media"><img src="assets/design-system/gallery/source/app-navigation.png" alt="App navigation components"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Display</div><span class="platform">App</span></div><div class="media"><img src="assets/design-system/gallery/source/app-display.png" alt="App display components"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Feedback</div><span class="platform">App</span></div><div class="media"><img src="assets/design-system/gallery/source/app-feedback.png" alt="App feedback components"></div></article>
+    </div>
+  </section>
+  <section class="page" data-page="4">
+    <header><div><div class="eyebrow"><span class="mark"><i></i><i></i><i></i><i></i></span>Web Trading System</div><h1>Trading Components — Web</h1></div><div class="counter">04 / 07</div></header>
+    <div class="grid trading-web">
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Order Book & Trades</div></div><div class="media focus-top"><img src="assets/design-system/gallery/source/web-orderbook.png" alt="Web order book"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Chart</div></div><div class="media focus-top"><img src="assets/design-system/gallery/source/web-chart.png" alt="Web chart"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Order Entry</div></div><div class="media focus-top"><img src="assets/design-system/gallery/source/web-order.png" alt="Web order entry"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Positions</div></div><div class="media focus-top"><img src="assets/design-system/gallery/source/web-position.png" alt="Web positions"></div></article>
+    </div>
+  </section>
+  <section class="page" data-page="5">
+    <header><div><div class="eyebrow"><span class="mark"><i></i><i></i><i></i><i></i></span>App Trading System</div><h1>Trading Components — App</h1></div><div class="counter">05 / 07</div></header>
+    <div class="grid trading-app">
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Order Book</div></div><div class="media focus-top"><img src="assets/design-system/gallery/source/app-orderbook.png" alt="App order book"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Chart</div></div><div class="media focus-top"><img src="assets/design-system/gallery/source/app-chart.png" alt="App chart"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Order Entry</div></div><div class="media focus-top"><img src="assets/design-system/gallery/source/app-order.png" alt="App order entry"></div></article>
+      <article class="card"><div class="card-head"><div class="card-title"><span class="mark"><i></i><i></i><i></i><i></i></span>Positions</div></div><div class="media focus-top"><img src="assets/design-system/gallery/source/app-position.png" alt="App positions"></div></article>
+    </div>
+  </section>
+  <section class="page" data-page="6">
+    <header><div><div class="eyebrow"><span class="mark"><i></i><i></i><i></i><i></i></span>Web Trading Experience</div><h1>Representative Web Pages</h1></div><div class="counter">06 / 07</div></header>
+    <div class="grid browser-grid">
+      <article class="card browser"><span class="browser-label">Contract Trading</span><div class="media"><img src="assets/design-system/gallery/source/web-page-main.png" alt="Contract trading web page"></div></article>
+      <article class="card browser"><span class="browser-label">Contract Right Layout</span><div class="media"><img src="assets/design-system/gallery/source/web-page-right.png" alt="Contract trading right layout"></div></article>
+    </div>
+  </section>
+  <section class="page" data-page="7">
+    <header><div><div class="eyebrow"><span class="mark"><i></i><i></i><i></i><i></i></span>App Trading Experience</div><h1>Representative App Pages</h1></div><div class="counter">07 / 07</div></header>
+    <div class="device-grid">
+      <div class="device-wrap"><div class="device"><div class="media"><img src="assets/design-system/gallery/source/app-page-market.png" alt="Market order app page"></div></div><div class="device-label">Market Order</div></div>
+      <div class="device-wrap"><div class="device"><div class="media"><img src="assets/design-system/gallery/source/app-page-history.png" alt="Position history app page"></div></div><div class="device-label">Position History</div></div>
+    </div>
+  </section>
+  <div class="note">OURBIT · FINTECH DESIGN SYSTEM 2.0</div>
+</main>
+<script>
+  const requested = Number(new URLSearchParams(location.search).get('page')) || 1;
+  const page = Math.min(7, Math.max(1, requested));
+  document.querySelector(`[data-page="${page}"]`).classList.add('active');
+  document.querySelectorAll('img').forEach(img => img.addEventListener('error', () => {
+    img.classList.add('load-error');
+    img.closest('.media')?.classList.add('error');
+  }));
+</script>
+</body>
+</html>

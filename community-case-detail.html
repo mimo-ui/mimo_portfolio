@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>社区功能改版 · MIMO</title>
+  <style>
+    :root { --bg:#070809; --panel:#0d0f11; --line:rgba(255,255,255,.13); --muted:rgba(255,255,255,.55); --dim:rgba(255,255,255,.34); --accent:#5ed29c; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; background:var(--bg); }
+    body { margin:0; overflow-x:hidden; background:var(--bg); color:#f5f5f5; font-family:"HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif; }
+    button { font:inherit; }
+    .shell { width:min(1400px,100%); margin:auto; padding:0 100px 120px; }
+    .hero { min-height:0; display:grid; grid-template-columns:minmax(0,.86fr) minmax(420px,1.14fr); align-items:start; gap:80px; padding:48px 0 64px; border-bottom:1px solid var(--line); }
+    .eyebrow,.meta,.index,.kicker,.step-no,.footer { font:10px/1.4 "SFMono-Regular",Consolas,monospace; letter-spacing:.12em; text-transform:uppercase; }
+    .eyebrow { margin:0 0 28px; color:var(--dim); }
+    h1 { margin:0; font-size:clamp(54px,7vw,104px); font-weight:300; line-height:.92; letter-spacing:-.055em; }
+    .lead { max-width:590px; margin:34px 0 0; color:var(--muted); font-size:16px; line-height:1.9; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px; margin-top:34px; color:rgba(255,255,255,.46); }
+    .meta span { padding:8px 12px; border:1px solid var(--line); }
+    .cover { position:relative; aspect-ratio:1135/720; margin:0; overflow:hidden; border:0; background:transparent; isolation:isolate; }
+    .cover img { position:absolute; inset:0; z-index:0; width:100%; height:100%; object-fit:contain; display:block; transition:transform .8s cubic-bezier(.16,1,.3,1),filter .5s ease; }
+    .cover-neon { position:absolute; inset:0; z-index:1; width:100%; height:100%; pointer-events:none; mix-blend-mode:screen; }
+    .cover-neon-path { fill:none; stroke-width:8; stroke-linecap:round; stroke-dasharray:16 84; opacity:.82; filter:url(#cover-neon-glow); animation:cover-neon-flow var(--neon-speed) linear infinite,cover-neon-breathe 3.5s ease-in-out infinite alternate; }
+    .cover-neon-path.pink { --neon-speed:5s; stroke:#ff2a91; }
+    .cover-neon-path.orange { --neon-speed:9s; stroke:#ff9c35; animation-direction:reverse,alternate; }
+    .cover-neon-path.blue { --neon-speed:7s; stroke:#536dff; animation-delay:-2.1s,-.8s; }
+    .cover:hover .cover-neon-path.pink { --neon-speed:3.75s; }
+    .cover:hover .cover-neon-path.orange { --neon-speed:6.75s; }
+    .cover:hover .cover-neon-path.blue { --neon-speed:5.25s; }
+    .cover:hover img { transform:scale(1.012); filter:saturate(1.08) contrast(1.02); }
+    @keyframes cover-neon-flow { to { stroke-dashoffset:-100; } }
+    @keyframes cover-neon-breathe { from { opacity:.5; } to { opacity:1; } }
+    .cover::before,.cover::after { content:none; display:none; }
+    .cover::before { left:-7px; top:-7px; }.cover::after { right:-7px; bottom:-7px; }
+    .index { display:flex; justify-content:space-between; padding:28px 0; border-bottom:1px solid var(--line); color:var(--dim); }
+    .tabs { position:sticky; top:0; z-index:10; display:flex; overflow:auto; padding:0 max(24px,calc((100vw - 1200px)/2)); border-bottom:1px solid var(--line); background:rgba(7,8,9,.92); backdrop-filter:blur(14px); }
+    .tab { flex:0 0 auto; padding:17px 20px; border:0; border-left:1px solid var(--line); color:var(--muted); background:transparent; cursor:pointer; font:10px/1 monospace; letter-spacing:.1em; text-transform:uppercase; }
+    .tab:last-child { border-right:1px solid var(--line); }.tab:hover,.tab.active { color:#070809; background:#fff; }
+    section.content { padding:104px 0; border-bottom:1px solid var(--line); scroll-margin-top:48px; }
+    .section-head { display:grid; grid-template-columns:180px minmax(0,1fr); gap:40px; margin-bottom:56px; }
+    .kicker { color:var(--accent); }
+    h2 { max-width:850px; margin:0; font-size:clamp(34px,5vw,68px); font-weight:300; line-height:1.05; letter-spacing:-.04em; }
+    .overview { display:grid; grid-template-columns:1.2fr .8fr; gap:18px; }
+    .panel { border:1px solid var(--line); background:var(--panel); padding:34px; }
+    .panel p { margin:0; color:var(--muted); font-size:15px; line-height:1.9; }
+    .panel strong { display:block; margin-bottom:18px; font-size:13px; font-weight:500; letter-spacing:.04em; }
+    .steps { display:grid; grid-template-columns:repeat(5,1fr); border-top:1px solid var(--line); border-left:1px solid var(--line); }
+    .step { min-height:270px; padding:28px 24px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .step-no { color:var(--accent); }.step h3 { margin:46px 0 16px; font-size:18px; font-weight:500; }.step p { margin:0; color:var(--muted); font-size:13px; line-height:1.75; }
+    .shots { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; align-items:start; }
+    .shot { margin:0; border:1px solid var(--line); background:#eef; overflow:hidden; }
+    .shot img { width:100%; height:auto; display:block; }
+    .shot figcaption { padding:14px 16px; border-top:1px solid var(--line); background:#0b0c0e; color:var(--dim); font:9px/1.5 monospace; letter-spacing:.08em; text-transform:uppercase; }
+    .highlights { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .highlight { position:relative; min-height:280px; padding:34px; border:1px solid var(--line); background:linear-gradient(145deg,rgba(94,210,156,.1),transparent 60%); }
+    .highlight span { color:var(--accent); font:11px/1 monospace; }.highlight h3 { margin:80px 0 18px; font-size:23px; font-weight:400; }.highlight p { margin:0; color:var(--muted); line-height:1.8; }
+    .results { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); border-left:1px solid var(--line); }
+    .result { padding:32px 24px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .result b { display:block; color:var(--accent); font-size:38px; font-weight:300; }.result span { display:block; margin-top:12px; color:var(--muted); font-size:12px; line-height:1.6; }
+    .insight { max-width:1000px; font-size:clamp(28px,4vw,54px); font-weight:300; line-height:1.25; letter-spacing:-.035em; }
+    .footer { display:flex; justify-content:space-between; padding-top:30px; color:var(--dim); }
+    .reveal { opacity:0; filter:blur(6px); transform:translateY(24px); transition:opacity .7s ease,filter .7s ease,transform .7s cubic-bezier(.16,1,.3,1); }.reveal.visible { opacity:1; filter:none; transform:none; }
+    @media (max-width:1000px) { .shell{padding:0 40px 80px}.hero{grid-template-columns:1fr;gap:44px}.steps{grid-template-columns:repeat(2,1fr)}.shots{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:680px) { .shell{padding:0 24px 64px}.hero{padding-top:36px}.section-head{grid-template-columns:1fr;gap:16px}.overview,.highlights,.results{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.shots{gap:10px}.content{padding:76px 0}.tab{padding:15px 16px} }
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto}.reveal{opacity:1;filter:none;transform:none;transition:none}.cover-neon-path{animation:none;stroke-dashoffset:0;opacity:.72}.cover:hover img{transform:none} }
+  </style>
+</head>
+<body>
+  <nav class="tabs" id="tabs" aria-label="案例章节"></nav>
+  <main class="shell">
+    <section class="hero reveal">
+      <div>
+        <p class="eyebrow" data-zh="COMMUNITY · 2025–2026 · COINW" data-en="COMMUNITY · 2025–2026 · COINW">COMMUNITY · 2025–2026 · COINW</p>
+        <h1 data-zh="社区功能<br>改版" data-en="Community<br>Redesign">社区功能<br>改版</h1>
+        <p class="lead" data-zh="主导 CoinW 社区模块从 V1 到 V3 的迭代设计，重构内容消费路径、创作者激励、互动组件与通知机制，连接社区参与和交易场景。" data-en="Redesigned CoinW Community from V1 to V3, rebuilding content discovery, creator incentives, interaction components, and notification logic.">主导 CoinW 社区模块从 V1 到 V3 的迭代设计，重构内容消费路径、创作者激励、互动组件与通知机制，连接社区参与和交易场景。</p>
+        <div class="meta"><span>Lead UI Designer</span><span>App / PC</span><span>3 Months</span></div>
+      </div>
+      <figure class="cover"><img src="assets/cases/telegram-badge-neon-cover-transparent.png" alt="CoinW badge detail and badge wall interfaces"><svg class="cover-neon" viewBox="0 0 1135 720" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><defs><filter id="cover-neon-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7" result="blur"></feGaussianBlur><feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter><mask id="cover-phone-mask"><rect width="1135" height="720" fill="white"></rect><path d="M300 84 L515 66 L610 615 L381 637 Z" fill="black"></path><path d="M650 45 L881 72 L815 556 L570 525 Z" fill="black"></path></mask></defs><g mask="url(#cover-phone-mask)"><ellipse class="cover-neon-path pink" pathLength="100" cx="500" cy="360" rx="392" ry="196"></ellipse><ellipse class="cover-neon-path orange" pathLength="100" cx="720" cy="348" rx="330" ry="192"></ellipse><ellipse class="cover-neon-path blue" pathLength="100" cx="745" cy="390" rx="346" ry="176"></ellipse></g></svg></figure>
+    </section>
+    <div class="index reveal"><span>04 / Complete Case Study</span><span>Scroll to explore</span></div>
+
+    <section class="content reveal" id="overview" data-tab-zh="项目概览" data-tab-en="Overview">
+      <div class="section-head"><span class="kicker">01 / Overview</span><h2 data-zh="让内容消费与创作反馈形成闭环" data-en="A healthier loop for readers and creators">让内容消费与创作反馈形成闭环</h2></div>
+      <div class="overview">
+        <article class="panel"><strong data-zh="项目背景" data-en="Context">项目背景</strong><p data-zh="V1 社区次日留存仅 18%，大量用户进入首屏后很快离开；创作者也因为发布后缺少反馈而降低更新频率。" data-en="V1 day-one retention was only 18%. Readers left quickly, while creators reduced posting because useful feedback was missing.">V1 社区次日留存仅 18%，大量用户进入首屏后很快离开；创作者也因为发布后缺少反馈而降低更新频率。</p></article>
+        <article class="panel"><strong data-zh="核心挑战" data-en="Core challenge">核心挑战</strong><p data-zh="问题不在功能数量，而在内容分发与创作者激励同时失效。设计需要兼顾消费者找到好内容，以及创作者获得正向反馈。" data-en="The issue was not missing features, but broken content distribution and creator incentives. The redesign had to serve both readers and creators.">问题不在功能数量，而在内容分发与创作者激励同时失效。设计需要兼顾消费者找到好内容，以及创作者获得正向反馈。</p></article>
+      </div>
+    </section>
+
+    <section class="content reveal" id="process" data-tab-zh="设计过程" data-tab-en="Process">
+      <div class="section-head"><span class="kicker">02 / Process</span><h2 data-zh="从数据诊断到内容生态" data-en="From diagnosis to content ecosystem">从数据诊断到内容生态</h2></div>
+      <div class="steps">
+        <article class="step"><span class="step-no">01</span><h3 data-zh="数据诊断" data-en="Diagnosis">数据诊断</h3><p data-zh="分析行为漏斗，定位首屏内容选择困难和发布后反馈不足。" data-en="Used behavior funnels to identify discovery and feedback failures.">分析行为漏斗，定位首屏内容选择困难和发布后反馈不足。</p></article>
+        <article class="step"><span class="step-no">02</span><h3 data-zh="内容分发" data-en="Distribution">内容分发</h3><p data-zh="将时间流升级为兴趣与热度混合流，并增加垂直频道入口。" data-en="Replaced the time feed with interest and popularity signals.">将时间流升级为兴趣与热度混合流，并增加垂直频道入口。</p></article>
+        <article class="step"><span class="step-no">03</span><h3 data-zh="激励体系" data-en="Creator rewards">激励体系</h3><p data-zh="设计创作积分与徽章系统，将阅读、互动和贡献转化为可感知反馈。" data-en="Turned reading, interaction, and contribution into visible rewards.">设计创作积分与徽章系统，将阅读、互动和贡献转化为可感知反馈。</p></article>
+        <article class="step"><span class="step-no">04</span><h3 data-zh="互动升级" data-en="Interactions">互动升级</h3><p data-zh="重构评论、快捷反应、分享卡和行情关联，降低互动门槛。" data-en="Reworked comments, reactions, sharing, and market links.">重构评论、快捷反应、分享卡和行情关联，降低互动门槛。</p></article>
+        <article class="step"><span class="step-no">05</span><h3 data-zh="通知分级" data-en="Notifications">通知分级</h3><p data-zh="按持仓相关、关注动态和活动信息分级，支持精细配置。" data-en="Prioritized position, follow, and campaign notifications.">按持仓相关、关注动态和活动信息分级，支持精细配置。</p></article>
+      </div>
+    </section>
+
+    <section class="content reveal" id="screens" data-tab-zh="关键界面" data-tab-en="Screens">
+      <div class="section-head"><span class="kicker">03 / Screens</span><h2 data-zh="真实产品界面" data-en="Product screens">真实产品界面</h2></div>
+      <div class="shots">
+        <figure class="shot"><img src="assets/cases/community/01-community-screen.png" alt="Community badge management"><figcaption>Badge Management</figcaption></figure>
+        <figure class="shot"><img src="assets/cases/community/02-community-screen.png" alt="Creator badge wall"><figcaption>Creator Profile / Badge Wall</figcaption></figure>
+        <figure class="shot"><img src="assets/cases/community/03-community-screen.png" alt="Community badge detail"><figcaption>Reward / Badge Detail</figcaption></figure>
+        <figure class="shot"><img src="assets/cases/community/04-community-screen.png" alt="Community share card"><figcaption>Community / Share Card</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="content reveal" id="highlights" data-tab-zh="设计亮点" data-tab-en="Highlights">
+      <div class="section-head"><span class="kicker">04 / Highlights</span><h2 data-zh="三处关键决策" data-en="Three key decisions">三处关键决策</h2></div>
+      <div class="highlights">
+        <article class="highlight"><span>01</span><h3 data-zh="兴趣引导" data-en="Interest onboarding">兴趣引导</h3><p data-zh="首次进入通过兴趣选择建立冷启动内容流，减少“不知道看什么”。" data-en="Interest selection gives new users a relevant feed immediately.">首次进入通过兴趣选择建立冷启动内容流，减少“不知道看什么”。</p></article>
+        <article class="highlight"><span>02</span><h3 data-zh="创作者主页" data-en="Creator profile">创作者主页</h3><p data-zh="用徽章、粉丝、活跃度与历史表现建立可感知的创作者身份。" data-en="Badges, audience, activity, and history make creator identity credible.">用徽章、粉丝、活跃度与历史表现建立可感知的创作者身份。</p></article>
+        <article class="highlight"><span>03</span><h3 data-zh="行情内容卡" data-en="Market-linked posts">行情内容卡</h3><p data-zh="帖子关联实时行情和交易对，让内容消费自然连接产品行动。" data-en="Posts connect live market context with relevant trading actions.">帖子关联实时行情和交易对，让内容消费自然连接产品行动。</p></article>
+      </div>
+    </section>
+
+    <section class="content reveal" id="results" data-tab-zh="项目结果" data-tab-en="Results">
+      <div class="section-head"><span class="kicker">05 / Results</span><h2 data-zh="上线后的核心指标" data-en="Core post-launch signals">上线后的核心指标</h2></div>
+      <div class="results"><div class="result"><b>+52%</b><span data-zh="社区日活用户" data-en="Community DAU">社区日活用户</span></div><div class="result"><b>3.2x</b><span data-zh="内容发布量" data-en="Content publishing">内容发布量</span></div><div class="result"><b>+19%</b><span data-zh="30 日留存率" data-en="30-day retention">30 日留存率</span></div><div class="result"><b>4.5</b><span data-zh="App Store 评分" data-en="App Store rating">App Store 评分</span></div></div>
+    </section>
+
+    <section class="content reveal" id="insight" data-tab-zh="设计洞察" data-tab-en="Insight"><div class="section-head"><span class="kicker">06 / Insight</span><p class="insight" data-zh="社区是双边市场：消费者需要好内容，创作者需要正向反馈。设计必须同时修复两侧体验，生态才能持续运转。" data-en="Community is a two-sided market: readers need good content and creators need meaningful feedback. Both sides must work for the ecosystem to grow.">社区是双边市场：消费者需要好内容，创作者需要正向反馈。设计必须同时修复两侧体验，生态才能持续运转。</p></div></section>
+    <footer class="footer"><span>MIMO · COMMUNITY REDESIGN</span><span>End of case</span></footer>
+  </main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const lang = params.get("lang") === "en" ? "en" : "zh";
+    document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+    document.querySelectorAll("[data-zh]").forEach((el) => { el.innerHTML = el.dataset[lang]; });
+    const sections = [...document.querySelectorAll("section.content")];
+    const tabs = document.getElementById("tabs");
+    const buttons = sections.map((section) => {
+      const button = document.createElement("button");
+      button.className = "tab";
+      button.textContent = section.dataset[`tab${lang === "en" ? "En" : "Zh"}`];
+      button.addEventListener("click", () => section.scrollIntoView({ behavior:"smooth", block:"start" }));
+      tabs.appendChild(button);
+      return button;
+    });
+    const activate = () => {
+      let active = 0;
+      sections.forEach((section, index) => { if (section.getBoundingClientRect().top <= 110) active = index; });
+      buttons.forEach((button, index) => button.classList.toggle("active", index === active));
+    };
+    addEventListener("scroll", activate, { passive:true });
+    activate();
+    const reveals = [...document.querySelectorAll(".reveal")];
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) reveals.forEach((el) => el.classList.add("visible"));
+    else {
+      const observer = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add("visible"); observer.unobserve(entry.target); } }), { rootMargin:"0px 0px -8%" });
+      reveals.forEach((el) => observer.observe(el));
+    }
+  </script>
+</body>
+</html>

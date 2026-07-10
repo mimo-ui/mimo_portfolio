@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CoinW 落地页设计合集</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #09090b;
+      --panel: #111114;
+      --line: rgba(255,255,255,.13);
+      --text: #f5f5f7;
+      --muted: rgba(245,245,247,.56);
+      --accent: #6842ff;
+      --ease: cubic-bezier(.22,1,.36,1);
+      --parallax: 0px;
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 82% 7%, rgba(104,66,255,.14), transparent 29rem),
+        var(--bg);
+      color: var(--text);
+      font-family: "SF Pro Display", "PingFang SC", "Noto Sans CJK SC", system-ui, sans-serif;
+    }
+    img { display: block; width: 100%; }
+    .case-page { min-height: 100dvh; }
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(300px, .55fr);
+      gap: clamp(40px, 8vw, 130px);
+      align-items: end;
+      width: min(1440px, calc(100% - 96px));
+      min-height: 68vh;
+      margin: 0 auto;
+      padding: clamp(86px, 12vh, 150px) 0 72px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 24px;
+      color: rgba(255,255,255,.6);
+      font: 600 11px/1.2 ui-monospace, "SFMono-Regular", monospace;
+      letter-spacing: .18em;
+    }
+    .eyebrow::before { content: ""; width: 34px; height: 1px; background: var(--accent); }
+    h1 {
+      max-width: 10ch;
+      margin: 0;
+      font-size: clamp(58px, 8vw, 132px);
+      line-height: .92;
+      letter-spacing: -.07em;
+      font-weight: 720;
+    }
+    .hero-copy { align-self: end; padding-bottom: 10px; }
+    .hero-copy p {
+      max-width: 25em;
+      margin: 0 0 32px;
+      color: var(--muted);
+      font-size: clamp(17px, 1.5vw, 22px);
+      line-height: 1.7;
+    }
+    .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .metric { min-height: 88px; padding: 18px; background: rgba(9,9,11,.9); }
+    .metric strong { display: block; margin-bottom: 7px; font-size: 20px; font-weight: 620; }
+    .metric span { color: var(--muted); font: 10px/1.4 ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; }
+    .lead {
+      position: relative;
+      width: min(1580px, calc(100% - 48px));
+      margin: 68px auto 18px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      aspect-ratio: 16 / 9;
+    }
+    .lead img {
+      height: 118%;
+      object-fit: cover;
+      object-position: 50% 3%;
+      transform: translate3d(0, var(--parallax), 0) scale(1.015);
+      transition: transform .7s var(--ease), filter .7s var(--ease);
+      will-change: transform;
+    }
+    .lead:hover img { filter: saturate(1.06); transform: translate3d(0, var(--parallax), 0) scale(1.03); }
+    .lead-caption {
+      position: absolute;
+      inset: auto 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 30px;
+      padding: 70px 30px 28px;
+      background: linear-gradient(transparent, rgba(0,0,0,.9));
+      pointer-events: none;
+    }
+    .lead-caption strong { font-size: clamp(22px, 2.2vw, 36px); letter-spacing: -.03em; }
+    .lead-caption span { color: rgba(255,255,255,.58); font: 10px/1.4 ui-monospace, monospace; letter-spacing: .12em; }
+    .campaign-wide {
+      position: relative;
+      width: min(1580px, calc(100% - 48px));
+      height: clamp(420px, 46vw, 700px);
+      margin: 0 auto 18px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+    .campaign-wide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 50% 2%;
+      transition: transform .75s var(--ease), filter .75s var(--ease);
+    }
+    .campaign-wide:hover img { transform: scale(1.015); filter: saturate(1.05); }
+    .gallery {
+      display: grid;
+      grid-template-columns: 1.08fr .92fr;
+      grid-template-rows: 470px 470px;
+      gap: 18px;
+      width: min(1580px, calc(100% - 48px));
+      margin: 0 auto;
+      padding-bottom: 120px;
+    }
+    .shot { position: relative; overflow: hidden; border: 1px solid var(--line); background: var(--panel); }
+    .shot img { width: 100%; height: 100%; object-fit: cover; transition: transform .75s var(--ease), filter .75s var(--ease); }
+    .shot:hover img { transform: scale(1.015); filter: saturate(1.05); }
+    .shot-agent { grid-column: 1; grid-row: 1 / span 2; }
+    .shot-agent img { object-position: 50% 2%; }
+    .shot-trader img { object-position: 50% 0%; }
+    .shot-shark img { object-position: 50% 45%; }
+    .shot-label {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 2;
+      padding: 9px 11px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(8,8,10,.72);
+      backdrop-filter: blur(12px);
+      color: rgba(255,255,255,.76);
+      font: 10px/1 ui-monospace, monospace;
+      letter-spacing: .1em;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(42px) scale(.992);
+      transition: opacity .78s var(--ease), transform .9s var(--ease);
+      transition-delay: var(--delay, 0ms);
+    }
+    .reveal.is-visible { opacity: 1; transform: translateY(0) scale(1); }
+    .hero .reveal:nth-child(2) { --delay: 110ms; }
+    .gallery .reveal:nth-child(2) { --delay: 70ms; }
+    .gallery .reveal:nth-child(3) { --delay: 140ms; }
+    .gallery .reveal:nth-child(4) { --delay: 90ms; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; width: min(100% - 36px, 760px); min-height: auto; padding: 82px 0 54px; gap: 38px; }
+      h1 { max-width: 12ch; font-size: clamp(52px, 15vw, 88px); }
+      .lead, .campaign-wide, .gallery { width: calc(100% - 24px); }
+      .lead { margin-top: 36px; aspect-ratio: 4 / 5; }
+      .lead img { height: 100%; object-position: 49% 0%; transform: none; }
+      .lead:hover img { transform: scale(1.015); }
+      .lead-caption { align-items: start; flex-direction: column; padding: 80px 18px 18px; }
+      .campaign-wide { height: 360px; margin-bottom: 12px; }
+      .gallery { grid-template-columns: 1fr; grid-template-rows: 660px 300px 340px; gap: 12px; padding-bottom: 64px; }
+      .shot-agent { grid-column: auto; grid-row: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .lead img, .lead:hover img, .shot img, .shot:hover img { transform: none; transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="case-page">
+    <section class="hero">
+      <div class="reveal">
+        <p class="eyebrow" data-copy="eyebrow">LANDING PAGE DESIGN</p>
+        <h1 data-copy="title">CoinW 落地页设计合集</h1>
+      </div>
+      <div class="hero-copy reveal">
+        <p data-copy="intro">覆盖品牌合作、增长活动、AI 产品与互动传播场景。</p>
+        <div class="metrics" aria-label="Case study coverage">
+          <div class="metric"><strong>05</strong><span data-copy="metricProjects">代表项目</span></div>
+          <div class="metric"><strong>WEB + H5</strong><span data-copy="metricPlatforms">多端体验</span></div>
+          <div class="metric"><strong>A/B</strong><span data-copy="metricTesting">转化实验</span></div>
+          <div class="metric"><strong>ZH / EN</strong><span data-copy="metricLanguage">多语言</span></div>
+        </div>
+      </div>
+    </section>
+
+    <figure class="lead reveal">
+      <img src="assets/cases/landing-pages/football-partner.png" alt="CoinW football partner landing page" fetchpriority="high" decoding="async">
+      <figcaption class="lead-caption"><strong data-copy="football">全球合作伙伴计划</strong><span>BRAND PARTNERSHIP / CONVERSION</span></figcaption>
+    </figure>
+
+    <figure class="campaign-wide reveal"><span class="shot-label" data-copy="cwc">CWC 合伙人活动</span><img src="assets/cases/landing-pages/page-overview.png" alt="CWC partner campaign landing page" loading="lazy" decoding="async"></figure>
+
+    <section class="gallery" aria-label="Landing page projects">
+      <figure class="shot shot-agent reveal"><span class="shot-label" data-copy="agent">AI AGENT SKILLS</span><img src="assets/cases/landing-pages/ai-agent.png" alt="CoinW AI Agent Skills landing page" loading="lazy" decoding="async"></figure>
+      <figure class="shot shot-trader reveal"><span class="shot-label" data-copy="trader">AI TRADER DNA</span><img src="assets/cases/landing-pages/trader-dna.png" alt="AI Trader DNA campaign landing page" loading="lazy" decoding="async"></figure>
+      <figure class="shot shot-shark reveal"><span class="shot-label" data-copy="shark">AI 交易人格结果页</span><img src="assets/cases/landing-pages/shark-modal.png" alt="AI trader persona result and sharing modal" loading="lazy" decoding="async"></figure>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const locale = new URLSearchParams(location.search).get("lang") === "en" ? "en" : "zh";
+      const copy = {
+        zh: {
+          eyebrow: "LANDING PAGE DESIGN",
+          title: "CoinW 落地页设计合集",
+          intro: "覆盖品牌合作、增长活动、AI 产品与互动传播场景。",
+          metricProjects: "代表项目",
+          metricPlatforms: "多端体验",
+          metricTesting: "转化实验",
+          metricLanguage: "多语言",
+          football: "全球合作伙伴计划",
+          cwc: "CWC 合伙人活动",
+          trader: "AI 交易人格测试",
+          shark: "AI 交易人格结果页",
+          agent: "AI Agent 技能生态"
+        },
+        en: {
+          eyebrow: "LANDING PAGE DESIGN",
+          title: "CoinW Campaign & Landing Pages",
+          intro: "Brand partnerships, growth campaigns, AI products, and interactive conversion experiences.",
+          metricProjects: "Selected projects",
+          metricPlatforms: "Responsive",
+          metricTesting: "Conversion tests",
+          metricLanguage: "Multilingual",
+          football: "Global Partner Campaign",
+          cwc: "CWC Partner Campaign",
+          trader: "AI Trader DNA",
+          shark: "AI Trader Persona Result",
+          agent: "AI Agent Skills"
+        }
+      }[locale];
+
+      document.documentElement.lang = locale === "en" ? "en" : "zh-CN";
+      document.title = copy.title;
+      document.querySelectorAll("[data-copy]").forEach((node) => {
+        const value = copy[node.dataset.copy];
+        if (value) node.textContent = value;
+      });
+
+      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const revealNodes = [...document.querySelectorAll(".reveal")];
+      if (reduceMotion || !("IntersectionObserver" in window)) {
+        revealNodes.forEach((node) => node.classList.add("is-visible"));
+      } else {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          });
+        }, { threshold: .14, rootMargin: "0px 0px -6%" });
+        revealNodes.forEach((node) => observer.observe(node));
+      }
+
+      if (!reduceMotion && matchMedia("(min-width: 901px)").matches) {
+        let ticking = false;
+        const updateParallax = () => {
+          const lead = document.querySelector(".lead");
+          const rect = lead.getBoundingClientRect();
+          const progress = Math.max(-1, Math.min(1, (innerHeight / 2 - (rect.top + rect.height / 2)) / innerHeight));
+          document.documentElement.style.setProperty("--parallax", `${progress * 18}px`);
+          ticking = false;
+        };
+        addEventListener("scroll", () => {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(updateParallax);
+        }, { passive: true });
+        updateParallax();
+      }
+    })();
+  </script>
+</body>
+</html>

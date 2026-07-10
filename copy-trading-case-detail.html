@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>跟单交易系统 · MIMO</title>
+  <style>
+    :root { --bg:#070809; --panel:#0d0f11; --line:rgba(255,255,255,.13); --muted:rgba(255,255,255,.55); --dim:rgba(255,255,255,.34); --accent:#b898e8; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; background:var(--bg); }
+    body { margin:0; overflow-x:hidden; background:var(--bg); color:#f5f5f5; font-family:"HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif; }
+    button { font:inherit; }
+    .shell { width:min(1400px,100%); margin:auto; padding:0 100px 120px; }
+    .hero { min-height:0; display:grid; grid-template-columns:minmax(0,.86fr) minmax(420px,1.14fr); align-items:start; gap:80px; padding:48px 0 64px; border-bottom:1px solid var(--line); }
+    .eyebrow,.meta,.index,.kicker,.step-no,.footer { font:10px/1.4 "SFMono-Regular",Consolas,monospace; letter-spacing:.12em; text-transform:uppercase; }
+    .eyebrow { margin:0 0 28px; color:var(--dim); }
+    h1 { margin:0; font-size:clamp(54px,7vw,104px); font-weight:300; line-height:.92; letter-spacing:-.055em; }
+    .lead { max-width:590px; margin:34px 0 0; color:var(--muted); font-size:16px; line-height:1.9; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px; margin-top:34px; color:rgba(255,255,255,.46); }
+    .meta span { padding:8px 12px; border:1px solid var(--line); }
+    .cover { position:relative; aspect-ratio:3/2; margin:0; overflow:hidden; border:0; background:#020203; }
+    .cover img { width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.9) contrast(1.08); }
+    .cover.copy-banner-cover { aspect-ratio:636/400; }
+    .copy-banner { position:relative; width:100%; height:100%; overflow:hidden; isolation:isolate; background:transparent; }
+    .copy-banner::before { content:none; display:none; }
+    .copy-banner > .copy-phone-generated { position:absolute; z-index:2; left:33.3%; top:4.8%; width:35.2%; height:auto; object-fit:contain; filter:drop-shadow(0 18px 30px rgba(0,0,0,.32)); }
+    .copy-float { position:absolute; z-index:var(--layer-z,4); left:var(--layer-x); top:var(--layer-y); width:var(--layer-w); aspect-ratio:var(--card-ratio); animation:copy-element-float var(--float-duration) ease-in-out var(--float-delay) infinite; will-change:transform; pointer-events:none; container-type:inline-size; }
+    .copy-float.copy-speaker { --layer-x:53%; --layer-y:9.5%; --layer-w:24.2%; --layer-z:5; --card-ratio:3.2; --float-duration:5.2s; --float-delay:-.8s; --float-y:-6px; }
+    .copy-float.copy-follower { --layer-x:18.3%; --layer-y:32%; --layer-w:22%; --layer-z:4; --card-ratio:3.15; --float-duration:5.8s; --float-delay:-2.1s; --float-y:5px; }
+    .copy-float.copy-growth { --layer-x:63%; --layer-y:46.2%; --layer-w:20.8%; --layer-z:4; --card-ratio:3.05; --float-duration:6.2s; --float-delay:-3.2s; --float-y:-5px; }
+    .copy-float.copy-profit { --layer-x:20.6%; --layer-y:68%; --layer-w:23%; --layer-z:4; --card-ratio:3.15; --float-duration:6.5s; --float-delay:-1.4s; --float-y:6px; }
+    .copy-plane { position:absolute; inset:0; transform:perspective(900px) rotateX(2deg) rotateY(-7deg) rotateZ(-3deg); transform-origin:50% 50%; transform-style:preserve-3d; filter:drop-shadow(0 14px 22px rgba(0,0,0,.24)); }
+    .copy-card { position:relative; display:flex; align-items:center; gap:5.5cqw; width:100%; height:100%; padding:5.5cqw 7cqw; overflow:hidden; border:1px solid rgba(255,255,255,.13); border-radius:999px; color:rgba(255,255,255,.94); background:radial-gradient(90% 160% at 16% -20%,rgba(255,255,255,.16),transparent 48%),linear-gradient(145deg,rgba(25,27,42,.38),rgba(12,13,22,.13) 58%,rgba(86,57,210,.11)); box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(255,255,255,.025),0 8px 24px rgba(0,0,0,.14); -webkit-backdrop-filter:blur(13px) saturate(1.4) brightness(1.04); backdrop-filter:blur(13px) saturate(1.4) brightness(1.04); }
+    .copy-card::before { content:""; position:absolute; inset:1px 16% auto 10%; height:1px; opacity:.65; background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent); }
+    .copy-card::after { content:""; position:absolute; inset:-30% 12% 55% 50%; border-radius:999px; background:radial-gradient(circle,rgba(155,124,255,.12),transparent 68%); filter:blur(7px); }
+    .copy-card > * { position:relative; z-index:1; }
+    .copy-card-icon,.copy-avatar { flex:0 0 auto; display:grid; place-items:center; width:20cqw; height:20cqw; border-radius:50%; color:#c9b6ff; background:linear-gradient(145deg,rgba(137,91,255,.78),rgba(62,31,147,.74)); box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 0 18px rgba(115,74,255,.18); }
+    .copy-card-icon svg,.copy-avatar svg { width:58%; height:58%; }
+    .copy-avatar { position:relative; background:linear-gradient(145deg,#8d75ff,#342760); }
+    .copy-avatar::after { content:""; position:absolute; right:-1cqw; bottom:0; width:5cqw; height:5cqw; border:1px solid rgba(12,14,22,.8); border-radius:50%; background:#4de29a; box-shadow:0 0 8px rgba(77,226,154,.55); }
+    .copy-card-copy { min-width:0; flex:1; overflow:hidden; }
+    .copy-card-kicker { display:block; margin-bottom:1cqw; color:#9c75ff; font:600 4.9cqw/1.05 "Inter 18pt",Inter,Arial,sans-serif; letter-spacing:.01em; white-space:nowrap; }
+    .copy-card-title { display:block; color:rgba(255,255,255,.94); font:600 6.3cqw/1.12 "Inter 18pt",Inter,Arial,sans-serif; letter-spacing:-.015em; white-space:nowrap; }
+    .copy-card-subtitle { display:block; margin-top:1.6cqw; color:rgba(255,255,255,.45); font:450 4.6cqw/1.1 "Inter 18pt",Inter,Arial,sans-serif; white-space:nowrap; }
+    .copy-accent { color:#9d76ff; }.copy-positive { color:#57dfa5; }
+    .copy-trend,.copy-wave,.copy-sparkle { flex:0 0 11cqw; width:11cqw; height:11cqw; margin-left:auto; align-self:center; color:#7447ff; }
+    .copy-wave { flex-basis:15cqw; width:15cqw; height:11cqw; color:#9b69ff; }.copy-sparkle { flex-basis:9cqw; width:9cqw; height:9cqw; color:#9c69ff; }
+    .copy-avatar-stack { display:flex; flex:0 0 auto; padding-left:2cqw; }
+    .copy-avatar-stack span { display:grid; place-items:center; width:16cqw; height:16cqw; margin-left:-4cqw; border:1px solid rgba(255,255,255,.22); border-radius:50%; color:rgba(255,255,255,.84); font:650 5cqw/1 "Inter 18pt",Inter,Arial,sans-serif; background:linear-gradient(145deg,var(--avatar-a),var(--avatar-b)); box-shadow:0 3px 10px rgba(0,0,0,.25); }
+    .copy-avatar-stack span:nth-child(1) { --avatar-a:#c98976; --avatar-b:#533b52; }.copy-avatar-stack span:nth-child(2) { --avatar-a:#67b6bd; --avatar-b:#244462; }.copy-avatar-stack span:nth-child(3) { --avatar-a:#8b70ef; --avatar-b:#3c2b7c; }
+    .copy-follower .copy-card,.copy-profit .copy-card { padding-left:6cqw; }.copy-profit .copy-card-icon { color:#ffb361; background:linear-gradient(145deg,rgba(255,113,92,.82),rgba(124,38,82,.8)); }.copy-growth .copy-card-icon { color:#ded4ff; }
+    .copy-speaker .copy-card-title { font-size:5.55cqw; }.copy-follower .copy-card-title { font-size:4.15cqw; }.copy-growth .copy-card-title { font-size:4.55cqw; }.copy-profit .copy-card-title { font-size:3.95cqw; }
+    @keyframes copy-element-float { 0%,100% { transform:translate3d(0,0,0); } 50% { transform:translate3d(0,var(--float-y),0); } }
+    .cover::before,.cover::after { content:none; display:none; }
+    .cover::before { left:-7px; top:-7px; }.cover::after { right:-7px; bottom:-7px; }
+    .index { display:flex; justify-content:space-between; padding:28px 0; border-bottom:1px solid var(--line); color:var(--dim); }
+    .tabs { position:sticky; top:0; z-index:10; display:flex; overflow:auto; padding:0 max(24px,calc((100vw - 1200px)/2)); border-bottom:1px solid var(--line); background:rgba(7,8,9,.92); backdrop-filter:blur(14px); }
+    .tab { flex:0 0 auto; padding:17px 20px; border:0; border-left:1px solid var(--line); color:var(--muted); background:transparent; cursor:pointer; font:10px/1 monospace; letter-spacing:.1em; text-transform:uppercase; }
+    .tab:last-child { border-right:1px solid var(--line); }.tab:hover,.tab.active { color:#070809; background:#fff; }
+    section.content { padding:104px 0; border-bottom:1px solid var(--line); scroll-margin-top:48px; }
+    .section-head { display:grid; grid-template-columns:180px minmax(0,1fr); gap:40px; margin-bottom:56px; }
+    .kicker { color:var(--accent); }
+    h2 { max-width:850px; margin:0; font-size:clamp(34px,5vw,68px); font-weight:300; line-height:1.05; letter-spacing:-.04em; }
+    .overview { display:grid; grid-template-columns:1.2fr .8fr; gap:18px; }
+    .panel { border:1px solid var(--line); background:var(--panel); padding:34px; }
+    .panel p { margin:0; color:var(--muted); font-size:15px; line-height:1.9; }
+    .panel strong { display:block; margin-bottom:18px; font-size:13px; font-weight:500; letter-spacing:.04em; }
+    .steps { display:grid; grid-template-columns:repeat(5,1fr); border-top:1px solid var(--line); border-left:1px solid var(--line); }
+    .step { min-height:270px; padding:28px 24px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .step-no { color:var(--accent); }.step h3 { margin:46px 0 16px; font-size:18px; font-weight:500; }.step p { margin:0; color:var(--muted); font-size:13px; line-height:1.75; }
+    .shots { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; align-items:start; }
+    .shot { margin:0; border:1px solid var(--line); background:#eef; overflow:hidden; }
+    .shot img { width:100%; height:auto; display:block; }
+    .shot figcaption { padding:14px 16px; border-top:1px solid var(--line); background:#0b0c0e; color:var(--dim); font:9px/1.5 monospace; letter-spacing:.08em; text-transform:uppercase; }
+    .highlights { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .highlight { position:relative; min-height:280px; padding:34px; border:1px solid var(--line); background:linear-gradient(145deg,rgba(184,152,232,.1),transparent 60%); }
+    .highlight span { color:var(--accent); font:11px/1 monospace; }.highlight h3 { margin:80px 0 18px; font-size:23px; font-weight:400; }.highlight p { margin:0; color:var(--muted); line-height:1.8; }
+    .results { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); border-left:1px solid var(--line); }
+    .result { padding:32px 24px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
+    .result b { display:block; color:var(--accent); font-size:38px; font-weight:300; }.result span { display:block; margin-top:12px; color:var(--muted); font-size:12px; line-height:1.6; }
+    .insight { max-width:1000px; font-size:clamp(28px,4vw,54px); font-weight:300; line-height:1.25; letter-spacing:-.035em; }
+    .footer { display:flex; justify-content:space-between; padding-top:30px; color:var(--dim); }
+    .reveal { opacity:0; filter:blur(6px); transform:translateY(24px); transition:opacity .7s ease,filter .7s ease,transform .7s cubic-bezier(.16,1,.3,1); }.reveal.visible { opacity:1; filter:none; transform:none; }
+    @media (max-width:1000px) { .shell{padding:0 40px 80px}.hero{grid-template-columns:1fr;gap:44px}.steps{grid-template-columns:repeat(2,1fr)}.shots{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:680px) { .shell{padding:0 24px 64px}.hero{padding-top:36px}.section-head{grid-template-columns:1fr;gap:16px}.overview,.highlights,.results{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.shots{gap:10px}.content{padding:76px 0}.tab{padding:15px 16px} }
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto}.reveal{opacity:1;filter:none;transform:none;transition:none}.copy-float{animation:none} }
+  </style>
+</head>
+<body>
+  <nav class="tabs" id="tabs" aria-label="案例章节"></nav>
+  <main class="shell">
+    <section class="hero reveal">
+      <div>
+        <p class="eyebrow" data-zh="COPY TRADING · 2025–2026 · COINW" data-en="COPY TRADING · 2025–2026 · COINW">COPY TRADING · 2025–2026 · COINW</p>
+        <h1 data-zh="跟单<br>交易系统" data-en="Copy Trading<br>System">跟单<br>交易系统</h1>
+        <p class="lead" data-zh="从 0 到 1 设计 CoinW 跟单交易产品，覆盖交易员排行、跟单设置、实时 PnL 可视化与社交信任机制，让专业交易数据对新用户同样可读。" data-en="Designed CoinW copy trading from 0 to 1, covering trader ranking, follow settings, real-time PnL visualization, and social trust signals.">从 0 到 1 设计 CoinW 跟单交易产品，覆盖交易员排行、跟单设置、实时 PnL 可视化与社交信任机制，让专业交易数据对新用户同样可读。</p>
+        <div class="meta"><span>Lead UI Designer</span><span>PC / Mobile</span><span>5 Months</span></div>
+      </div>
+      <figure class="cover copy-banner-cover">
+        <div class="copy-banner" role="img" aria-label="CoinW copy trading system on mobile">
+          <img class="copy-phone-generated" src="assets/cases/layers/copy/phone-generated-tight.png" alt="">
+          <div class="copy-float copy-speaker"><div class="copy-plane"><div class="copy-card"><span class="copy-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M5 20c.5-4 3-6 7-6s6.5 2 7 6" fill="currentColor"/></svg></span><span class="copy-card-copy"><span class="copy-card-kicker">正在讲解</span><span class="copy-card-title">趋势策略分享中</span></span><svg class="copy-wave" viewBox="0 0 36 24" fill="none" aria-hidden="true"><path d="M2 10v4M7 6v12M12 2v20M17 7v10M22 4v16M27 8v8M32 5v14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></div></div></div>
+          <div class="copy-float copy-follower"><div class="copy-plane"><div class="copy-card"><span class="copy-avatar-stack" aria-hidden="true"><span>L</span><span>M</span><span>A</span></span><span class="copy-card-copy"><span class="copy-card-title">32 人正在跟随</span><span class="copy-card-subtitle">收益领先中</span></span><svg class="copy-trend" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 17l6-6 4 4 8-9M15 6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
+          <div class="copy-float copy-growth"><div class="copy-plane"><div class="copy-card"><span class="copy-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="9" r="3" fill="currentColor"/><circle cx="16" cy="10" r="2.5" fill="currentColor" opacity=".75"/><path d="M3.5 19c.4-3.6 2.4-5.5 5.5-5.5s5.1 1.9 5.5 5.5M14 14c3.5 0 5.5 1.7 6 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="copy-card-copy"><span class="copy-card-title">本周新增跟随者 <b class="copy-accent">+156</b></span><span class="copy-card-subtitle">较上周增长 <b class="copy-positive">28%</b></span></span><svg class="copy-trend" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 17l6-6 4 4 8-9M15 6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div></div>
+          <div class="copy-float copy-profit"><div class="copy-plane"><div class="copy-card"><span class="copy-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2c1 4-1 5-2 7 3-1 4-3 5-5 3 3 5 6 5 10a9 9 0 11-18 0c0-3 2-6 5-9 0 3 1 5 3 6-1-4 1-6 2-9z" fill="currentColor"/><path d="M12 12c2 2 3 3 3 5a3 3 0 11-6 0c0-2 1-3 3-5z" fill="#ff6b5e"/></svg></span><span class="copy-card-copy"><span class="copy-card-title">累计分润突破 <b class="copy-accent">4.5万 USDT</b></span><span class="copy-card-subtitle">继续加油，收益长虹！</span></span><svg class="copy-sparkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1l2.2 6.8L21 10l-6.8 2.2L12 19l-2.2-6.8L3 10l6.8-2.2L12 1z"/><path d="M20 16l.8 2.2L23 19l-2.2.8L20 22l-.8-2.2L17 19l2.2-.8L20 16z" opacity=".7"/></svg></div></div></div>
+        </div>
+      </figure>
+    </section>
+    <div class="index reveal"><span>03 / Complete Case Study</span><span>Scroll to explore</span></div>
+
+    <section class="content reveal" id="overview" data-tab-zh="项目概览" data-tab-en="Overview">
+      <div class="section-head"><span class="kicker">01 / Overview</span><h2 data-zh="专业内容，小白可读" data-en="Expert data without the intimidation">专业内容，小白可读</h2></div>
+      <div class="overview">
+        <article class="panel"><strong data-zh="项目背景" data-en="Context">项目背景</strong><p data-zh="产品需要同时服务保守型跟单者、积极型跟单者与策略观察者。三类用户在选择交易员时关注的指标不同，但旧信息结构缺少明确优先级。" data-en="The product serves conservative followers, active followers, and strategy observers. Each group evaluates traders differently, while the old structure lacked clear data priority.">产品需要同时服务保守型跟单者、积极型跟单者与策略观察者。三类用户在选择交易员时关注的指标不同，但旧信息结构缺少明确优先级。</p></article>
+        <article class="panel"><strong data-zh="核心挑战" data-en="Core challenge">核心挑战</strong><p data-zh="真正懂数据的用户不需要跟单，而需要跟单的用户往往看不懂数据。设计重点不是隐藏复杂度，而是让不同深度的信息逐层出现。" data-en="Users who need copy trading often struggle with trading metrics. The goal was not to hide complexity, but to reveal it in understandable layers.">真正懂数据的用户不需要跟单，而需要跟单的用户往往看不懂数据。设计重点不是隐藏复杂度，而是让不同深度的信息逐层出现。</p></article>
+      </div>
+    </section>
+
+    <section class="content reveal" id="process" data-tab-zh="设计过程" data-tab-en="Process">
+      <div class="section-head"><span class="kicker">02 / Process</span><h2 data-zh="从用户分层到信任闭环" data-en="From segmentation to trust">从用户分层到信任闭环</h2></div>
+      <div class="steps">
+        <article class="step"><span class="step-no">01</span><h3 data-zh="用户分层" data-en="Segments">用户分层</h3><p data-zh="拆分三类用户旅程，识别各自在选择交易员时的决策依据。" data-en="Mapped three user types and their different trader-selection criteria.">拆分三类用户旅程，识别各自在选择交易员时的决策依据。</p></article>
+        <article class="step"><span class="step-no">02</span><h3 data-zh="数据优先级" data-en="Data priority">数据优先级</h3><p data-zh="梳理 30+ 指标，确定首屏三件套：30 日收益、最大回撤、跟随人数。" data-en="Ranked 30+ metrics and defined the first-screen decision set.">梳理 30+ 指标，确定首屏三件套：30 日收益、最大回撤、跟随人数。</p></article>
+        <article class="step"><span class="step-no">03</span><h3 data-zh="可视化" data-en="Visualization">可视化</h3><p data-zh="用收益曲线、周期柱状图和风险颜色强化趋势与波动感知。" data-en="Used return curves, period bars, and risk color to clarify performance.">用收益曲线、周期柱状图和风险颜色强化趋势与波动感知。</p></article>
+        <article class="step"><span class="step-no">04</span><h3 data-zh="跟单设置" data-en="Follow setup">跟单设置</h3><p data-zh="将 12 个参数拆为基础与高级设置，默认折叠低频选项。" data-en="Grouped 12 parameters into basic and advanced settings.">将 12 个参数拆为基础与高级设置，默认折叠低频选项。</p></article>
+        <article class="step"><span class="step-no">05</span><h3 data-zh="社交信任" data-en="Social trust">社交信任</h3><p data-zh="加入风格标签、动态、问答与关注关系，补足数据之外的判断线索。" data-en="Added style tags, posts, Q&A, and follow relationships.">加入风格标签、动态、问答与关注关系，补足数据之外的判断线索。</p></article>
+      </div>
+    </section>
+
+    <section class="content reveal" id="screens" data-tab-zh="关键界面" data-tab-en="Screens">
+      <div class="section-head"><span class="kicker">03 / Screens</span><h2 data-zh="真实产品界面" data-en="Product screens">真实产品界面</h2></div>
+      <div class="shots">
+        <figure class="shot"><img src="assets/cases/copy-trading/01-copy-screen.png" alt="Trader profile and copy lead"><figcaption>KOL Profile / Copy Lead</figcaption></figure>
+        <figure class="shot"><img src="assets/cases/copy-trading/02-copy-screen.png" alt="Trader questions and answers"><figcaption>KOL Profile / Q&amp;A</figcaption></figure>
+        <figure class="shot"><img src="assets/cases/copy-trading/03-copy-screen.png" alt="Trader question list"><figcaption>Community / Questions</figcaption></figure>
+        <figure class="shot"><img src="assets/cases/copy-trading/04-copy-screen.png" alt="Copy trading performance statistics"><figcaption>Performance / Statistics</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="content reveal" id="highlights" data-tab-zh="设计亮点" data-tab-en="Highlights">
+      <div class="section-head"><span class="kicker">04 / Highlights</span><h2 data-zh="三处关键决策" data-en="Three key decisions">三处关键决策</h2></div>
+      <div class="highlights">
+        <article class="highlight"><span>01</span><h3 data-zh="交易员排行" data-en="Trader ranking">交易员排行</h3><p data-zh="多维筛选与卡片对比，让收益、风险和热度可以快速横向判断。" data-en="Multi-dimensional filtering makes return, risk, and popularity easier to compare.">多维筛选与卡片对比，让收益、风险和热度可以快速横向判断。</p></article>
+        <article class="highlight"><span>02</span><h3 data-zh="渐进式跟单" data-en="Progressive setup">渐进式跟单</h3><p data-zh="优先呈现金额和关键风控，将高级参数后置，缩短首次操作路径。" data-en="Prioritized amount and core risk controls while moving advanced options later.">优先呈现金额和关键风控，将高级参数后置，缩短首次操作路径。</p></article>
+        <article class="highlight"><span>03</span><h3 data-zh="可读 PnL" data-en="Readable PnL">可读 PnL</h3><p data-zh="用分层数据与趋势图同时支持快速扫描和深入复盘。" data-en="Layered metrics support both quick scanning and deeper review.">用分层数据与趋势图同时支持快速扫描和深入复盘。</p></article>
+      </div>
+    </section>
+
+    <section class="content reveal" id="results" data-tab-zh="项目结果" data-tab-en="Results">
+      <div class="section-head"><span class="kicker">05 / Results</span><h2 data-zh="上线后的核心指标" data-en="Core post-launch signals">上线后的核心指标</h2></div>
+      <div class="results"><div class="result"><b>+38%</b><span data-zh="新用户激活率" data-en="New-user activation">新用户激活率</span></div><div class="result"><b>+27%</b><span data-zh="跟单用户 7 日留存" data-en="7-day retention">跟单用户 7 日留存</span></div><div class="result"><b>4.6/5</b><span data-zh="数据展示满意度" data-en="Data readability score">数据展示满意度</span></div><div class="result"><b>10k+</b><span data-zh="上线 30 天日均活跃" data-en="30-day average DAU">上线 30 天日均活跃</span></div></div>
+    </section>
+
+    <section class="content reveal" id="insight" data-tab-zh="设计洞察" data-tab-en="Insight"><div class="section-head"><span class="kicker">06 / Insight</span><p class="insight" data-zh="复杂数据的可读性不是靠“简化”实现，而是靠“分层”——让对的人在对的时机看到对的数据。" data-en="Readable data is not about hiding complexity. It is about layering complexity so the right user can enter at the right depth.">复杂数据的可读性不是靠“简化”实现，而是靠“分层”——让对的人在对的时机看到对的数据。</p></div></section>
+    <footer class="footer"><span>MIMO · COPY TRADING SYSTEM</span><span>End of case</span></footer>
+  </main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const lang = params.get("lang") === "en" ? "en" : "zh";
+    document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+    document.querySelectorAll("[data-zh]").forEach((el) => { el.innerHTML = el.dataset[lang]; });
+    const sections = [...document.querySelectorAll("section.content")];
+    const tabs = document.getElementById("tabs");
+    const buttons = sections.map((section) => {
+      const button = document.createElement("button");
+      button.className = "tab";
+      button.textContent = section.dataset[`tab${lang === "en" ? "En" : "Zh"}`];
+      button.addEventListener("click", () => section.scrollIntoView({ behavior:"smooth", block:"start" }));
+      tabs.appendChild(button);
+      return button;
+    });
+    const activate = () => {
+      let active = 0;
+      sections.forEach((section, index) => { if (section.getBoundingClientRect().top <= 110) active = index; });
+      buttons.forEach((button, index) => button.classList.toggle("active", index === active));
+    };
+    addEventListener("scroll", activate, { passive:true });
+    activate();
+    const reveals = [...document.querySelectorAll(".reveal")];
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) reveals.forEach((el) => el.classList.add("visible"));
+    else {
+      const observer = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add("visible"); observer.unobserve(entry.target); } }), { rootMargin:"0px 0px -8%" });
+      reveals.forEach((el) => observer.observe(el));
+    }
+  </script>
+</body>
+</html>
