@@ -1333,7 +1333,26 @@
     html[lang="en"] #case-community .case-info h3 {
       font-size: 21px;
       letter-spacing: .5px;
-      white-space: nowrap;
+      white-space: normal;
+    }
+    html[lang="en"] h1,
+    html[lang="en"] h2,
+    html[lang="en"] h3,
+    html[lang="en"] .tags,
+    html[lang="en"] .tags li,
+    html[lang="en"] .hero-inner p,
+    html[lang="en"] .bio,
+    html[lang="en"] .case-info p,
+    html[lang="en"] .client-logo {
+      word-break: normal;
+      overflow-wrap: normal;
+      hyphens: none;
+    }
+    html[lang="en"] h1,
+    html[lang="en"] h2,
+    html[lang="en"] h3,
+    html[lang="en"] .case-info p {
+      text-wrap: balance;
     }
     .kinetic-case {
       display: block;
