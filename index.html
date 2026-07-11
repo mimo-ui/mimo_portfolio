@@ -196,7 +196,9 @@
       height: 100vh;
       overflow: hidden;
       pointer-events: none;
+      transition: opacity .2s linear, visibility 0s linear .2s;
     }
+    .hero-coins.is-hidden { opacity: 0; visibility: hidden; }
     .hero-coins canvas {
       display: block;
       width: 100%;
@@ -1657,6 +1659,484 @@
     .list p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.75; }
     .project-brand-logo { width: 52px; height: 52px; margin-bottom: 16px; image-rendering: pixelated; }
     .soon { color: var(--dim); font-style: normal; }
+    .mimo-booking-module {
+      width: 100%;
+      max-width: 1400px;
+      margin: 105px auto 0;
+      padding: 0 100px;
+    }
+    .mimo-booking-shell {
+      display: grid;
+      grid-template-columns: minmax(250px,.9fr) minmax(460px,1.45fr) minmax(250px,.78fr);
+      width: 100%;
+      height: 510px;
+      min-height: 510px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--text);
+    }
+    .mimo-booking-shell button,
+    .mimo-booking-shell input,
+    .mimo-booking-shell select,
+    .mimo-booking-shell textarea { font: inherit; }
+    .mimo-booking-info,
+    .mimo-booking-calendar-panel,
+    .mimo-booking-times-panel,
+    .mimo-booking-form-panel { min-width: 0; background: transparent; }
+    .mimo-booking-info {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--line);
+    }
+    .mimo-booking-tech-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-content: space-between;
+      min-height: 92px;
+      padding: 14px 15px;
+      border-bottom: 1px solid var(--line);
+      color: var(--dim);
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .mimo-booking-tech-header strong {
+      color: #fff;
+      font-family: "Inter 18pt", Inter, Arial, sans-serif;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+    .mimo-booking-status { display: flex; align-items: center; gap: 8px; }
+    .mimo-booking-status:before { content: ""; width: 5px; height: 5px; background: #fff; }
+    .mimo-booking-coord {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+    .mimo-booking-info-content { display: flex; flex: 1; flex-direction: column; padding: 30px 24px 21px; }
+    .mimo-booking-eyebrow {
+      margin: 0 0 15px;
+      color: var(--dim);
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .mimo-booking-title {
+      margin: 0 0 14px;
+      color: #fff;
+      font-size: 30px;
+      line-height: 1.1;
+      font-weight: 300;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .mimo-booking-description { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.8; }
+    .mimo-booking-description + .mimo-booking-description { margin-top: 9px; }
+    .mimo-booking-chosen {
+      display: none;
+      margin-top: 18px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 10px;
+      line-height: 1.7;
+    }
+    .mimo-booking-chosen strong { display: block; color: #fff; font-weight: 600; }
+    .mimo-booking-shell.is-form-stage .mimo-booking-chosen { display: block; }
+    .mimo-booking-contact,
+    .mimo-booking-submit {
+      position: relative;
+      width: fit-content;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      color: #fff;
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color .22s var(--ease), transform .22s var(--ease);
+    }
+    .mimo-booking-contact { margin-top: 20px; padding: 10px 14px; }
+    .mimo-booking-contact:hover,
+    .mimo-booking-submit:hover { border-color: #fff; transform: translateY(-2px); }
+    .mimo-booking-contact:before,
+    .mimo-booking-contact:after,
+    .mimo-booking-submit:before,
+    .mimo-booking-submit:after {
+      content: "";
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      border-color: #fff;
+      pointer-events: none;
+    }
+    .mimo-booking-contact:before,
+    .mimo-booking-submit:before { top: -1px; left: -1px; border-top: 1px solid; border-left: 1px solid; }
+    .mimo-booking-contact:after,
+    .mimo-booking-submit:after { right: -1px; bottom: -1px; border-right: 1px solid; border-bottom: 1px solid; }
+    .mimo-booking-meta {
+      display: grid;
+      gap: 11px;
+      margin-top: auto;
+      padding-top: 24px;
+      color: var(--dim);
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .04em;
+    }
+    .mimo-booking-meta-row { display: flex; align-items: center; gap: 8px; }
+    .mimo-booking-timezone-control { position: relative; min-width: 0; }
+    .mimo-booking-timezone-button {
+      display: flex;
+      min-width: 0;
+      max-width: 100%;
+      align-items: center;
+      gap: 8px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--dim);
+      font-family: inherit;
+      font-size: 10px;
+      text-align: left;
+      cursor: pointer;
+      transition: color .2s ease;
+    }
+    .mimo-booking-timezone-button:hover,
+    .mimo-booking-timezone-button:focus-visible,
+    .mimo-booking-timezone-button[aria-expanded="true"] { color: #fff; outline: none; }
+    .mimo-booking-timezone-value { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mimo-booking-timezone-chevron { flex: none; transition: transform .2s var(--ease); }
+    .mimo-booking-timezone-button[aria-expanded="true"] .mimo-booking-timezone-chevron { transform: rotate(180deg); }
+    .mimo-booking-timezone-menu {
+      position: absolute;
+      z-index: 30;
+      left: 0;
+      bottom: calc(100% + 10px);
+      width: min(280px, calc(100vw - 96px));
+      max-height: 246px;
+      overflow: auto;
+      padding: 4px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(3,3,3,.92);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      scrollbar-width: thin;
+      scrollbar-color: var(--line-soft) transparent;
+    }
+    .mimo-booking-timezone-menu[hidden] { display: none; }
+    .mimo-booking-timezone-option {
+      position: relative;
+      display: flex;
+      width: 100%;
+      min-height: 42px;
+      align-items: center;
+      padding: 0 12px 0 26px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      color: var(--dim);
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-align: left;
+      cursor: pointer;
+    }
+    .mimo-booking-timezone-option:last-child { border-bottom: 0; }
+    .mimo-booking-timezone-option:hover,
+    .mimo-booking-timezone-option:focus-visible { background: rgba(255,255,255,.055); color: #fff; outline: none; }
+    .mimo-booking-timezone-option[aria-selected="true"] { color: #fff; }
+    .mimo-booking-timezone-option[aria-selected="true"]:before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      width: 5px;
+      height: 5px;
+      background: #fff;
+    }
+    .mimo-booking-calendar-panel {
+      display: flex;
+      flex-direction: column;
+      padding: 29px 30px;
+      border-right: 1px solid var(--line);
+    }
+    .mimo-booking-calendar-head,
+    .mimo-booking-times-head { display: flex; align-items: center; justify-content: space-between; }
+    .mimo-booking-calendar-head { margin-bottom: 21px; }
+    .mimo-booking-month,
+    .mimo-booking-selected-date {
+      color: #fff;
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+    }
+    .mimo-booking-month span { color: var(--dim); }
+    .mimo-booking-month-nav { display: flex; gap: 8px; }
+    .mimo-booking-icon-button,
+    .mimo-booking-back {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      color: var(--dim);
+      cursor: pointer;
+      transition: border-color .2s ease, color .2s ease;
+    }
+    .mimo-booking-icon-button { border-color: transparent; font-size: 24px; }
+    .mimo-booking-icon-button:hover,
+    .mimo-booking-back:hover { border-color: #fff; color: #fff; }
+    .mimo-booking-weekdays,
+    .mimo-booking-calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 6px; }
+    .mimo-booking-weekdays {
+      margin-bottom: 10px;
+      color: var(--dim);
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 9px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .mimo-booking-calendar-grid { flex: 1; grid-template-rows: repeat(6, minmax(40px,1fr)); }
+    .mimo-booking-day,
+    .mimo-booking-blank {
+      position: relative;
+      display: grid;
+      min-width: 0;
+      place-items: center;
+      border: 1px solid transparent;
+      border-radius: 0;
+      background: transparent;
+      color: var(--dim);
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 11px;
+    }
+    .mimo-booking-day { cursor: default; }
+    .mimo-booking-day.is-available {
+      border-color: rgba(255,255,255,.18);
+      background: rgba(255,255,255,.05);
+      color: #fff;
+      cursor: pointer;
+    }
+    .mimo-booking-day.is-available:not(.is-selected):before {
+      content: "";
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      width: 3px;
+      height: 3px;
+      background: rgba(255,255,255,.55);
+    }
+    .mimo-booking-day.is-available:hover { border-color: #fff; background: rgba(255,255,255,.10); }
+    .mimo-booking-day.is-selected,
+    .mimo-booking-day.is-selected:hover { border-color: #fff; background: #fff; color: #000; }
+    .mimo-booking-day.is-selected:before { display: none; }
+    .mimo-booking-day:disabled { opacity: .42; }
+    .mimo-booking-times-panel { display: flex; min-height: 0; flex-direction: column; padding: 23px 21px; overflow: hidden; }
+    .mimo-booking-times-head { min-height: 38px; margin-bottom: 14px; }
+    .mimo-booking-time-list {
+      display: grid;
+      min-height: 0;
+      gap: 6px;
+      overflow: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--line-soft) transparent;
+    }
+    .mimo-booking-time-button {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      color: var(--muted);
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      cursor: pointer;
+      transition: border-color .22s var(--ease), color .22s var(--ease);
+    }
+    .mimo-booking-time-button:hover { border-color: rgba(255,255,255,.55); color: #fff; }
+    .mimo-booking-time-button[aria-pressed="true"] { border-color: #fff; background: #fff; color: #000; }
+    .mimo-booking-empty { padding: 20px 0; color: var(--dim); font-size: 12px; }
+    .mimo-booking-summary {
+      min-height: 30px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+      color: var(--dim);
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+    .mimo-booking-form-panel {
+      display: none;
+      grid-column: 2 / 4;
+      height: 508px;
+      max-height: 508px;
+      min-height: 0;
+      box-sizing: border-box;
+      padding: 30px 36px 39px;
+      overflow: auto;
+    }
+    .mimo-booking-shell.is-form-stage .mimo-booking-calendar-panel,
+    .mimo-booking-shell.is-form-stage .mimo-booking-times-panel { display: none; }
+    .mimo-booking-shell.is-form-stage .mimo-booking-form-panel { display: block; }
+    .mimo-booking-form-head { display: flex; align-items: center; gap: 18px; margin-bottom: 23px; }
+    .mimo-booking-form-title { margin: 0; font-size: 30px; line-height: 1.2; font-weight: 300; letter-spacing: 0; text-transform: none; }
+    .mimo-booking-form-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px 18px; }
+    .mimo-booking-field { display: grid; gap: 6px; }
+    .mimo-booking-field.is-full { grid-column: 1 / -1; }
+    .mimo-booking-field label,
+    .mimo-booking-field legend {
+      color: #fff;
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .mimo-booking-field input,
+    .mimo-booking-field select,
+    .mimo-booking-field textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      color: #fff;
+      font-family: "Inter 18pt", Inter, Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      outline: none;
+    }
+    .mimo-booking-field input:focus,
+    .mimo-booking-field select:focus,
+    .mimo-booking-field textarea:focus { border-color: #fff; }
+    .mimo-booking-field textarea { min-height: 84px; resize: vertical; }
+    .mimo-booking-phone-row { display: grid; grid-template-columns: 126px 1fr; }
+    .mimo-booking-country-control { position: relative; min-width: 0; }
+    .mimo-booking-country-button {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      min-height: 40px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 42px 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      color: #fff;
+      text-align: left;
+      cursor: pointer;
+    }
+    .mimo-booking-country-chevron {
+      position: absolute;
+      top: 50%;
+      right: 14px;
+      width: 7px;
+      height: 7px;
+      border-right: 1px solid currentColor;
+      border-bottom: 1px solid currentColor;
+      color: var(--muted);
+      pointer-events: none;
+      transform: translateY(-72%) rotate(45deg);
+      transition: color .2s ease;
+    }
+    .mimo-booking-country-control:focus-within .mimo-booking-country-chevron { color: #fff; }
+    .mimo-booking-country-menu {
+      position: absolute;
+      z-index: 40;
+      top: calc(100% + 8px);
+      left: 0;
+      width: max(100%, 150px);
+      padding: 4px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(3,3,3,.94);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    .mimo-booking-country-menu[hidden] { display: none; }
+    .mimo-booking-country-option {
+      position: relative;
+      display: flex;
+      width: 100%;
+      min-height: 42px;
+      align-items: center;
+      padding: 0 12px 0 26px;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      color: var(--dim);
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-align: left;
+      cursor: pointer;
+    }
+    .mimo-booking-country-option:last-child { border-bottom: 0; }
+    .mimo-booking-country-option:hover,
+    .mimo-booking-country-option:focus-visible { background: rgba(255,255,255,.055); color: #fff; outline: none; }
+    .mimo-booking-country-option[aria-selected="true"] { color: #fff; }
+    .mimo-booking-country-option[aria-selected="true"]:before {
+      content: "";
+      position: absolute;
+      left: 11px;
+      width: 5px;
+      height: 5px;
+      background: #fff;
+    }
+    .mimo-booking-phone-row input { border-left: 0; }
+    .mimo-booking-optional { color: var(--dim); font-size: 9px; }
+    .mimo-booking-radio-group { margin: 0; padding: 0; border: 0; }
+    .mimo-booking-radio-options { display: flex; gap: 36px; margin-top: 18px; }
+    .mimo-booking-radio-options label {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-family: "Inter 18pt", Inter, Arial, sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .mimo-booking-radio-options input { width: 18px; height: 18px; accent-color: #fff; }
+    .mimo-booking-form-error {
+      min-height: 15px;
+      margin: 12px 0 0;
+      color: var(--red);
+      font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
+      font-size: 9px;
+    }
+    .mimo-booking-form-actions { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-top: 21px; }
+    .mimo-booking-legal { max-width: 56ch; margin: 0; color: var(--dim); font-size: 10px; line-height: 1.5; }
+    .mimo-booking-submit { min-width: 150px; padding: 12px 22px; }
+    .mimo-booking-success { display: none; min-height: 390px; place-items: center; text-align: center; }
+    .mimo-booking-success.is-visible { display: grid; }
+    .mimo-booking-success-mark { margin-bottom: 18px; font-size: 46px; font-weight: 300; }
+    .mimo-booking-success h3 { margin: 0 0 12px; font-size: 30px; font-weight: 300; text-transform: none; }
+    .mimo-booking-success p { color: var(--dim); font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace; font-size: 11px; }
+    .mimo-booking-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
     .vse {
       width: 100%;
       margin: 110px auto 0;
@@ -2093,6 +2573,16 @@
       .case-info { max-width: 100%; }
       .last { flex-direction: column; gap: 50px; padding: 0 40px; }
       .block { width: 100%; }
+      .mimo-booking-module { padding: 0 40px; }
+      .mimo-booking-shell { grid-template-columns: minmax(0,1.35fr) minmax(260px,.75fr); height: auto; min-height: 0; }
+      .mimo-booking-info { grid-column: 1 / -1; display: grid; grid-template-columns: 220px 1fr; border-right: 0; border-bottom: 1px solid var(--line); }
+      .mimo-booking-tech-header { min-height: 100%; }
+      .mimo-booking-info-content { padding: 21px 26px; }
+      .mimo-booking-description + .mimo-booking-description { display: none; }
+      .mimo-booking-meta { display: flex; flex-wrap: wrap; gap: 14px 24px; margin-top: 22px; padding-top: 0; }
+      .mimo-booking-calendar-panel { min-height: 458px; }
+      .mimo-booking-times-panel { min-height: 458px; }
+      .mimo-booking-form-panel { grid-column: 1 / -1; height: auto; max-height: none; }
     }
     @media (prefers-reduced-motion: reduce) {
       .design-system-mask:hover .glitch-layer,
@@ -2127,6 +2617,9 @@
       .import-carousel-track,
       .import-carousel-card,
       .import-carousel-dot { transition-duration: 1ms; }
+      .mimo-booking-shell *,
+      .mimo-booking-shell *:before,
+      .mimo-booking-shell *:after { scroll-behavior: auto !important; transition: none !important; }
       .mimo-loop { animation: none; transform: translateX(-8%); }
     }
 
@@ -2151,6 +2644,23 @@
       .import-carousel-controls { flex-wrap: wrap; margin-top: 22px; }
       .import-carousel-dots { order: 3; width: 100%; }
       .last { padding: 0 24px; }
+      .mimo-booking-module { margin-top: 75px; padding: 0 24px; }
+      .mimo-booking-shell { display: block; }
+      .mimo-booking-info { display: block; }
+      .mimo-booking-tech-header { min-height: 92px; }
+      .mimo-booking-info-content { padding: 24px 20px; }
+      .mimo-booking-description + .mimo-booking-description { display: block; }
+      .mimo-booking-meta { display: grid; gap: 14px; }
+      .mimo-booking-calendar-panel { min-height: 450px; padding: 24px 14px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .mimo-booking-calendar-grid { grid-template-rows: repeat(6, 44px); gap: 4px; }
+      .mimo-booking-weekdays { gap: 4px; font-size: 8px; }
+      .mimo-booking-times-panel { min-height: 0; padding: 20px 18px; }
+      .mimo-booking-time-list { grid-template-columns: repeat(2,minmax(0,1fr)); overflow: visible; }
+      .mimo-booking-form-panel { padding: 24px 20px; }
+      .mimo-booking-form-grid { grid-template-columns: 1fr; }
+      .mimo-booking-field.is-full { grid-column: auto; }
+      .mimo-booking-form-actions { align-items: stretch; flex-direction: column; }
+      .mimo-booking-submit { width: 100%; }
       .cursor-label { display: none; }
     }
   </style>
@@ -2241,7 +2751,6 @@
       </div>
       <p data-i18n="hero.body">I design portfolio-ready product systems, interaction prototypes and decision flows for complex digital products.</p>
       <a href="https://t.me/Mimomo1" target="_blank" rel="noopener" class="btn mono" data-i18n-aria="telegram.aria" data-i18n-cursor="telegram.cursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="telegram.label">WRITE TO TELEGRAM</span></a>
-      <a href="booking.html" class="btn mono" data-i18n-aria="booking.aria" data-i18n-cursor="booking.cursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="booking.label">BOOK AN INTERVIEW</span></a>
     </div>
   </div>
 
@@ -2257,7 +2766,6 @@
         <p class="bio" data-i18n="spec.body">I am currently shaping a portfolio around product thinking, high-fidelity interaction, and AI-assisted prototypes that make ideas testable faster.</p>
         <ul class="btn-group">
           <li><a href="https://t.me/Mimomo1" target="_blank" rel="noopener" class="btn mono" data-i18n-aria="telegram.aria" data-i18n-cursor="telegram.cursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="telegram.label">WRITE TO TELEGRAM</span></a></li>
-          <li><a href="booking.html" class="btn mono" data-i18n-aria="booking.aria" data-i18n-cursor="booking.cursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="booking.label">BOOK AN INTERVIEW</span></a></li>
           <li><a href="#cases" class="btn mono" data-i18n-cursor="cases.viewCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="cases.viewLabel">VIEW CASES</span></a></li>
         </ul>
       </div>
@@ -2421,6 +2929,133 @@
           </ul>
         </div>
       </div>
+      <section class="mimo-booking-module reveal" id="booking" aria-labelledby="mimoBookingTitle">
+        <div class="mimo-booking-shell" id="mimoBookingShell">
+          <section class="mimo-booking-info">
+            <div class="mimo-booking-tech-header" aria-hidden="true">
+              <strong>MIMO</strong>
+              <span class="mimo-booking-status" data-booking-copy="status">Available</span>
+              <div class="mimo-booking-coord"><span>Module 04</span><span>Interview / 2026</span></div>
+            </div>
+            <div class="mimo-booking-info-content">
+              <p class="mimo-booking-eyebrow">MIMO / INTERVIEW</p>
+              <h3 class="mimo-booking-title" id="mimoBookingTitle" data-booking-copy="title">Book an interview or collaboration call</h3>
+              <p class="mimo-booking-description" data-booking-copy="description1">Choose a convenient time for a 30-minute online interview.</p>
+              <p class="mimo-booking-description" data-booking-copy="description2">We can discuss my projects, design decisions, and ways of working.</p>
+              <div class="mimo-booking-chosen" id="mimoBookingChosen"></div>
+              <a class="mimo-booking-contact" href="https://t.me/Mimomo1" target="_blank" rel="noopener noreferrer" data-booking-copy="contact">Contact on Telegram ↗</a>
+              <div class="mimo-booking-meta">
+                <div class="mimo-booking-meta-row"><span aria-hidden="true">◷</span><span data-booking-copy="duration">30 minutes</span></div>
+                <div class="mimo-booking-meta-row"><span aria-hidden="true">▣</span><span>Google Meet</span></div>
+                <div class="mimo-booking-meta-row">
+                  <span aria-hidden="true">◎</span>
+                  <span class="mimo-booking-sr-only" id="mimoBookingTimezoneLabel" data-booking-copy="timezoneLabel">Select timezone</span>
+                  <div class="mimo-booking-timezone-control">
+                    <button class="mimo-booking-timezone-button" id="mimoBookingTimezoneButton" type="button" aria-labelledby="mimoBookingTimezoneLabel mimoBookingTimezoneValue" aria-haspopup="listbox" aria-expanded="false" aria-controls="mimoBookingTimezoneMenu">
+                      <span class="mimo-booking-timezone-value" id="mimoBookingTimezoneValue" data-booking-copy="timezoneShanghai">China Standard Time UTC+8</span>
+                      <span class="mimo-booking-timezone-chevron" aria-hidden="true">⌄</span>
+                    </button>
+                    <div class="mimo-booking-timezone-menu" id="mimoBookingTimezoneMenu" role="listbox" aria-labelledby="mimoBookingTimezoneLabel" hidden>
+                      <button class="mimo-booking-timezone-option" type="button" role="option" data-timezone="Asia/Shanghai" data-booking-copy="timezoneShanghai" aria-selected="true">China Standard Time UTC+8</button>
+                      <button class="mimo-booking-timezone-option" type="button" role="option" data-timezone="Asia/Tokyo" data-booking-copy="timezoneTokyo" aria-selected="false">Japan Standard Time UTC+9</button>
+                      <button class="mimo-booking-timezone-option" type="button" role="option" data-timezone="Europe/London" data-booking-copy="timezoneLondon" aria-selected="false">United Kingdom UTC±0</button>
+                      <button class="mimo-booking-timezone-option" type="button" role="option" data-timezone="America/New_York" data-booking-copy="timezoneNewYork" aria-selected="false">US Eastern Time UTC-5</button>
+                      <button class="mimo-booking-timezone-option" type="button" role="option" data-timezone="America/Los_Angeles" data-booking-copy="timezoneLosAngeles" aria-selected="false">US Pacific Time UTC-8</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="mimo-booking-calendar-panel" data-booking-aria="calendarAria" aria-label="Choose a date">
+            <header class="mimo-booking-calendar-head">
+              <div class="mimo-booking-month" id="mimoBookingMonth"></div>
+              <div class="mimo-booking-month-nav">
+                <button class="mimo-booking-icon-button" id="mimoBookingPrev" type="button" data-booking-aria="previousMonth" aria-label="Previous month">‹</button>
+                <button class="mimo-booking-icon-button" id="mimoBookingNext" type="button" data-booking-aria="nextMonth" aria-label="Next month">›</button>
+              </div>
+            </header>
+            <div class="mimo-booking-weekdays" id="mimoBookingWeekdays" aria-hidden="true"></div>
+            <div class="mimo-booking-calendar-grid" id="mimoBookingGrid" role="grid" aria-labelledby="mimoBookingMonth"></div>
+          </section>
+
+          <section class="mimo-booking-times-panel" data-booking-aria="timesAria" aria-label="Choose a time">
+            <header class="mimo-booking-times-head">
+              <div class="mimo-booking-selected-date" id="mimoBookingSelectedDate">Choose a date</div>
+            </header>
+            <div class="mimo-booking-time-list" id="mimoBookingTimeList"></div>
+            <div class="mimo-booking-summary" id="mimoBookingSummary" aria-live="polite"></div>
+          </section>
+
+          <section class="mimo-booking-form-panel" data-booking-aria="formAria" aria-label="Booking details">
+            <div id="mimoBookingFormView">
+              <header class="mimo-booking-form-head">
+                <button class="mimo-booking-back" id="mimoBookingBack" type="button" data-booking-aria="backAria" aria-label="Back to date selection">←</button>
+                <h3 class="mimo-booking-form-title" data-booking-copy="formTitle">Booking details</h3>
+              </header>
+              <form id="mimoBookingForm" novalidate>
+                <div class="mimo-booking-form-grid">
+                  <div class="mimo-booking-field">
+                    <label for="mimoBookingName" data-booking-copy="nameLabel">Name *</label>
+                    <input id="mimoBookingName" name="name" autocomplete="name" required data-booking-placeholder="namePlaceholder" placeholder="Your name">
+                  </div>
+                  <div class="mimo-booking-field">
+                    <label for="mimoBookingEmail" data-booking-copy="emailLabel">Email *</label>
+                    <input id="mimoBookingEmail" name="email" type="email" autocomplete="email" required data-booking-placeholder="emailPlaceholder" placeholder="you@company.com">
+                  </div>
+                  <div class="mimo-booking-field is-full">
+                    <label for="mimoBookingPhone"><span data-booking-copy="phoneLabel">Phone</span> <span class="mimo-booking-optional" data-booking-copy="optional">(optional)</span></label>
+                    <div class="mimo-booking-phone-row">
+                      <div class="mimo-booking-country-control">
+                        <button class="mimo-booking-country-button" id="mimoBookingCountryButton" type="button" data-booking-aria="countryAria" aria-label="Country code" aria-haspopup="listbox" aria-expanded="false" aria-controls="mimoBookingCountryMenu">
+                          <span id="mimoBookingCountryValue">CN +86</span>
+                        </button>
+                        <span class="mimo-booking-country-chevron" aria-hidden="true"></span>
+                        <div class="mimo-booking-country-menu" id="mimoBookingCountryMenu" role="listbox" data-booking-aria="countryAria" aria-label="Country code" hidden>
+                          <button class="mimo-booking-country-option" type="button" role="option" data-country="+86" aria-selected="true">CN +86</button>
+                          <button class="mimo-booking-country-option" type="button" role="option" data-country="+1" aria-selected="false">US +1</button>
+                          <button class="mimo-booking-country-option" type="button" role="option" data-country="+44" aria-selected="false">UK +44</button>
+                        </div>
+                        <input id="mimoBookingCountryInput" name="country" type="hidden" value="+86">
+                      </div>
+                      <input id="mimoBookingPhone" name="phone" type="tel" autocomplete="tel" data-booking-placeholder="phonePlaceholder" placeholder="Phone number">
+                    </div>
+                  </div>
+                  <div class="mimo-booking-field is-full">
+                    <label for="mimoBookingCompany" data-booking-copy="companyLabel">Company *</label>
+                    <input id="mimoBookingCompany" name="company" required data-booking-placeholder="companyPlaceholder" placeholder="Company name">
+                  </div>
+                  <fieldset class="mimo-booking-field is-full mimo-booking-radio-group">
+                    <legend data-booking-copy="primaryLabel">Are you the primary contact? *</legend>
+                    <div class="mimo-booking-radio-options">
+                      <label><input type="radio" name="primary" value="yes" required><span data-booking-copy="yes">Yes</span></label>
+                      <label><input type="radio" name="primary" value="no"><span data-booking-copy="no">No</span></label>
+                    </div>
+                  </fieldset>
+                  <div class="mimo-booking-field is-full">
+                    <label for="mimoBookingNotes" data-booking-copy="notesLabel">Additional notes</label>
+                    <textarea id="mimoBookingNotes" name="notes" data-booking-placeholder="notesPlaceholder" placeholder="Share anything that will help prepare for our meeting."></textarea>
+                  </div>
+                </div>
+                <p class="mimo-booking-form-error" id="mimoBookingError" role="alert"></p>
+                <div class="mimo-booking-form-actions">
+                  <p class="mimo-booking-legal" data-booking-copy="legal">This portfolio demo does not send or save any submitted information.</p>
+                  <button class="mimo-booking-submit" type="submit" data-booking-copy="submit">Confirm booking</button>
+                </div>
+              </form>
+            </div>
+            <div class="mimo-booking-success" id="mimoBookingSuccess" aria-live="polite">
+              <div>
+                <div class="mimo-booking-success-mark" aria-hidden="true">✓</div>
+                <h3 data-booking-copy="successTitle">Booking confirmed</h3>
+                <p id="mimoBookingSuccessCopy"></p>
+                <button class="mimo-booking-back" id="mimoBookingRestart" type="button" data-booking-aria="restartAria" aria-label="Choose another time">↺</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
       <div class="vse reveal" aria-hidden="true">
         <div class="mimo-loop">
           <div class="mimo-loop-group"><span>MIMO</span><span>MIMO</span><span>MIMO</span><span>MIMO</span></div>
@@ -2531,9 +3166,6 @@
         "telegram.aria": "Write to Mimo on Telegram",
         "telegram.cursor": "WRITE TO TELEGRAM",
         "telegram.label": "WRITE TO TELEGRAM",
-        "booking.aria": "Book an interview with Mimo",
-        "booking.cursor": "BOOK AN INTERVIEW",
-        "booking.label": "BOOK AN INTERVIEW",
         "spec.tag1": "product strategy",
         "spec.tag2": "portfolio",
         "spec.tag3": "interaction",
@@ -2660,9 +3292,6 @@
         "telegram.aria": "通过 Telegram 联系 Mimo",
         "telegram.cursor": "联系 TELEGRAM",
         "telegram.label": "联系 TELEGRAM",
-        "booking.aria": "与 Mimo 预约面试",
-        "booking.cursor": "预约面试",
-        "booking.label": "预约面试",
         "spec.tag1": "产品策略",
         "spec.tag2": "作品集",
         "spec.tag3": "交互",
@@ -2788,6 +3417,7 @@
     const soundToggle = document.getElementById("soundToggle");
     const langToggle = document.getElementById("langToggle");
     const heroContent = document.getElementById("hero-content");
+    const heroCoinsLayer = document.getElementById("heroCoins");
     const marketCards = [...document.querySelectorAll(".fin-card[data-symbol]")];
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const startedAt = performance.now();
@@ -3109,7 +3739,7 @@
 
     soundToggle.addEventListener("click", () => setSoundEnabled(!soundEnabled));
     langToggle.addEventListener("click", toggleLanguage);
-    document.querySelectorAll(".btn, .main-menu a, .main-menu button, .gallery-close, .wave, .kinetic-band.b3, .import-carousel-control, .import-carousel-dot").forEach((control) => {
+    document.querySelectorAll(".btn, .main-menu a, .main-menu button, .gallery-close, .wave, .kinetic-band.b3, .import-carousel-control, .import-carousel-dot, .mimo-booking-shell button, .mimo-booking-shell a").forEach((control) => {
       control.addEventListener("pointerenter", playButtonHover);
     });
 
@@ -3307,7 +3937,9 @@
         }
       }
       heroMotionTime = now;
-      window.mimoHeroProgress = heroMotionProgress;
+      const isPastHero = window.scrollY > window.innerHeight * 1.2;
+      const visibleHeroProgress = isPastHero ? 1 : heroMotionProgress;
+      window.mimoHeroProgress = visibleHeroProgress;
       const revealRaw = Math.max(0, Math.min(1, (heroMotionProgress - .72) / .28));
       const screenTarget = revealRaw * revealRaw * (3 - 2 * revealRaw);
       if (reduceMotion) {
@@ -3322,7 +3954,8 @@
       root.style.setProperty("--spec-reveal", secondScreenProgress.toFixed(4));
       root.style.setProperty("--spec-offset", `${((1 - secondScreenProgress) * 48).toFixed(2)}px`);
       root.classList.toggle("hero-expanded", secondScreenProgress > .001);
-      setHeroVisibility(heroMotionProgress);
+      setHeroVisibility(visibleHeroProgress);
+      heroCoinsLayer.classList.toggle("is-hidden", visibleHeroProgress >= .98);
       root.style.setProperty("--footer-opacity", (1 - Math.min(1, window.scrollY / 180)).toFixed(3));
       activeLine.style.transform = `scaleY(${progress.toFixed(4)})`;
       scrollValue.textContent = progress.toFixed(3);
@@ -3991,6 +4624,487 @@
       });
       window.addEventListener("resize", () => goTo(focusIndex), { passive: true });
       goTo(1);
+    })();
+  </script>
+  <script>
+    (() => {
+      const shell = document.getElementById("mimoBookingShell");
+      if (!shell) return;
+
+      const elements = {
+        grid: document.getElementById("mimoBookingGrid"),
+        weekdays: document.getElementById("mimoBookingWeekdays"),
+        month: document.getElementById("mimoBookingMonth"),
+        selectedDate: document.getElementById("mimoBookingSelectedDate"),
+        timeList: document.getElementById("mimoBookingTimeList"),
+        summary: document.getElementById("mimoBookingSummary"),
+        timezoneButton: document.getElementById("mimoBookingTimezoneButton"),
+        timezoneValue: document.getElementById("mimoBookingTimezoneValue"),
+        timezoneMenu: document.getElementById("mimoBookingTimezoneMenu"),
+        countryButton: document.getElementById("mimoBookingCountryButton"),
+        countryValue: document.getElementById("mimoBookingCountryValue"),
+        countryMenu: document.getElementById("mimoBookingCountryMenu"),
+        countryInput: document.getElementById("mimoBookingCountryInput"),
+        chosen: document.getElementById("mimoBookingChosen"),
+        formView: document.getElementById("mimoBookingFormView"),
+        form: document.getElementById("mimoBookingForm"),
+        error: document.getElementById("mimoBookingError"),
+        success: document.getElementById("mimoBookingSuccess"),
+        successCopy: document.getElementById("mimoBookingSuccessCopy"),
+        name: document.getElementById("mimoBookingName")
+      };
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
+      const state = {
+        viewDate: new Date(today.getFullYear(), today.getMonth(), 1, 12),
+        selectedDate: null,
+        selectedTime: null,
+        timezone: "Asia/Shanghai"
+      };
+      const timezoneOptions = [...shell.querySelectorAll(".mimo-booking-timezone-option")];
+      const countryOptions = [...shell.querySelectorAll(".mimo-booking-country-option")];
+      const BOOKING_COPY = {
+        en: {
+          status: "Available",
+          title: "Book an interview or collaboration call",
+          description1: "Choose a convenient time for a 30-minute online interview.",
+          description2: "We can discuss my projects, design decisions, and ways of working.",
+          contact: "Contact on Telegram ↗",
+          duration: "30 minutes",
+          timezoneLabel: "Select timezone",
+          timezoneShanghai: "China Standard Time UTC+8",
+          timezoneTokyo: "Japan Standard Time UTC+9",
+          timezoneLondon: "United Kingdom UTC±0",
+          timezoneNewYork: "US Eastern Time UTC-5",
+          timezoneLosAngeles: "US Pacific Time UTC-8",
+          calendarAria: "Choose a date",
+          timesAria: "Choose a time",
+          formAria: "Booking details",
+          previousMonth: "Previous month",
+          nextMonth: "Next month",
+          backAria: "Back to date selection",
+          restartAria: "Choose another time",
+          countryAria: "Country code",
+          formTitle: "Booking details",
+          nameLabel: "Name *",
+          namePlaceholder: "Your name",
+          emailLabel: "Email *",
+          emailPlaceholder: "you@company.com",
+          phoneLabel: "Phone",
+          optional: "(optional)",
+          phonePlaceholder: "Phone number",
+          companyLabel: "Company *",
+          companyPlaceholder: "Company name",
+          primaryLabel: "Are you the primary contact? *",
+          yes: "Yes",
+          no: "No",
+          notesLabel: "Additional notes",
+          notesPlaceholder: "Share anything that will help prepare for our meeting.",
+          legal: "This portfolio demo does not send or save any submitted information.",
+          submit: "Confirm booking",
+          successTitle: "Booking confirmed",
+          chooseDate: "Choose a date",
+          chooseDateFirst: "Choose an available date first",
+          noTimes: "No times are available",
+          chooseTime: "Choose a time slot",
+          selected: "Selected",
+          available: "available",
+          unavailable: "unavailable",
+          validation: "Complete all required fields and check the email format.",
+          weekdays: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+        },
+        zh: {
+          status: "可预约",
+          title: "和我预约面试或合作",
+          description1: "选择一个方便的时间，与我进行一场 30 分钟的线上面试沟通。",
+          description2: "我们可以聊聊我的项目经历、设计思路与合作方式。",
+          contact: "直接联系 Telegram ↗",
+          duration: "30 分钟",
+          timezoneLabel: "选择时区",
+          timezoneShanghai: "中国标准时间 UTC+8",
+          timezoneTokyo: "日本标准时间 UTC+9",
+          timezoneLondon: "英国时间 UTC±0",
+          timezoneNewYork: "美国东部时间 UTC-5",
+          timezoneLosAngeles: "美国西部时间 UTC-8",
+          calendarAria: "选择日期",
+          timesAria: "选择时间",
+          formAria: "填写预约信息",
+          previousMonth: "上个月",
+          nextMonth: "下个月",
+          backAria: "返回日期选择",
+          restartAria: "重新选择时间",
+          countryAria: "国家区号",
+          formTitle: "填写预约信息",
+          nameLabel: "姓名 *",
+          namePlaceholder: "你的姓名",
+          emailLabel: "邮箱地址 *",
+          emailPlaceholder: "you@company.com",
+          phoneLabel: "电话号码",
+          optional: "（非必填）",
+          phonePlaceholder: "手机号码",
+          companyLabel: "公司名称 *",
+          companyPlaceholder: "请输入公司名称",
+          primaryLabel: "你是这个项目的主要联系人吗？ *",
+          yes: "是",
+          no: "否",
+          notesLabel: "附加备注",
+          notesPlaceholder: "请分享任何有助于筹备我们会议的内容。",
+          legal: "此作品集演示不会发送或保存任何填写信息。",
+          submit: "确认预约",
+          successTitle: "预约已确认",
+          chooseDate: "请选择日期",
+          chooseDateFirst: "请先选择可预约日期",
+          noTimes: "暂无可预约时间",
+          chooseTime: "请选择一个时间段",
+          selected: "已选择",
+          available: "可预约",
+          unavailable: "不可预约",
+          validation: "请填写所有必填项目，并检查邮箱格式。",
+          weekdays: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"]
+        }
+      };
+
+      const localeKey = () => document.documentElement.lang === "zh" ? "zh" : "en";
+      const copy = () => BOOKING_COPY[localeKey()];
+      const localeTag = () => localeKey() === "zh" ? "zh-CN" : "en-US";
+      const dateKey = (date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+      const sameDate = (a, b) => Boolean(a && b && dateKey(a) === dateKey(b));
+      const isAvailable = (date) => date >= today && date.getDay() >= 1 && date.getDay() <= 5;
+      const availableTimes = (date) => isAvailable(date) ? ["14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00"] : [];
+      const addMinutes = (value, minutes) => {
+        const [hours, currentMinutes] = value.split(":").map(Number);
+        const total = hours * 60 + currentMinutes + minutes;
+        return `${String(Math.floor(total / 60) % 24).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+      };
+      const firstAvailable = (year, month) => {
+        const last = new Date(year, month + 1, 0, 12).getDate();
+        for (let day = 1; day <= last; day += 1) {
+          const date = new Date(year, month, day, 12);
+          if (isAvailable(date)) return date;
+        }
+        return null;
+      };
+      const initialAvailable = () => {
+        for (let offset = 0; offset < 3; offset += 1) {
+          const view = new Date(today.getFullYear(), today.getMonth() + offset, 1, 12);
+          const candidate = firstAvailable(view.getFullYear(), view.getMonth());
+          if (candidate) return candidate;
+        }
+        return today;
+      };
+      const formatDate = (date) => new Intl.DateTimeFormat(localeTag(), {
+        year: "numeric", month: "long", day: "numeric", weekday: "long"
+      }).format(date);
+      const formatTime = (value) => {
+        if (!value || state.timezone === "Asia/Shanghai" || !state.selectedDate) return value;
+        const [hours, minutes] = value.split(":").map(Number);
+        const instant = new Date(Date.UTC(
+          state.selectedDate.getFullYear(),
+          state.selectedDate.getMonth(),
+          state.selectedDate.getDate(),
+          hours - 8,
+          minutes
+        ));
+        return new Intl.DateTimeFormat(localeTag(), {
+          timeZone: state.timezone,
+          hour: "2-digit",
+          minute: "2-digit",
+          hourCycle: "h23"
+        }).format(instant);
+      };
+      const bindDynamicSound = (control) => {
+        control.addEventListener("pointerenter", () => {
+          if (typeof playButtonHover === "function") playButtonHover();
+        });
+      };
+
+      function syncTimezoneUi() {
+        const selected = timezoneOptions.find((option) => option.dataset.timezone === state.timezone) || timezoneOptions[0];
+        timezoneOptions.forEach((option) => {
+          option.setAttribute("aria-selected", String(option === selected));
+        });
+        elements.timezoneValue.textContent = selected.textContent.trim();
+      }
+
+      function openTimezoneMenu(focusSelected = false) {
+        elements.timezoneMenu.hidden = false;
+        elements.timezoneButton.setAttribute("aria-expanded", "true");
+        if (focusSelected) {
+          timezoneOptions.find((option) => option.getAttribute("aria-selected") === "true")?.focus();
+        }
+      }
+
+      function closeTimezoneMenu(restoreFocus = false) {
+        elements.timezoneMenu.hidden = true;
+        elements.timezoneButton.setAttribute("aria-expanded", "false");
+        if (restoreFocus) elements.timezoneButton.focus({ preventScroll: true });
+      }
+
+      function chooseTimezone(value) {
+        state.timezone = value;
+        state.selectedTime = null;
+        syncTimezoneUi();
+        renderTimes();
+        closeTimezoneMenu(true);
+      }
+
+      function moveTimezoneFocus(direction) {
+        const current = timezoneOptions.indexOf(document.activeElement);
+        const next = current < 0
+          ? timezoneOptions.findIndex((option) => option.getAttribute("aria-selected") === "true")
+          : (current + direction + timezoneOptions.length) % timezoneOptions.length;
+        timezoneOptions[Math.max(0, next)]?.focus();
+      }
+
+      function syncCountryUi() {
+        const selected = countryOptions.find((option) => option.dataset.country === elements.countryInput.value) || countryOptions[0];
+        countryOptions.forEach((option) => {
+          option.setAttribute("aria-selected", String(option === selected));
+        });
+        elements.countryValue.textContent = selected.textContent.trim();
+      }
+
+      function openCountryMenu(focusSelected = false) {
+        elements.countryMenu.hidden = false;
+        elements.countryButton.setAttribute("aria-expanded", "true");
+        if (focusSelected) {
+          countryOptions.find((option) => option.getAttribute("aria-selected") === "true")?.focus();
+        }
+      }
+
+      function closeCountryMenu(restoreFocus = false) {
+        elements.countryMenu.hidden = true;
+        elements.countryButton.setAttribute("aria-expanded", "false");
+        if (restoreFocus) elements.countryButton.focus({ preventScroll: true });
+      }
+
+      function chooseCountry(value) {
+        elements.countryInput.value = value;
+        syncCountryUi();
+        closeCountryMenu(true);
+      }
+
+      function moveCountryFocus(direction) {
+        const current = countryOptions.indexOf(document.activeElement);
+        const next = current < 0
+          ? countryOptions.findIndex((option) => option.getAttribute("aria-selected") === "true")
+          : (current + direction + countryOptions.length) % countryOptions.length;
+        countryOptions[Math.max(0, next)]?.focus();
+      }
+
+      function applyBookingLanguage() {
+        const strings = copy();
+        shell.querySelectorAll("[data-booking-copy]").forEach((node) => {
+          const value = strings[node.dataset.bookingCopy];
+          if (typeof value === "string") node.textContent = value;
+        });
+        shell.querySelectorAll("[data-booking-placeholder]").forEach((node) => {
+          const value = strings[node.dataset.bookingPlaceholder];
+          if (typeof value === "string") node.placeholder = value;
+        });
+        shell.querySelectorAll("[data-booking-aria]").forEach((node) => {
+          const value = strings[node.dataset.bookingAria];
+          if (typeof value === "string") node.setAttribute("aria-label", value);
+        });
+        elements.weekdays.innerHTML = strings.weekdays.map((day) => `<span>${day}</span>`).join("");
+        closeTimezoneMenu();
+        syncTimezoneUi();
+        closeCountryMenu();
+        syncCountryUi();
+        render();
+      }
+
+      function renderCalendar() {
+        const year = state.viewDate.getFullYear();
+        const month = state.viewDate.getMonth();
+        const monthName = new Intl.DateTimeFormat(localeTag(), { month: "long" }).format(state.viewDate);
+        const firstDay = new Date(year, month, 1, 12).getDay();
+        const days = new Date(year, month + 1, 0, 12).getDate();
+        elements.month.innerHTML = `${monthName} <span>${year}</span>`;
+        elements.grid.replaceChildren();
+        for (let index = 0; index < 42; index += 1) {
+          if (index < firstDay || index >= firstDay + days) {
+            const blank = document.createElement("span");
+            blank.className = "mimo-booking-blank";
+            blank.setAttribute("aria-hidden", "true");
+            elements.grid.append(blank);
+            continue;
+          }
+          const day = index - firstDay + 1;
+          const date = new Date(year, month, day, 12);
+          const available = isAvailable(date);
+          const selected = sameDate(date, state.selectedDate);
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `mimo-booking-day${available ? " is-available" : ""}${selected ? " is-selected" : ""}`;
+          button.textContent = day;
+          button.disabled = !available;
+          button.setAttribute("aria-label", `${formatDate(date)}, ${available ? copy().available : copy().unavailable}`);
+          button.setAttribute("aria-pressed", String(selected));
+          if (available) {
+            bindDynamicSound(button);
+            button.addEventListener("click", () => {
+              state.selectedDate = date;
+              state.selectedTime = null;
+              render();
+            });
+          }
+          elements.grid.append(button);
+        }
+      }
+
+      function renderTimes() {
+        if (!state.selectedDate) {
+          elements.selectedDate.textContent = copy().chooseDate;
+          elements.timeList.innerHTML = `<div class="mimo-booking-empty">${copy().chooseDateFirst}</div>`;
+          elements.summary.textContent = "";
+          return;
+        }
+        elements.selectedDate.textContent = new Intl.DateTimeFormat(localeTag(), {
+          weekday: "short", day: "numeric"
+        }).format(state.selectedDate);
+        elements.timeList.replaceChildren();
+        const times = availableTimes(state.selectedDate);
+        if (!times.length) {
+          elements.timeList.innerHTML = `<div class="mimo-booking-empty">${copy().noTimes}</div>`;
+          return;
+        }
+        times.forEach((time) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "mimo-booking-time-button";
+          button.textContent = formatTime(time);
+          button.setAttribute("aria-pressed", String(state.selectedTime === time));
+          bindDynamicSound(button);
+          button.addEventListener("click", () => {
+            state.selectedTime = time;
+            renderTimes();
+            openForm();
+          });
+          elements.timeList.append(button);
+        });
+        elements.summary.textContent = state.selectedTime
+          ? `${copy().selected}: ${formatDate(state.selectedDate)} · ${formatTime(state.selectedTime)} · ${copy().duration}`
+          : copy().chooseTime;
+      }
+
+      function render() {
+        renderCalendar();
+        renderTimes();
+      }
+
+      function openForm() {
+        shell.classList.add("is-form-stage");
+        elements.chosen.innerHTML = `<strong>▣ ${formatDate(state.selectedDate)}</strong>${formatTime(state.selectedTime)}-${formatTime(addMinutes(state.selectedTime, 30))}`;
+        elements.formView.hidden = false;
+        elements.success.classList.remove("is-visible");
+        elements.name.focus({ preventScroll: true });
+      }
+
+      function closeForm() {
+        shell.classList.remove("is-form-stage");
+        elements.error.textContent = "";
+        shell.querySelector('.mimo-booking-time-button[aria-pressed="true"]')?.focus({ preventScroll: true });
+      }
+
+      document.getElementById("mimoBookingPrev").addEventListener("click", () => {
+        state.viewDate = new Date(state.viewDate.getFullYear(), state.viewDate.getMonth() - 1, 1, 12);
+        state.selectedDate = firstAvailable(state.viewDate.getFullYear(), state.viewDate.getMonth());
+        state.selectedTime = null;
+        render();
+      });
+      document.getElementById("mimoBookingNext").addEventListener("click", () => {
+        state.viewDate = new Date(state.viewDate.getFullYear(), state.viewDate.getMonth() + 1, 1, 12);
+        state.selectedDate = firstAvailable(state.viewDate.getFullYear(), state.viewDate.getMonth());
+        state.selectedTime = null;
+        render();
+      });
+      document.getElementById("mimoBookingBack").addEventListener("click", closeForm);
+      elements.timezoneButton.addEventListener("click", () => {
+        if (elements.timezoneMenu.hidden) openTimezoneMenu();
+        else closeTimezoneMenu();
+      });
+      elements.timezoneButton.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+        event.preventDefault();
+        openTimezoneMenu(true);
+      });
+      timezoneOptions.forEach((option) => {
+        option.addEventListener("click", () => chooseTimezone(option.dataset.timezone));
+      });
+      elements.timezoneMenu.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeTimezoneMenu(true);
+          return;
+        }
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          event.preventDefault();
+          moveTimezoneFocus(event.key === "ArrowDown" ? 1 : -1);
+          return;
+        }
+        if (event.key === "Home" || event.key === "End") {
+          event.preventDefault();
+          timezoneOptions[event.key === "Home" ? 0 : timezoneOptions.length - 1]?.focus();
+        }
+      });
+      elements.countryButton.addEventListener("click", () => {
+        if (elements.countryMenu.hidden) openCountryMenu();
+        else closeCountryMenu();
+      });
+      elements.countryButton.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+        event.preventDefault();
+        openCountryMenu(true);
+      });
+      countryOptions.forEach((option) => {
+        option.addEventListener("click", () => chooseCountry(option.dataset.country));
+      });
+      elements.countryMenu.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeCountryMenu(true);
+          return;
+        }
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          event.preventDefault();
+          moveCountryFocus(event.key === "ArrowDown" ? 1 : -1);
+          return;
+        }
+        if (event.key === "Home" || event.key === "End") {
+          event.preventDefault();
+          countryOptions[event.key === "Home" ? 0 : countryOptions.length - 1]?.focus();
+        }
+      });
+      document.addEventListener("pointerdown", (event) => {
+        if (!event.target.closest(".mimo-booking-timezone-control")) closeTimezoneMenu();
+        if (!event.target.closest(".mimo-booking-country-control")) closeCountryMenu();
+      });
+      elements.form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        if (!elements.form.checkValidity()) {
+          elements.error.textContent = copy().validation;
+          elements.form.reportValidity();
+          return;
+        }
+        elements.error.textContent = "";
+        elements.formView.hidden = true;
+        elements.success.classList.add("is-visible");
+        elements.successCopy.textContent = `${formatDate(state.selectedDate)} · ${formatTime(state.selectedTime)} · Google Meet`;
+      });
+      document.getElementById("mimoBookingRestart").addEventListener("click", () => {
+        elements.form.reset();
+        elements.countryInput.value = "+86";
+        syncCountryUi();
+        elements.formView.hidden = false;
+        elements.success.classList.remove("is-visible");
+        closeForm();
+      });
+      document.getElementById("langToggle").addEventListener("click", applyBookingLanguage);
+
+      state.selectedDate = initialAvailable();
+      state.viewDate = new Date(state.selectedDate.getFullYear(), state.selectedDate.getMonth(), 1, 12);
+      applyBookingLanguage();
     })();
   </script>
 </body>
