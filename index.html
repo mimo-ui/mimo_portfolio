@@ -1354,6 +1354,10 @@
     html[lang="en"] .case-info p {
       text-wrap: balance;
     }
+    html[lang="en"] .case-info .tags {
+      justify-content: flex-start;
+      text-align: left;
+    }
     .kinetic-case {
       display: block;
       width: 100%;
@@ -2207,6 +2211,10 @@
       transform: translateY(1.05em) rotateX(-68deg);
       transform-origin: 50% 100%;
       will-change: transform, opacity, filter;
+    }
+    [data-split-title] .split-word {
+      display: inline-block;
+      white-space: nowrap;
     }
     [data-split-title].is-split-visible .split-char {
       animation: split-text-in .68s var(--ease) forwards;
@@ -3530,6 +3538,9 @@
       document.querySelectorAll(".split-char").forEach((char) => {
         char.replaceWith(document.createTextNode(char.textContent));
       });
+      document.querySelectorAll(".split-word").forEach((word) => {
+        word.replaceWith(document.createTextNode(word.textContent));
+      });
       document.querySelectorAll("[data-split-title]").forEach((title) => {
         if (splitObserver) splitObserver.unobserve(title);
         window.clearTimeout(title._splitTimer);
@@ -3571,17 +3582,28 @@
         let index = 0;
         textNodes.forEach((node) => {
           const fragment = document.createDocumentFragment();
-          [...node.textContent].forEach((char) => {
-            if (/\s/.test(char)) {
-              fragment.appendChild(document.createTextNode(char));
+          const parts = document.documentElement.lang === "en"
+            ? node.textContent.match(/\s+|\S+/g) || []
+            : [...node.textContent];
+          parts.forEach((part) => {
+            if (/^\s+$/.test(part)) {
+              fragment.appendChild(document.createTextNode(part));
               return;
             }
-            const span = document.createElement("span");
-            span.className = "split-char";
-            span.style.setProperty("--split-index", index++);
-            span.setAttribute("aria-hidden", "true");
-            span.textContent = char;
-            fragment.appendChild(span);
+            const word = document.documentElement.lang === "en" ? document.createElement("span") : fragment;
+            if (word !== fragment) {
+              word.className = "split-word";
+              word.setAttribute("aria-hidden", "true");
+            }
+            [...part].forEach((char) => {
+              const span = document.createElement("span");
+              span.className = "split-char";
+              span.style.setProperty("--split-index", index++);
+              span.setAttribute("aria-hidden", "true");
+              span.textContent = char;
+              word.appendChild(span);
+            });
+            if (word !== fragment) fragment.appendChild(word);
           });
           node.replaceWith(fragment);
         });
