@@ -2853,7 +2853,7 @@
           </div>
         </article>
         <article class="case reveal" id="case-landing-page">
-          <div class="image-mask" data-i18n-cursor="gallery.openCursor" data-i18n-gallery-title="case5.galleryTitle"><div class="landing-cover-preview"><img src="assets/cases/landing-page-matrix-transparent.png" alt="CoinW multilingual landing page matrix across desktop and mobile" loading="lazy"></div><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></div>
+          <div class="image-mask" data-gallery-disabled="true" data-i18n-gallery-title="case5.galleryTitle"><div class="landing-cover-preview"><img src="assets/cases/landing-page-matrix-transparent.png" alt="CoinW multilingual landing page matrix across desktop and mobile" loading="lazy"></div><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></div>
           <div class="case-info">
             <ul class="tags mono"><li data-i18n="case5.tag1">A/B Testing</li><li data-i18n="case5.tag2">Conversion</li><li data-i18n="case5.tag3">Multilingual</li></ul>
             <h3 data-i18n="case5.title">Landing Page Matrix</h3>
@@ -4035,7 +4035,7 @@
     });
 
     imageMasks.forEach((mask) => {
-      if (mask.classList.contains("otc-mask") || mask.classList.contains("design-system-mask") || mask.classList.contains("copy-mask") || mask.classList.contains("community-mask")) return;
+      if (mask.classList.contains("otc-mask") || mask.classList.contains("design-system-mask") || mask.classList.contains("copy-mask") || mask.classList.contains("community-mask") || mask.dataset.galleryDisabled === "true") return;
       mask.setAttribute("role", "button");
       mask.setAttribute("tabindex", "0");
       mask.addEventListener("mouseenter", () => {
