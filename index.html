@@ -237,13 +237,16 @@
       bottom: 0;
       left: 0;
       height: clamp(150px, 21vh, 230px);
-      background: transparent;
+      background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.5) 58%, rgba(0,0,0,.9) 100%);
       backdrop-filter: blur(22px);
       -webkit-backdrop-filter: blur(22px);
       mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.38) 38%, #000 100%);
       -webkit-mask-image: linear-gradient(180deg, transparent 0%, rgba(0,0,0,.38) 38%, #000 100%);
+      opacity: 0;
       pointer-events: none;
+      transition: opacity .24s ease;
     }
+    html.has-more-content .frame-screen:after { opacity: 1; }
     .corner {
       position: absolute;
       width: 5px;
@@ -1633,14 +1636,15 @@
       padding-bottom: 100px;
     }
     .last {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       align-items: flex-start;
       gap: 60px;
       max-width: 1400px;
       width: 100%;
       padding: 0 100px;
     }
-    .block { width: 33.333%; }
+    .block { width: 100%; min-width: 0; }
     h3.small { margin: 0 0 20px; font-size: 20px; }
     .list { display: flex; flex-direction: column; gap: 20px; counter-reset: list-item; }
     .list li {
@@ -1822,6 +1826,15 @@
       letter-spacing: .04em;
     }
     .mimo-booking-meta-row { display: flex; align-items: center; gap: 8px; }
+    .mimo-booking-meta-row > span[aria-hidden="true"]:first-child {
+      display: grid;
+      flex: 0 0 12px;
+      width: 12px;
+      height: 12px;
+      place-items: center;
+      line-height: 1;
+      text-align: center;
+    }
     .mimo-booking-timezone-control { position: relative; min-width: 0; }
     .mimo-booking-timezone-button {
       display: flex;
@@ -2004,7 +2017,6 @@
       min-height: 30px;
       margin-top: 10px;
       padding-top: 10px;
-      border-top: 1px solid var(--line);
       color: var(--dim);
       font-family: "Cartograph Mono CF", "SFMono-Regular", Consolas, Menlo, monospace;
       font-size: 9px;
@@ -2598,7 +2610,9 @@
       .import-carousel-dots { width: min(28vw, 180px); }
       .image-mask { flex: none; width: 100%; }
       .case-info { max-width: 100%; }
-      .last { flex-direction: column; gap: 50px; padding: 0 40px; }
+      .last { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 50px 36px; padding: 0 40px; }
+      .last .block:last-child { grid-column: 1 / -1; }
+      .last .split-follow { opacity: 1 !important; transform: none !important; pointer-events: auto; transition: none !important; }
       .block { width: 100%; }
       .mimo-booking-module { padding: 0 40px; }
       .mimo-booking-shell { grid-template-columns: minmax(0,1.35fr) minmax(260px,.75fr); height: auto; min-height: 0; }
@@ -2670,7 +2684,9 @@
       .import-carousel-slide { flex-basis: 72%; }
       .import-carousel-controls { flex-wrap: wrap; margin-top: 22px; }
       .import-carousel-dots { order: 3; width: 100%; }
-      .last { padding: 0 24px; }
+      .last { grid-template-columns: 1fr; padding: 0 24px; }
+      .last .block:last-child { grid-column: auto; }
+      .frame-screen:after { height: 120px; }
       .mimo-booking-module { margin-top: 75px; padding: 0 24px; }
       .mimo-booking-shell { display: block; }
       .mimo-booking-info { display: block; }
@@ -2691,6 +2707,10 @@
       .cursor-label { display: none; }
     }
   </style>
+  <script>
+    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="loader-active">
   <div class="loader" id="loader" aria-hidden="true">
@@ -3998,6 +4018,7 @@
       setHeroVisibility(visibleHeroProgress);
       heroCoinsLayer.classList.toggle("is-hidden", visibleHeroProgress >= .98);
       root.style.setProperty("--footer-opacity", (1 - Math.min(1, window.scrollY / 180)).toFixed(3));
+      root.classList.toggle("has-more-content", window.scrollY < max - 8);
       activeLine.style.transform = `scaleY(${progress.toFixed(4)})`;
       scrollValue.textContent = progress.toFixed(3);
       const activeIndex = Math.min(progressMarks.length - 1, Math.floor(progress * progressMarks.length));
