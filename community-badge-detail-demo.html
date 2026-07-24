@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Badge Details</title>
+  <style>
+    @font-face{font-family:Satoshi;src:url("./assets/cases/otc-sell-auto-demo/fonts/Satoshi-Regular.ttf")}
+    @font-face{font-family:Satoshi;src:url("./assets/cases/otc-sell-auto-demo/fonts/Satoshi-Bold.ttf");font-weight:700}
+    *{box-sizing:border-box}html,body{width:390px;height:844px;margin:0;overflow:hidden;background:#111214;color:#fff;font-family:Satoshi,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{position:relative;border:9px solid #050506;border-radius:48px}
+    .island{position:absolute;z-index:4;top:9px;left:50%;width:112px;height:28px;border-radius:20px;background:#020203;transform:translateX(-50%)}
+    .status{position:absolute;z-index:3;top:13px;left:17px;right:17px;display:flex;justify-content:space-between;font-size:14px;font-weight:700}.signal{font-size:12px;letter-spacing:1px}
+    .drawer{position:absolute;left:16px;right:16px;bottom:16px;height:432px;overflow:hidden;border-radius:24px;background:#252525;transition:height .45s cubic-bezier(.22,1,.36,1)}
+    .drawer.has-buttons{height:512px}.grabber{width:36px;height:5px;margin:9px auto 8px;border-radius:3px;background:#8c8c8c}
+    h1{margin:5px 16px 0;font-size:20px;line-height:24px}.content{display:flex;flex-direction:column;align-items:center;padding:8px 16px 0;text-align:center}
+    .badge-stage{position:relative;width:160px;height:160px}.badge-stage .badge-svg{position:absolute;inset:0;width:160px;height:160px;display:block;transition:opacity .5s ease,transform .5s cubic-bezier(.22,1,.36,1)}
+    .badge-stage .earned{opacity:0;transform:scale(.96)}.drawer.has-buttons .badge-stage .locked{opacity:0;transform:scale(.96)}.drawer.has-buttons .badge-stage .earned{opacity:1;transform:none}
+    .chip{margin-top:0;padding:2px 8px;border-radius:80px;background:rgba(82,39,255,.18);color:#8a6cff;font-size:12px;line-height:16px;letter-spacing:.5px}h2{margin:4px 0 0;font-size:20px;line-height:24px}
+    .desc{margin:10px 0 0;color:#bfbfbf;font-size:14px;line-height:20px;letter-spacing:.25px}.date{margin:2px 0 0;color:#777;font-size:12px;line-height:16px}
+    .levels{position:relative;display:flex;width:255px;justify-content:space-between;margin-top:24px}.levels::before{content:"";position:absolute;top:12px;left:30px;right:30px;border-top:1px dashed #454545}
+    .level{position:relative;z-index:1;width:42px;color:#747474;font-size:11px;line-height:12px;transition:color .4s ease}.level-art{display:block;width:28px;height:28px;margin:0 auto 5px;filter:grayscale(1) brightness(1.35);opacity:.35;transition:filter .5s ease,opacity .5s ease,transform .5s cubic-bezier(.22,1,.36,1)}.level.on{color:#fff}.level.on .level-art{filter:none;opacity:1;transform:scale(1.06)}
+    .footer{position:absolute;left:0;right:0;bottom:0;display:flex;gap:16px;padding:16px;background:#252525;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .35s ease,transform .35s cubic-bezier(.22,1,.36,1)}.drawer.has-buttons .footer{opacity:1;transform:none;pointer-events:auto}
+    button{height:48px;flex:1;border:0;border-radius:12px;font:700 14px Satoshi;letter-spacing:.1px}.secondary{background:#3a3a3a;color:#fff}.primary{background:#fff;color:#1a1a1a}
+    .home{position:absolute;z-index:5;bottom:8px;left:50%;width:134px;height:5px;border-radius:5px;background:#fff;transform:translateX(-50%)}
+  </style>
+</head>
+<body>
+  <div class="island"></div><div class="status"><span>9:41</span><span class="signal">▮▮▮ WiFi ▰</span></div>
+  <section class="drawer" id="drawer">
+    <div class="grabber"></div><h1>Badge Details</h1>
+    <div class="content">
+      <div class="badge-stage"><img class="badge-svg locked" src="./assets/cases/community-badge-demo/badge-full-gray.svg" alt=""><img class="badge-svg earned" src="./assets/cases/community-badge-demo/badge-full-pink.svg" alt=""></div>
+      <div class="chip">Contract Lead</div><h2>Badge Name</h2>
+      <p class="desc">Cumulative contract volume above 10,000 USDT</p><p class="date" id="progress">Current progress 10 / 10,000</p>
+      <div class="levels">
+        <div class="level"><img class="level-art" src="./assets/cases/community-badge-demo/level-full-1.svg?v=2" alt=""><span>Lv.1</span></div>
+        <div class="level"><img class="level-art" src="./assets/cases/community-badge-demo/level-full-2.svg?v=2" alt=""><span>Lv.2</span></div>
+        <div class="level"><img class="level-art" src="./assets/cases/community-badge-demo/level-full-3.svg?v=2" alt=""><span>Lv.3</span></div>
+      </div>
+    </div>
+    <div class="footer"><button class="secondary">Wear Now</button><button class="primary">Show It Off</button></div>
+  </section>
+  <div class="home"></div>
+  <script>
+    const drawer=document.querySelector("#drawer"),progress=document.querySelector("#progress"),levels=[...document.querySelectorAll(".level")];let state=0;
+    function render(){levels.forEach((level,index)=>level.classList.toggle("on",index<state));drawer.classList.toggle("has-buttons",state>0);progress.textContent=state===0?"Current progress 10 / 10,000":"Earned on 2024/07/03"}
+    render();setInterval(()=>{state=(state+1)%4;render()},1600);
+  </script>
+</body>
+</html>

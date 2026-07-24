@@ -1,0 +1,47 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="78.3593" height="22.9138" viewBox="0 0 78.3593 22.9138" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Vector 14044" filter="url(#filter0_diin_0_1281)">
+<path d="M1.69172 19.7469L26.8828 4.68423C34.4554 0.156252 43.9038 0.156252 51.4764 4.68422L76.6676 19.7469" stroke="url(#paint0_linear_0_1281)" stroke-width="2.57649"/>
+</g>
+<defs>
+<filter id="filter0_diin_0_1281" x="0" y="-0.257649" width="78.3593" height="23.1715" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="1.0306"/>
+<feGaussianBlur stdDeviation="0.515298"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_1281"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="0.515298"/>
+<feGaussianBlur stdDeviation="0.180354"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"/>
+<feBlend mode="normal" in2="shape" result="effect2_innerShadow_0_1281"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dx="-1.0306" dy="-0.257649"/>
+<feGaussianBlur stdDeviation="0.206119"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"/>
+<feBlend mode="normal" in2="effect2_innerShadow_0_1281" result="effect3_innerShadow_0_1281"/>
+<feTurbulence type="fractalNoise" baseFrequency="19.40625 19.40625" stitchTiles="stitch" numOctaves="3" result="noise" seed="7100" />
+<feColorMatrix in="noise" type="luminanceToAlpha" result="alphaNoise" />
+<feComponentTransfer in="alphaNoise" result="coloredNoise1">
+<feFuncA type="discrete" tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "/>
+</feComponentTransfer>
+<feComposite operator="in" in2="effect3_innerShadow_0_1281" in="coloredNoise1" result="noise1Clipped" />
+<feFlood flood-color="rgba(0, 0, 0, 0.25)" result="color1Flood" />
+<feComposite operator="in" in2="noise1Clipped" in="color1Flood" result="color1" />
+<feMerge result="effect4_noise_0_1281">
+<feMergeNode in="effect3_innerShadow_0_1281" />
+<feMergeNode in="color1" />
+</feMerge>
+<feBlend mode="normal" in="effect4_noise_0_1281" in2="effect1_dropShadow_0_1281" result="effect4_noise_0_1281"/>
+</filter>
+<linearGradient id="paint0_linear_0_1281" x1="-15.8284" y1="10.9869" x2="64.6869" y2="13.4345" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FFF0EC"/>
+<stop offset="0.548077" stop-color="#CA583E"/>
+<stop offset="1" stop-color="#FFF0EC"/>
+</linearGradient>
+</defs>
+</svg>

@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>跟单交易系统 · MIMO</title>
   <style>
-    :root { --bg:#070809; --panel:#0d0f11; --line:rgba(255,255,255,.13); --muted:rgba(255,255,255,.55); --dim:rgba(255,255,255,.34); --accent:#b898e8; }
+    :root { --bg:#070809; --panel:#0d0f11; --line:rgba(255,255,255,.13); --muted:rgba(255,255,255,.55); --dim:rgba(255,255,255,.34); --accent:rgba(255,255,255,.44); }
     * { box-sizing:border-box; }
     html { scroll-behavior:smooth; background:var(--bg); }
     body { margin:0; overflow-x:hidden; background:var(--bg); color:#f5f5f5; font-family:"HarmonyOS Sans SC","PingFang SC","Microsoft YaHei",sans-serif; }
     button { font:inherit; }
-    .shell { width:min(1400px,100%); margin:auto; padding:0 100px 120px; }
+    .shell { width:min(1920px,100%); margin:auto; padding:0 clamp(40px,4vw,80px) 120px; }
     .hero { min-height:0; display:grid; grid-template-columns:minmax(0,.86fr) minmax(420px,1.14fr); align-items:start; gap:80px; padding:48px 0 64px; border-bottom:1px solid var(--line); }
     .eyebrow,.meta,.index,.kicker,.step-no,.footer { font:10px/1.4 "SFMono-Regular",Consolas,monospace; letter-spacing:.12em; text-transform:uppercase; }
     .eyebrow { margin:0 0 28px; color:var(--dim); }
@@ -69,20 +69,20 @@
     .step { min-height:270px; padding:28px 24px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
     .step-no { color:var(--accent); }.step h3 { margin:46px 0 16px; font-size:18px; font-weight:500; }.step p { margin:0; color:var(--muted); font-size:13px; line-height:1.75; }
     .shots { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; align-items:start; }
-    .shot { margin:0; border:1px solid var(--line); background:#eef; overflow:hidden; }
-    .shot img { width:100%; height:auto; display:block; }
-    .shot figcaption { padding:14px 16px; border-top:1px solid var(--line); background:#0b0c0e; color:var(--dim); font:9px/1.5 monospace; letter-spacing:.08em; text-transform:uppercase; }
+    .shot { display:flex; flex-direction:column; margin:0; border:0; background:transparent; overflow:visible; }
+    .shot img { display:block; width:min(100%,248px); height:auto; max-width:248px; margin:0 auto; object-fit:contain; object-position:center top; border-radius:24px; }
+    .shot figcaption { order:-1; min-height:38px; padding:0 0 12px; border:0; background:transparent; color:var(--dim); font:9px/1.5 monospace; letter-spacing:.08em; text-transform:uppercase; }
     .highlights { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
-    .highlight { position:relative; min-height:280px; padding:34px; border:1px solid var(--line); background:linear-gradient(145deg,rgba(184,152,232,.1),transparent 60%); }
+    .highlight { position:relative; min-height:280px; padding:34px; border:1px solid var(--line); background:transparent; }
     .highlight span { color:var(--accent); font:11px/1 monospace; }.highlight h3 { margin:80px 0 18px; font-size:23px; font-weight:400; }.highlight p { margin:0; color:var(--muted); line-height:1.8; }
     .results { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); border-left:1px solid var(--line); }
     .result { padding:32px 24px; border-right:1px solid var(--line); border-bottom:1px solid var(--line); }
-    .result b { display:block; color:var(--accent); font-size:38px; font-weight:300; }.result span { display:block; margin-top:12px; color:var(--muted); font-size:12px; line-height:1.6; }
+    .result b { display:block; color:#f5f5f5; font-size:38px; font-weight:300; }.result span { display:block; margin-top:12px; color:var(--muted); font-size:12px; line-height:1.6; }
     .insight { max-width:1000px; font-size:clamp(28px,4vw,54px); font-weight:300; line-height:1.25; letter-spacing:-.035em; }
     .footer { display:flex; justify-content:space-between; padding-top:30px; color:var(--dim); }
     .reveal { opacity:0; filter:blur(6px); transform:translateY(24px); transition:opacity .7s ease,filter .7s ease,transform .7s cubic-bezier(.16,1,.3,1); }.reveal.visible { opacity:1; filter:none; transform:none; }
     @media (max-width:1000px) { .shell{padding:0 40px 80px}.hero{grid-template-columns:1fr;gap:44px}.steps{grid-template-columns:repeat(2,1fr)}.shots{grid-template-columns:repeat(2,1fr)} }
-    @media (max-width:680px) { .shell{padding:0 24px 64px}.hero{padding-top:36px}.section-head{grid-template-columns:1fr;gap:16px}.overview,.highlights,.results{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.shots{gap:10px}.content{padding:76px 0}.tab{padding:15px 16px} }
+    @media (max-width:680px) { .shell{padding:0 24px 64px}.hero{padding-top:36px}.section-head{grid-template-columns:1fr;gap:16px}.overview,.highlights,.results{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.shots{grid-template-columns:1fr;gap:32px}.shot img{width:min(100%,248px);max-width:248px}.content{padding:76px 0}.tab{padding:15px 16px} }
     @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto}.reveal{opacity:1;filter:none;transform:none;transition:none}.copy-float{animation:none} }
   </style>
 </head>
@@ -93,7 +93,7 @@
       <div>
         <p class="eyebrow" data-zh="COPY TRADING · 2025–2026 · COINW" data-en="COPY TRADING · 2025–2026 · COINW">COPY TRADING · 2025–2026 · COINW</p>
         <h1 data-zh="跟单<br>交易系统" data-en="Copy Trading<br>System">跟单<br>交易系统</h1>
-        <p class="lead" data-zh="从 0 到 1 设计 CoinW 跟单交易产品，覆盖交易员排行、跟单设置、实时 PnL 可视化与社交信任机制，让专业交易数据对新用户同样可读。" data-en="Designed CoinW copy trading from 0 to 1, covering trader ranking, follow settings, real-time PnL visualization, and social trust signals.">从 0 到 1 设计 CoinW 跟单交易产品，覆盖交易员排行、跟单设置、实时 PnL 可视化与社交信任机制，让专业交易数据对新用户同样可读。</p>
+        <p class="lead" data-zh="从 0 到 1 设计 CoinW 跟单交易产品，覆盖交易员筛选、跟单配置、实时 PnL 可视化与社交信任机制，建立完整的跟单决策链路。" data-en="Designed CoinW copy trading from 0 to 1, covering trader discovery, follow configuration, real-time PnL visualization, and social trust signals across the decision journey.">从 0 到 1 设计 CoinW 跟单交易产品，覆盖交易员筛选、跟单配置、实时 PnL 可视化与社交信任机制，建立完整的跟单决策链路。</p>
         <div class="meta"><span>Lead UI Designer</span><span>PC / Mobile</span><span>5 Months</span></div>
       </div>
       <figure class="cover copy-banner-cover">
@@ -109,10 +109,10 @@
     <div class="index reveal"><span>03 / Complete Case Study</span><span>Scroll to explore</span></div>
 
     <section class="content reveal" id="overview" data-tab-zh="项目概览" data-tab-en="Overview">
-      <div class="section-head"><span class="kicker">01 / Overview</span><h2 data-zh="专业内容，小白可读" data-en="Expert data without the intimidation">专业内容，小白可读</h2></div>
+      <div class="section-head"><span class="kicker">01 / Overview</span><h2 data-zh="复杂交易信息，清晰决策" data-en="Complex data, clearer decisions">复杂交易信息，清晰决策</h2></div>
       <div class="overview">
         <article class="panel"><strong data-zh="项目背景" data-en="Context">项目背景</strong><p data-zh="产品需要同时服务保守型跟单者、积极型跟单者与策略观察者。三类用户在选择交易员时关注的指标不同，但旧信息结构缺少明确优先级。" data-en="The product serves conservative followers, active followers, and strategy observers. Each group evaluates traders differently, while the old structure lacked clear data priority.">产品需要同时服务保守型跟单者、积极型跟单者与策略观察者。三类用户在选择交易员时关注的指标不同，但旧信息结构缺少明确优先级。</p></article>
-        <article class="panel"><strong data-zh="核心挑战" data-en="Core challenge">核心挑战</strong><p data-zh="真正懂数据的用户不需要跟单，而需要跟单的用户往往看不懂数据。设计重点不是隐藏复杂度，而是让不同深度的信息逐层出现。" data-en="Users who need copy trading often struggle with trading metrics. The goal was not to hide complexity, but to reveal it in understandable layers.">真正懂数据的用户不需要跟单，而需要跟单的用户往往看不懂数据。设计重点不是隐藏复杂度，而是让不同深度的信息逐层出现。</p></article>
+        <article class="panel"><strong data-zh="核心挑战" data-en="Core challenge">核心挑战</strong><p data-zh="不同经验层级的用户对收益、风险与策略信息的理解深度不同。设计需要保留专业信息，同时通过清晰的层级与引导降低决策成本。" data-en="Users at different experience levels interpret return, risk, and strategy data differently. The design preserves professional depth while using clear hierarchy and guidance to reduce decision effort.">不同经验层级的用户对收益、风险与策略信息的理解深度不同。设计需要保留专业信息，同时通过清晰的层级与引导降低决策成本。</p></article>
       </div>
     </section>
 

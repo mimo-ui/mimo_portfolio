@@ -388,6 +388,7 @@
     }
     .main-menu a:hover,
     .main-menu button:hover { color: rgba(255,255,255,.6); }
+    .download-label-short { display: none; }
     .lang-toggle { min-width: 30px; text-align: center; appearance: none; }
     .file-warning {
       position: fixed;
@@ -512,8 +513,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 16px;
-      max-width: 430px;
+      gap: 18px;
+      width: min(760px, calc(100vw - 48px));
+      max-width: 760px;
       pointer-events: auto;
       transform: scale(var(--hero-scale));
       opacity: var(--hero-opacity);
@@ -528,7 +530,7 @@
       line-height: 1;
     }
     h1 {
-      max-width: 520px;
+      max-width: 760px;
       margin: 0;
       font-size: 30px;
       line-height: 1.2;
@@ -540,12 +542,30 @@
     h1 b, h2 b { font-weight: 600; }
     .x-symbol { font-size: 30px; }
     .hero-inner p {
-      max-width: 400px;
+      max-width: 620px;
       margin: 0 0 8px;
       color: var(--muted);
       font-size: 14px;
       line-height: 1.8;
       text-align: center;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .hero-actions .btn {
+      min-width: 148px;
+      text-align: center;
+    }
+    .hero-actions .btn.is-primary {
+      border-color: #fff;
+      background: #fff;
+      color: #050505;
+    }
+    .hero-actions .btn.is-primary:hover {
+      background: rgba(255,255,255,.86);
     }
 
     main { position: relative; z-index: 8; }
@@ -575,7 +595,7 @@
       min-height: 80vh;
       padding: 200px 0;
     }
-    #cases { padding-bottom: 40px; }
+    #cases { padding-bottom: 16px; }
     .container {
       display: flex;
       flex-direction: column;
@@ -668,6 +688,7 @@
     .image-mask > .design-system-preview,
     .image-mask > .otc-preview,
     .image-mask > .otc-flow-stage,
+    .image-mask > .dual-phone-promo-preview,
     .image-mask > .telegram-badge-preview,
     .image-mask > .landing-cover-preview {
       border: 0;
@@ -820,6 +841,138 @@
       aspect-ratio: 802 / 582;
       filter: drop-shadow(0 26px 36px rgba(0,0,0,.48));
       transform: rotateY(-4deg) rotateZ(.8deg) translateZ(34px);
+    }
+    .dual-phone-promo-preview {
+      position: relative;
+      width: 100%;
+      min-height: clamp(400px, 42vw, 470px);
+      overflow: visible;
+      background: transparent;
+      perspective: 1800px;
+      transform-style: preserve-3d;
+    }
+    .dual-phone-item {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 390px;
+      height: 844px;
+      overflow: hidden;
+      border-radius: 48px;
+      transform-origin: 50% 50%;
+      filter: drop-shadow(0 24px 28px rgba(0,0,0,.32));
+      opacity: 0;
+    }
+    .dual-phone-item iframe {
+      position: absolute;
+      display: block;
+      border: 0;
+      background: transparent;
+      pointer-events: none;
+    }
+    .dual-phone-item.is-coinw {
+      z-index: 1;
+    }
+    .dual-phone-promo-preview.is-active .dual-phone-item.is-coinw {
+      animation: dual-phone-coinw 1.8s cubic-bezier(.22,1,.36,1) both;
+    }
+    .dual-phone-item.is-coinw iframe {
+      top: -14px;
+      left: -14px;
+      width: 418px;
+      height: 872px;
+    }
+    .dual-phone-item.is-otc {
+      z-index: 2;
+      width: 391px;
+      height: 828px;
+      border-radius: 46px;
+    }
+    .dual-phone-promo-preview.is-active .dual-phone-item.is-otc {
+      animation: dual-phone-otc 1.8s cubic-bezier(.22,1,.36,1) 80ms both;
+    }
+    .dual-phone-item.is-otc iframe {
+      top: -26px;
+      left: -26px;
+      width: 443px;
+      height: 880px;
+    }
+    .copy-trading-demo-preview {
+      position: relative;
+      width: 100%;
+      min-height: clamp(430px, 42vw, 500px);
+      overflow: visible;
+      background: transparent;
+    }
+    .copy-trading-demo-device {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 407px;
+      height: 844px;
+      overflow: hidden;
+      border-radius: 64px;
+      background: transparent;
+      filter: drop-shadow(0 24px 32px rgba(0,0,0,.36));
+      transform: translate(-50%,-50%) scale(.54);
+      transform-origin: 50% 50%;
+    }
+    .copy-trading-demo-device iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: transparent !important;
+      color-scheme: dark;
+      pointer-events: none;
+    }
+    .community-demo-preview {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 636 / 400;
+      overflow: visible;
+      background: transparent;
+    }
+    .community-demo-mount {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: transparent !important;
+      overflow: visible;
+    }
+    @keyframes dual-phone-coinw {
+      0% { opacity: 0; transform: translate3d(-50%,-50%,0) rotateZ(0) scale(.38); }
+      18% { opacity: 1; }
+      68% { opacity: 1; transform: translate3d(-75%,-48%,0) rotateZ(-8deg) scale(.47); }
+      100% { opacity: 1; transform: translate3d(-70.5%,-50%,0) rotateZ(0) scale(.46); }
+    }
+    @keyframes dual-phone-otc {
+      0% { opacity: 0; transform: translate3d(-50%,-50%,0) rotateZ(0) scale(.39); }
+      18% { opacity: 1; }
+      68% { opacity: 1; transform: translate3d(-31%,-54%,0) rotateZ(14deg) scale(.48); }
+      100% { opacity: 1; transform: translate3d(-21.5%,-50%,0) rotateZ(0) scale(.47); }
+    }
+    @media (max-width: 760px) {
+      .dual-phone-promo-preview { min-height: 250px; }
+      .copy-trading-demo-preview { min-height: 270px; }
+      .copy-trading-demo-device { transform: translate(-50%,-50%) scale(.29); }
+      @keyframes dual-phone-coinw {
+        0% { opacity: 0; transform: translate3d(-50%,-50%,0) rotateZ(0) scale(.20); }
+        18% { opacity: 1; }
+        68% { opacity: 1; transform: translate3d(-75%,-48%,0) rotateZ(-8deg) scale(.26); }
+        100% { opacity: 1; transform: translate3d(-70.5%,-50%,0) rotateZ(0) scale(.25); }
+      }
+      @keyframes dual-phone-otc {
+        0% { opacity: 0; transform: translate3d(-50%,-50%,0) rotateZ(0) scale(.21); }
+        18% { opacity: 1; }
+        68% { opacity: 1; transform: translate3d(-31%,-54%,0) rotateZ(14deg) scale(.27); }
+        100% { opacity: 1; transform: translate3d(-21.5%,-50%,0) rotateZ(0) scale(.26); }
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .dual-phone-promo-preview.is-active .dual-phone-item { animation-duration: 1ms; animation-delay: 0ms; }
     }
     .otc-flow-modal img { object-fit: contain; }
     .otc-phone-shell {
@@ -1229,7 +1382,10 @@
     #case-community .community-mask {
       flex-shrink: 0;
       margin-left: auto;
-      overflow: hidden;
+      overflow: visible;
+    }
+    #case-community .community-mask > .corner {
+      display: none;
     }
     .telegram-neon {
       position: absolute;
@@ -1504,7 +1660,7 @@
     .import-carousel-viewport {
       width: 100%;
       margin: 0 auto;
-      padding: 92px 0 60px;
+      padding: 82px 0 84px;
       overflow: hidden;
       perspective: 1000px;
     }
@@ -1533,8 +1689,8 @@
       will-change: transform, opacity, filter;
     }
     .import-carousel-card:not(.is-active) {
-      opacity: .56;
-      filter: blur(1px) saturate(.78);
+      opacity: .38;
+      filter: blur(1.2px) saturate(.7);
     }
     .import-carousel-button {
       display: block;
@@ -1560,7 +1716,7 @@
     .import-carousel-controls {
       display: flex;
       width: min(100%, 640px);
-      margin: 30px auto 0;
+      margin: 14px auto 0;
       align-items: center;
       justify-content: center;
       gap: 18px;
@@ -1628,6 +1784,87 @@
     .import-carousel-dot:focus-visible {
       outline: 1px solid rgba(255,255,255,.9);
       outline-offset: 4px;
+    }
+    .import-carousel-viewer {
+      position: fixed;
+      inset: 0;
+      z-index: 1800;
+      display: grid;
+      grid-template-rows: 64px minmax(0,1fr);
+      color: #f4f4f4;
+      background: rgba(5,6,7,.96);
+      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(18px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .24s ease, visibility .24s ease;
+    }
+    .import-carousel-viewer.is-open { opacity: 1; visibility: visible; }
+    .import-carousel-viewer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-left: clamp(20px,4vw,64px);
+      border-bottom: 1px solid var(--line);
+    }
+    .import-carousel-viewer-count {
+      color: rgba(255,255,255,.58);
+      font: 10px/1 "SFMono-Regular",Consolas,monospace;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    .import-carousel-viewer-close,
+    .import-carousel-viewer-nav {
+      display: grid;
+      width: 64px;
+      height: 64px;
+      padding: 0;
+      place-items: center;
+      border: 0;
+      color: #f4f4f4;
+      background: transparent;
+      cursor: pointer;
+    }
+    .import-carousel-viewer-close {
+      border-left: 1px solid var(--line);
+      font-size: 28px;
+    }
+    .import-carousel-viewer-close:hover,
+    .import-carousel-viewer-close:focus-visible,
+    .import-carousel-viewer-nav:hover,
+    .import-carousel-viewer-nav:focus-visible {
+      color: #070809;
+      background: #f4f4f4;
+      outline: 0;
+    }
+    .import-carousel-viewer-stage {
+      display: grid;
+      min-height: 0;
+      grid-template-columns: 64px minmax(0,1fr) 64px;
+      align-items: center;
+      gap: clamp(12px,2vw,28px);
+      padding: clamp(20px,3vw,44px);
+      overflow: hidden;
+    }
+    .import-carousel-viewer-nav {
+      border: 1px solid var(--line);
+      font-size: 28px;
+    }
+    .import-carousel-viewer-figure {
+      display: grid;
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      margin: 0;
+      place-items: center;
+    }
+    .import-carousel-viewer-image {
+      display: block;
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
     }
     .last-section {
       justify-content: flex-start;
@@ -2674,16 +2911,26 @@
       .main-menu { gap: 0; margin-left: auto; }
       .main-menu a,
       .main-menu button { font-size: 8px; letter-spacing: .045em; padding: 9px 3px 10px; white-space: nowrap; }
+      .download-label-full { display: none; }
+      .download-label-short { display: inline; }
       .lang-toggle { min-width: 18px; }
       .quote { max-width: 230px; }
       h1 { font-size: 25px; max-width: 320px; }
       h2 { font-size: 23px; }
-      .hero-inner { max-width: 330px; }
+      .hero-inner { width: min(340px, calc(100vw - 40px)); max-width: 340px; gap: 14px; }
+      .hero-inner p { max-width: 330px; font-size: 13px; line-height: 1.65; }
+      .hero-actions { width: 100%; gap: 8px; }
+      .hero-actions .btn { min-width: 0; flex: 1 1 calc(50% - 4px); padding: 14px 10px; font-size: 10px; }
+      .hero-actions .btn:first-child { flex-basis: 100%; }
       .tags { font-size: 10px; }
       .btn-group { flex-direction: column; align-items: center; }
       .import-carousel-slide { flex-basis: 72%; }
       .import-carousel-controls { flex-wrap: wrap; margin-top: 22px; }
       .import-carousel-dots { order: 3; width: 100%; }
+      .import-carousel-viewer { grid-template-rows: 54px minmax(0,1fr); }
+      .import-carousel-viewer-close { width: 54px; height: 54px; }
+      .import-carousel-viewer-stage { grid-template-columns: 42px minmax(0,1fr) 42px; padding: 16px; }
+      .import-carousel-viewer-nav { width: 42px; height: 54px; }
       .last { grid-template-columns: 1fr; padding: 0 24px; }
       .last .block:last-child { grid-column: auto; }
       .frame-screen:after { height: 120px; }
@@ -2755,6 +3002,7 @@
         <a class="mono" href="#cases" data-i18n="nav.cases" data-i18n-cursor="nav.casesCursor">CASES</a>
         <a class="mono" href="#exp" data-i18n="nav.experience" data-i18n-cursor="nav.experienceCursor">EXPERIENCE</a>
         <a class="mono" href="mailto:mokusama001@gmail.com" data-i18n="nav.mail" data-i18n-cursor="nav.mailCursor">MAIL</a>
+        <a class="mono download-link" href="output/pdf/MIMO-Resume-and-Portfolio.zip" download="MIMO-Resume-and-Portfolio.zip" data-i18n-aria="download.aria" data-i18n-cursor="download.cursor"><span class="download-label-full" data-i18n="download.label">DOWNLOAD</span><span class="download-label-short">PDF</span></a>
         <button class="mono lang-toggle" id="langToggle" type="button" data-i18n="language.toggle" data-i18n-aria="language.aria" data-i18n-cursor="language.cursor">中</button>
         <span class="nav-hover" id="navHover"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></span>
       </nav>
@@ -2793,11 +3041,15 @@
     <div class="hero-inner">
       <div class="logo-title">
         <span class="pixel-cat hero-brand" role="img" aria-label="Mimo"></span>
-        <span class="hero-name mono">MIMO</span>
-        <h1><b>UI</b> <span class="x-symbol">x</span> <b>UX</b> <span data-i18n="hero.headingTail">for product, data and control</span></h1>
+        <span class="hero-name mono" data-i18n="hero.eyebrow">MIMO / PRODUCT DESIGNER</span>
+        <h1 data-i18n="hero.heading">Product designer for fintech, trading and complex systems</h1>
       </div>
-      <p data-i18n="hero.body">I design portfolio-ready product systems, interaction prototypes and decision flows for complex digital products.</p>
-      <a href="https://t.me/Mimomo1" target="_blank" rel="noopener" class="btn mono" data-i18n-aria="telegram.aria" data-i18n-cursor="telegram.cursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="telegram.label">WRITE TO TELEGRAM</span></a>
+      <p data-i18n="hero.body">With 7+ years of experience, I turn complex financial and data-heavy workflows into clear product systems, reusable design foundations and testable high-fidelity prototypes.</p>
+      <div class="hero-actions">
+        <a href="otc-case-detail.html" class="btn is-primary mono" id="heroFlagshipLink" data-open-otc-case data-i18n-aria="hero.flagshipAria" data-i18n-cursor="hero.flagshipCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="hero.flagshipLabel">FLAGSHIP CASE</span></a>
+        <a href="output/pdf/MIMO-Resume.pdf" target="_blank" rel="noopener" class="btn mono" data-i18n-aria="hero.resumeAria" data-i18n-cursor="hero.resumeCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="hero.resumeLabel">RESUME</span></a>
+        <a href="mailto:mokusama001@gmail.com" class="btn mono" data-i18n-aria="hero.contactAria" data-i18n-cursor="hero.contactCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="hero.contactLabel">CONTACT</span></a>
+      </div>
     </div>
   </div>
 
@@ -2840,45 +3092,19 @@
           </div>
         </article>
         <article class="case reveal" id="case-otc">
-          <div class="image-mask otc-mask"><div class="otc-flow-stage" role="img" aria-label="CoinW OTC flow from desktop merchant list to purchase confirmation and mobile buying screens"><svg class="otc-flow-path" viewBox="0 0 636 400" aria-hidden="true"><path d="M72 312 C205 360 290 330 349 248 S486 154 608 246"></path></svg><div class="otc-flow-layer otc-flow-desktop"><img src="assets/cases/otc-flow/desktop-list.png" alt="" loading="lazy"></div><div class="otc-flow-layer otc-flow-modal"><img src="assets/cases/otc-flow/purchase-modal.png" alt="" aria-hidden="true" loading="lazy"></div><div class="otc-flow-layer otc-phone-shell otc-flow-buy"><img src="assets/cases/otc-flow/buy-app.png" alt="" aria-hidden="true" loading="lazy"></div><div class="otc-flow-layer otc-phone-shell otc-flow-list"><img src="assets/cases/otc-flow/p2p-list-app.png" alt="" aria-hidden="true" loading="lazy"></div></div><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></div>
+          <div class="image-mask otc-mask"><div class="dual-phone-promo-preview"><div class="dual-phone-item is-coinw"><iframe src="coinw-app-launch-demo.html" title="CoinW App 内容" loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div><div class="dual-phone-item is-otc"><iframe src="otc-sell-auto-demo.html?embed=1" title="OTC App 内容" loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div></div><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></div>
           <div class="case-info">
             <ul class="tags mono"><li data-i18n="case2.tag1">OTC Design</li></ul>
             <h3 data-i18n="case2.title">OTC Trading Flow</h3>
             <p data-i18n="case2.desc">A cross-platform OTC experience covering merchant discovery, quote confirmation, payment, and order status across web and mobile.</p>
-            <a class="btn mono" id="otcCaseLink" href="otc-case-detail.html" onpointerdown="event.preventDefault();document.getElementById('otcCaseModal').classList.add('is-open');document.getElementById('otcCaseModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';document.getElementById('otcCaseClose').focus()" onclick="return false" data-i18n-cursor="case.viewCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="case.viewLabel">VIEW CASE</span></a>
+            <a class="btn mono" id="otcCaseLink" href="otc-case-detail.html" data-open-otc-case data-i18n-cursor="case.viewCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="case.viewLabel">VIEW CASE</span></a>
           </div>
         </article>
         <article class="case reveal" id="case-copy-trading">
           <div class="image-mask copy-mask">
-            <div class="otc-preview" role="img" aria-label="CoinW copy trading system on mobile">
-              <img class="case-layer copy-phone-generated" src="assets/cases/layers/copy/phone-generated-tight.png" alt="" loading="lazy">
-              <div class="copy-float copy-speaker">
-                <div class="copy-plane"><div class="copy-card">
-                  <span class="copy-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="currentColor"/><path d="M5 20c.5-4 3-6 7-6s6.5 2 7 6" fill="currentColor"/></svg></span>
-                  <span class="copy-card-copy"><span class="copy-card-kicker">正在讲解</span><span class="copy-card-title">趋势策略分享中</span></span>
-                  <svg class="copy-wave" viewBox="0 0 36 24" fill="none" aria-hidden="true"><path d="M2 10v4M7 6v12M12 2v20M17 7v10M22 4v16M27 8v8M32 5v14" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
-                </div></div>
-              </div>
-              <div class="copy-float copy-follower">
-                <div class="copy-plane"><div class="copy-card">
-                  <span class="copy-avatar-stack" aria-hidden="true"><span>L</span><span>M</span><span>A</span></span>
-                  <span class="copy-card-copy"><span class="copy-card-title">32 人正在跟随</span><span class="copy-card-subtitle">收益领先中</span></span>
-                  <svg class="copy-trend" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 17l6-6 4 4 8-9M15 6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div></div>
-              </div>
-              <div class="copy-float copy-growth">
-                <div class="copy-plane"><div class="copy-card">
-                  <span class="copy-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="9" r="3" fill="currentColor"/><circle cx="16" cy="10" r="2.5" fill="currentColor" opacity=".75"/><path d="M3.5 19c.4-3.6 2.4-5.5 5.5-5.5s5.1 1.9 5.5 5.5M14 14c3.5 0 5.5 1.7 6 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-                  <span class="copy-card-copy"><span class="copy-card-title">本周新增跟随者 <b class="copy-accent">+156</b></span><span class="copy-card-subtitle">较上周增长 <b class="copy-positive">28%</b></span></span>
-                  <svg class="copy-trend" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 17l6-6 4 4 8-9M15 6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </div></div>
-              </div>
-              <div class="copy-float copy-profit">
-                <div class="copy-plane"><div class="copy-card">
-                  <span class="copy-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2c1 4-1 5-2 7 3-1 4-3 5-5 3 3 5 6 5 10a9 9 0 11-18 0c0-3 2-6 5-9 0 3 1 5 3 6-1-4 1-6 2-9z" fill="currentColor"/><path d="M12 12c2 2 3 3 3 5a3 3 0 11-6 0c0-2 1-3 3-5z" fill="#ff6b5e"/></svg></span>
-                  <span class="copy-card-copy"><span class="copy-card-title">累计分润突破 <b class="copy-accent">4.5万 USDT</b></span><span class="copy-card-subtitle">继续加油，收益长虹！</span></span>
-                  <svg class="copy-sparkle" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1l2.2 6.8L21 10l-6.8 2.2L12 19l-2.2-6.8L3 10l6.8-2.2L12 1z"/><path d="M20 16l.8 2.2L23 19l-2.2.8L20 22l-.8-2.2L17 19l2.2-.8L20 16z" opacity=".7"/></svg>
-                </div></div>
+            <div class="copy-trading-demo-preview">
+              <div class="copy-trading-demo-device">
+                <iframe src="coinw-copy-trading-demo.html?embed=1&v=roi-center-3" title="CoinW 跟单系统动态原型" loading="lazy" tabindex="-1" aria-hidden="true" allowtransparency="true"></iframe>
               </div>
             </div>
             <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
@@ -2891,7 +3117,7 @@
           </div>
         </article>
         <article class="case reveal" id="case-community">
-          <div class="image-mask community-mask"><div class="telegram-badge-preview"><img src="assets/cases/telegram-badge-neon-cover-transparent.png" alt="Badge detail and badge wall mobile interfaces with animated neon trails" loading="lazy"><svg class="telegram-neon" viewBox="0 0 1135 720" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><defs><filter id="telegram-neon-glow" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7" result="blur"></feGaussianBlur><feMerge><feMergeNode in="blur"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge></filter><mask id="telegram-phone-mask"><rect width="1135" height="720" fill="white"></rect><path d="M300 84 L515 66 L610 615 L381 637 Z" fill="black"></path><path d="M650 45 L881 72 L815 556 L570 525 Z" fill="black"></path></mask></defs><g mask="url(#telegram-phone-mask)"><ellipse class="telegram-neon-path is-pink" pathLength="100" cx="500" cy="360" rx="392" ry="196"></ellipse><ellipse class="telegram-neon-path is-orange" pathLength="100" cx="720" cy="348" rx="330" ry="192"></ellipse><ellipse class="telegram-neon-path is-blue" pathLength="100" cx="745" cy="390" rx="346" ry="176"></ellipse></g></svg></div><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></div>
+          <div class="image-mask community-mask"><div class="community-demo-preview"><div class="community-demo-mount" id="communityDemoMount" aria-label="社区徽章双手机动态展示"></div></div><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></div>
           <div class="case-info">
             <ul class="tags mono"><li data-i18n="case4.tag1">Community Growth</li><li data-i18n="case4.tag2">Content Structure</li><li data-i18n="case4.tag3">Retention</li></ul>
             <h3 data-i18n="case4.title">Community Redesign</h3>
@@ -3112,6 +3338,20 @@
     </section>
   </main>
 
+  <div class="import-carousel-viewer" id="importCarouselViewer" role="dialog" aria-modal="true" aria-label="Prototype frame preview" aria-hidden="true">
+    <header class="import-carousel-viewer-head">
+      <span class="import-carousel-viewer-count" id="importCarouselViewerCount" aria-live="polite"></span>
+      <button class="import-carousel-viewer-close" id="importCarouselViewerClose" type="button" aria-label="Close preview">×</button>
+    </header>
+    <div class="import-carousel-viewer-stage">
+      <button class="import-carousel-viewer-nav" id="importCarouselViewerPrev" type="button" aria-label="Previous frame">‹</button>
+      <figure class="import-carousel-viewer-figure">
+        <img class="import-carousel-viewer-image" id="importCarouselViewerImage" alt="">
+      </figure>
+      <button class="import-carousel-viewer-nav" id="importCarouselViewerNext" type="button" aria-label="Next frame">›</button>
+    </div>
+  </div>
+
   <div class="otc-case-modal" id="otcCaseModal" role="dialog" aria-modal="true" aria-labelledby="otcCaseModalTitle" aria-hidden="true">
     <header class="otc-case-header">
       <span class="otc-case-index">02 / Selected Case</span>
@@ -3119,7 +3359,7 @@
       <button class="otc-case-close" id="otcCaseClose" type="button" aria-label="Close OTC case" onclick="document.getElementById('otcCaseModal').classList.remove('is-open');document.getElementById('otcCaseModal').setAttribute('aria-hidden','true');document.body.style.overflow='';document.getElementById('otcCaseLink').focus()">×</button>
     </header>
     <div class="otc-case-progress" aria-hidden="true"><span id="otcCaseProgress"></span></div>
-    <iframe class="otc-case-frame" id="otcCaseFrame" title="OTC Trading Flow case study" src="otc-case-detail.html?v=homepage-banner-3" data-src="otc-case-detail.html?v=homepage-banner-3"></iframe>
+    <iframe class="otc-case-frame" id="otcCaseFrame" title="OTC Trading Flow case study" src="otc-case-detail.html?embed=1&amp;v=screen-standard-248-1" data-src="otc-case-detail.html?embed=1&amp;v=screen-standard-248-1"></iframe>
     <span class="otc-case-corner tl"></span><span class="otc-case-corner tr"></span><span class="otc-case-corner bl"></span><span class="otc-case-corner br"></span>
   </div>
 
@@ -3130,7 +3370,7 @@
       <button class="otc-case-close" id="copyCaseClose" type="button" aria-label="Close copy trading case">×</button>
     </header>
     <div class="otc-case-progress" aria-hidden="true"><span id="copyCaseProgress"></span></div>
-    <iframe class="otc-case-frame" id="copyCaseFrame" title="CoinW Copy Trading System case study" src="copy-trading-case-detail.html?lang=en&amp;v=homepage-banner-3" data-src="copy-trading-case-detail.html"></iframe>
+    <iframe class="otc-case-frame" id="copyCaseFrame" title="CoinW Copy Trading System case study" src="copy-trading-case-detail.html?lang=en&amp;v=neutral-copy-1" data-src="copy-trading-case-detail.html?v=neutral-copy-1"></iframe>
     <span class="otc-case-corner tl"></span><span class="otc-case-corner tr"></span><span class="otc-case-corner bl"></span><span class="otc-case-corner br"></span>
   </div>
 
@@ -3141,7 +3381,7 @@
       <button class="otc-case-close" id="communityCaseClose" type="button" aria-label="Close community case">×</button>
     </header>
     <div class="otc-case-progress" aria-hidden="true"><span id="communityCaseProgress"></span></div>
-    <iframe class="otc-case-frame" id="communityCaseFrame" title="CoinW Community Redesign case study" src="community-case-detail.html?lang=en" data-src="community-case-detail.html"></iframe>
+    <iframe class="otc-case-frame" id="communityCaseFrame" title="CoinW Community Redesign case study" src="community-case-detail.html?lang=en&amp;v=screen-standard-248-1" data-src="community-case-detail.html"></iframe>
     <span class="otc-case-corner tl"></span><span class="otc-case-corner tr"></span><span class="otc-case-corner bl"></span><span class="otc-case-corner br"></span>
   </div>
 
@@ -3198,6 +3438,9 @@
         "nav.experienceCursor": "VIEW EXPERIENCE",
         "nav.mail": "MAIL",
         "nav.mailCursor": "SEND MAIL",
+        "download.label": "DOWNLOAD",
+        "download.aria": "Download Mimo resume and portfolio PDFs",
+        "download.cursor": "DOWNLOAD PDF PACK",
         "language.toggle": "中",
         "language.aria": "Switch language to Chinese",
         "language.cursor": "中文",
@@ -3208,8 +3451,18 @@
         "metrics.cursorY": "Cursor Y",
         "metrics.scroll": "Scroll",
         "metrics.time": "Time",
-        "hero.headingTail": "for product, data and control",
-        "hero.body": "I design portfolio-ready product systems, interaction prototypes and decision flows for complex digital products.",
+        "hero.eyebrow": "MIMO / PRODUCT DESIGNER",
+        "hero.heading": "Product designer for fintech, trading and complex systems",
+        "hero.body": "With 7+ years of experience, I turn complex financial and data-heavy workflows into clear product systems, reusable design foundations and testable high-fidelity prototypes.",
+        "hero.flagshipAria": "View Mimo's flagship OTC case",
+        "hero.flagshipCursor": "VIEW FLAGSHIP CASE",
+        "hero.flagshipLabel": "FLAGSHIP CASE",
+        "hero.resumeAria": "Open Mimo's bilingual resume",
+        "hero.resumeCursor": "OPEN RESUME",
+        "hero.resumeLabel": "RESUME",
+        "hero.contactAria": "Email Mimo",
+        "hero.contactCursor": "SEND EMAIL",
+        "hero.contactLabel": "CONTACT",
         "telegram.aria": "Write to Mimo on Telegram",
         "telegram.cursor": "WRITE TO TELEGRAM",
         "telegram.label": "WRITE TO TELEGRAM",
@@ -3324,6 +3577,9 @@
         "nav.experienceCursor": "查看经历",
         "nav.mail": "邮件",
         "nav.mailCursor": "发送邮件",
+        "download.label": "下载",
+        "download.aria": "下载 Mimo 的简历和作品集 PDF",
+        "download.cursor": "下载 PDF 文件包",
         "language.toggle": "EN",
         "language.aria": "切换为英文",
         "language.cursor": "ENGLISH",
@@ -3334,8 +3590,18 @@
         "metrics.cursorY": "光标 Y",
         "metrics.scroll": "滚动",
         "metrics.time": "时间",
-        "hero.headingTail": "面向产品、数据与控制体验",
-        "hero.body": "为复杂数字产品设计可用于作品集呈现的产品系统、交互原型和决策流程。",
+        "hero.eyebrow": "MIMO / 产品设计师",
+        "hero.heading": "专注金融科技、交易产品与复杂系统的产品设计师",
+        "hero.body": "拥有 7+ 年产品设计经验，将复杂的金融与数据流程转化为清晰的产品系统、可复用的设计基础和可验证的高保真原型。",
+        "hero.flagshipAria": "查看 Mimo 的 OTC 旗舰案例",
+        "hero.flagshipCursor": "查看旗舰案例",
+        "hero.flagshipLabel": "旗舰案例",
+        "hero.resumeAria": "打开 Mimo 的双语简历",
+        "hero.resumeCursor": "打开简历",
+        "hero.resumeLabel": "查看简历",
+        "hero.contactAria": "通过邮件联系 Mimo",
+        "hero.contactCursor": "发送邮件",
+        "hero.contactLabel": "联系我",
         "telegram.aria": "通过 Telegram 联系 Mimo",
         "telegram.cursor": "联系 TELEGRAM",
         "telegram.label": "联系 TELEGRAM",
@@ -4308,6 +4574,7 @@
   <script>
     (() => {
       const link = document.getElementById("otcCaseLink");
+      const links = [...document.querySelectorAll("[data-open-otc-case]")];
       const modal = document.getElementById("otcCaseModal");
       const closeButton = document.getElementById("otcCaseClose");
       const frame = document.getElementById("otcCaseFrame");
@@ -4336,9 +4603,11 @@
       window.openOtcCaseModal = open;
       window.closeOtcCaseModal = close;
 
-      link.addEventListener("click", (event) => {
-        event.preventDefault();
-        open(link);
+      links.forEach((caseLink) => {
+        caseLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          open(caseLink);
+        });
       });
       closeButton.addEventListener("click", close);
       window.addEventListener("keydown", (event) => {
@@ -4384,7 +4653,7 @@
 
       const open = (source = link) => {
         trigger = source;
-        const targetSrc = `${frame.dataset.src}?lang=${currentLocale === "en" ? "en" : "zh"}&v=homepage-banner-3`;
+        const targetSrc = `${frame.dataset.src}?lang=${currentLocale === "en" ? "en" : "zh"}&v=screen-standard-248-1`;
         if (!frame.src.endsWith(targetSrc)) frame.src = targetSrc;
         modal.classList.add("is-open");
         modal.setAttribute("aria-hidden", "false");
@@ -4440,7 +4709,7 @@
 
       const open = (source = link) => {
         trigger = source;
-        const targetSrc = `${frame.dataset.src}?lang=${currentLocale === "en" ? "en" : "zh"}`;
+        const targetSrc = `${frame.dataset.src}?lang=${currentLocale === "en" ? "en" : "zh"}&v=screen-standard-248-1`;
         if (!frame.src.endsWith(targetSrc)) frame.src = targetSrc;
         modal.classList.add("is-open");
         modal.setAttribute("aria-hidden", "false");
@@ -4593,7 +4862,13 @@
       const dots = document.getElementById("importCarouselDots");
       const prev = document.getElementById("importCarouselPrev");
       const next = document.getElementById("importCarouselNext");
-      if (!root || !track || !dots || !prev || !next) return;
+      const viewer = document.getElementById("importCarouselViewer");
+      const viewerImage = document.getElementById("importCarouselViewerImage");
+      const viewerCount = document.getElementById("importCarouselViewerCount");
+      const viewerPrev = document.getElementById("importCarouselViewerPrev");
+      const viewerNext = document.getElementById("importCarouselViewerNext");
+      const viewerClose = document.getElementById("importCarouselViewerClose");
+      if (!root || !track || !dots || !prev || !next || !viewer || !viewerImage || !viewerCount || !viewerPrev || !viewerNext || !viewerClose) return;
 
       const assets = [
         "frame-03.png", "frame-04.png", "frame-05.png", "frame-06.png", "frame-07.png",
@@ -4601,12 +4876,14 @@
         "frame-13.png", "frame-14.png", "frame-15.png", "frame-16.png", "frame-17.png",
         "frame-18.png", "frame-19.png", "frame-20.png", "frame-21.png"
       ].map((name, index) => ({
-        src: `assets/import-carousel-transparent/${name}`,
+        src: `assets/import-carousel-focused/${name}`,
         title: `Frame ${String(index + 3).padStart(2, "0")}`
       }));
 
       let activeIndex = 0;
       let focusIndex = 1;
+      let viewerIndex = focusIndex;
+      let viewerTrigger = null;
       let pointerInside = false;
 
       track.innerHTML = assets.map((item, index) => `
@@ -4650,8 +4927,8 @@
           const distance = focusIndex - cardIndex;
           const isActive = cardIndex === focusIndex;
           card.classList.toggle("is-active", isActive);
-          card.style.setProperty("--rotation", `${Math.max(-2, Math.min(2, distance)) * 42}deg`);
-          card.style.setProperty("--scale", isActive ? "1.36" : ".64");
+          card.style.setProperty("--rotation", `${Math.max(-2, Math.min(2, distance)) * 36}deg`);
+          card.style.setProperty("--scale", isActive ? "1.68" : ".56");
           card.style.setProperty("--card-z", isActive ? "5" : "1");
         });
         dotButtons.forEach((dot, dotIndex) => {
@@ -4661,10 +4938,40 @@
         next.disabled = focusIndex === assets.length - 1;
       }
 
+      function renderViewer(index) {
+        viewerIndex = (index + assets.length) % assets.length;
+        const item = assets[viewerIndex];
+        viewerImage.src = item.src;
+        viewerImage.alt = item.title;
+        viewerCount.textContent = `${String(viewerIndex + 1).padStart(2, "0")} / ${String(assets.length).padStart(2, "0")} · ${item.title}`;
+      }
+
+      function openViewer(index, trigger) {
+        viewerTrigger = trigger;
+        renderViewer(index);
+        viewer.classList.add("is-open");
+        viewer.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        viewerClose.focus({ preventScroll: true });
+      }
+
+      function closeViewer() {
+        viewer.classList.remove("is-open");
+        viewer.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        viewerTrigger?.focus({ preventScroll: true });
+        viewerTrigger = null;
+      }
+
       root.addEventListener("click", (event) => {
         const target = event.target.closest("[data-import-slide]");
         if (!target || !root.contains(target)) return;
-        goTo(Number(target.dataset.importSlide));
+        const index = Number(target.dataset.importSlide);
+        if (target.classList.contains("import-carousel-button") && index === focusIndex) {
+          openViewer(index, target);
+          return;
+        }
+        goTo(index);
       });
       root.addEventListener("pointerenter", () => { pointerInside = true; });
       root.addEventListener("pointerleave", () => { pointerInside = false; });
@@ -4679,10 +4986,27 @@
       });
       prev.addEventListener("click", () => goTo(focusIndex - 1));
       next.addEventListener("click", () => goTo(focusIndex + 1));
+      viewerPrev.addEventListener("click", () => renderViewer(viewerIndex - 1));
+      viewerNext.addEventListener("click", () => renderViewer(viewerIndex + 1));
+      viewerClose.addEventListener("click", closeViewer);
+      viewer.addEventListener("click", (event) => {
+        if (event.target === viewer) closeViewer();
+      });
+      [viewerPrev, viewerNext, viewerClose].forEach((control) => {
+        control.addEventListener("mouseenter", () => {
+          if (typeof playButtonHover === "function") playButtonHover();
+        });
+      });
       window.addEventListener("keydown", (event) => {
+        if (viewer.classList.contains("is-open")) {
+          if (event.key === "Escape") closeViewer();
+          if (event.key === "ArrowLeft") renderViewer(viewerIndex - 1);
+          if (event.key === "ArrowRight") renderViewer(viewerIndex + 1);
+          return;
+        }
         if (!pointerInside) return;
-        if (event.key === "ArrowLeft") goTo(activeIndex - 1);
-        if (event.key === "ArrowRight") goTo(activeIndex + 1);
+        if (event.key === "ArrowLeft") goTo(focusIndex - 1);
+        if (event.key === "ArrowRight") goTo(focusIndex + 1);
       });
       window.addEventListener("resize", () => goTo(focusIndex), { passive: true });
       goTo(1);
@@ -5167,6 +5491,101 @@
       state.selectedDate = initialAvailable();
       state.viewDate = new Date(state.selectedDate.getFullYear(), state.selectedDate.getMonth(), 1, 12);
       applyBookingLanguage();
+    })();
+  </script>
+  <script>
+    (() => {
+      const preview = document.querySelector(".dual-phone-promo-preview");
+      const otcFrame = preview?.querySelector(".dual-phone-item.is-otc iframe");
+      if (!preview || !otcFrame) return;
+
+      let isVisible = false;
+      const syncOtcPlayback = () => {
+        otcFrame.contentWindow?.postMessage({
+          type: "otc-demo-visibility",
+          visible: isVisible
+        }, "*");
+      };
+
+      otcFrame.addEventListener("load", syncOtcPlayback);
+      new IntersectionObserver(([entry]) => {
+        isVisible = entry.isIntersecting && entry.intersectionRatio >= .3;
+        if (isVisible) preview.classList.add("is-active");
+        syncOtcPlayback();
+      }, { threshold: [0, .3, 1] }).observe(preview);
+    })();
+  </script>
+  <script type="application/json" id="communityDemoSource">"<!doctype html>\n<html lang=\"zh-CN\">\n<head>\n  <meta charset=\"utf-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1,viewport-fit=cover\">\n  <link rel=\"icon\" href=\"data:,\">\n  <title>Community Badge Promo</title>\n  <style>\n    * { box-sizing: border-box; }\n\n    html,\n    body {\n      width: 100%;\n      height: 100%;\n      min-height: 100%;\n      margin: 0;\n      overflow: hidden;\n      background: transparent !important;\n      background-color: transparent !important;\n    }\n    .phones {\n      position: relative;\n      width: 100vw;\n      height: 100dvh;\n      min-height: 640px;\n      perspective: 1800px;\n      transform-style: preserve-3d;\n    }\n\n    .orbits {\n      position: absolute;\n      z-index: 0;\n      top: 50%;\n      left: 50%;\n      width: min(1120px, 96vw);\n      height: min(720px, 92vh);\n      overflow: visible;\n      pointer-events: none;\n      transform: translate(-50%, -50%);\n    }\n\n    .orbits--front {\n      z-index: 3;\n    }\n\n    .orbit {\n      fill: none;\n      stroke-width: 1.5;\n      stroke-linecap: round;\n      vector-effect: non-scaling-stroke;\n    }\n\n    .orbit-base {\n      stroke: rgba(150, 157, 173, .28);\n      opacity: .62;\n    }\n\n    .orbit-flow {\n      stroke-width: 6;\n      stroke-dasharray: 42 58;\n      opacity: 1;\n      animation: orbit-flow 7.8s linear infinite;\n    }\n\n    .orbit-flow--two {\n      stroke-dasharray: 36 64;\n      animation-duration: 9.6s;\n      animation-direction: reverse;\n    }\n\n    .orbit-flow--three {\n      stroke-dasharray: 31 69;\n      animation-duration: 6.8s;\n      animation-delay: -2.4s;\n    }\n\n    .orbit-front-base {\n      stroke: rgba(145, 152, 169, .3);\n      opacity: .68;\n    }\n\n    .orbit-front-flow {\n      stroke-width: 6;\n      stroke-dasharray: 40 60;\n      opacity: 1;\n      animation: orbit-flow 7.8s linear infinite;\n    }\n\n    .orbit-front-flow--two {\n      stroke-dasharray: 34 66;\n      animation-duration: 9.6s;\n      animation-direction: reverse;\n    }\n\n    .orbit-front-flow--three {\n      stroke-dasharray: 29 71;\n      animation-duration: 6.8s;\n      animation-delay: -2.4s;\n    }\n\n    .glass-anchor {\n      position: absolute;\n      z-index: 4;\n      top: 50%;\n      left: 50%;\n      pointer-events: none;\n    }\n\n    .glass-chip {\n      position: relative;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      gap: 12px;\n      min-width: 184px;\n      height: 68px;\n      padding: 10px 20px;\n      overflow: hidden;\n      border: 1px solid rgba(255, 255, 255, .62);\n      border-radius: 19px;\n      color: #fff;\n      font: 700 20px/1.1 Satoshi, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif;\n      letter-spacing: .1px;\n      white-space: nowrap;\n      pointer-events: none;\n      background:\n        linear-gradient(135deg, rgba(95, 73, 154, .62), rgba(35, 29, 61, .38) 54%, rgba(139, 116, 208, .38));\n      box-shadow:\n        inset 0 1px 0 rgba(255, 255, 255, .36),\n        inset 0 -1px 0 rgba(109, 82, 180, .34),\n        0 12px 32px rgba(38, 29, 69, .22),\n        0 0 0 1px rgba(143, 111, 229, .22);\n      will-change: transform;\n      transform: translate3d(0, 0, 0);\n      backface-visibility: hidden;\n      animation: glass-float var(--float-duration, 4s) cubic-bezier(.45, .05, .55, .95) var(--float-delay, 0s) infinite;\n    }\n\n    .glass-chip::after {\n      content: \"\";\n      position: absolute;\n      inset: 0;\n      border-radius: inherit;\n      background: linear-gradient(112deg, rgba(255, 255, 255, .24), transparent 34%, transparent 70%, rgba(179, 157, 255, .18));\n    }\n\n    .glass-chip img,\n    .glass-chip span {\n      position: relative;\n      z-index: 1;\n    }\n\n    .glass-chip img {\n      width: 48px;\n      height: 48px;\n      flex: 0 0 auto;\n    }\n\n    .glass-anchor--badges {\n      transform: translate(-620px, -310px);\n    }\n\n    .glass-anchor--badges .glass-chip {\n      --float-distance: 10px;\n      --float-duration: 4.2s;\n    }\n\n    .glass-anchor--level {\n      transform: translate(-625px, 225px);\n    }\n\n    .glass-anchor--level .glass-chip {\n      --float-distance: 13px;\n      --float-duration: 4.8s;\n      --float-delay: -1.1s;\n    }\n\n    .glass-anchor--action {\n      transform: translate(395px, 225px);\n    }\n\n    .glass-anchor--action .glass-chip {\n      min-width: 190px;\n      --float-distance: 9px;\n      --float-duration: 4.4s;\n      --float-delay: -2.2s;\n    }\n\n    @keyframes glass-float {\n      0%, 100% { transform: translate3d(0, 0, 0); }\n      50% { transform: translate3d(0, calc(var(--float-distance, 10px) * -1), 0); }\n    }\n\n    @keyframes orbit-flow {\n      to { stroke-dashoffset: -100; }\n    }\n\n    .phone {\n      position: absolute;\n      top: 50%;\n      left: 50%;\n      overflow: visible;\n      transform-style: preserve-3d;\n      transform-origin: 50% 50%;\n      box-shadow: 0 34px 38px rgba(0, 0, 0, .25);\n    }\n\n    .device-screen {\n      position: absolute;\n      z-index: 2;\n      inset: 0;\n      overflow: hidden;\n      border-radius: inherit;\n      background: #050506;\n      box-shadow:\n        inset 0 0 0 3px #030304,\n        inset 0 0 0 5px rgba(255, 255, 255, .045);\n    }\n\n    .device-back {\n      position: absolute;\n      z-index: 0;\n      pointer-events: none;\n      border-radius: inherit;\n      background:\n        linear-gradient(90deg, #171520 0%, #71618a 20%, #2d2939 46%, #17161f 75%, #9080aa 100%);\n      box-shadow:\n        inset 1px 0 1px rgba(255, 255, 255, .52),\n        inset -2px -2px 4px rgba(0, 0, 0, .58),\n        0 8px 0 rgba(18, 16, 24, .9),\n        0 14px 24px rgba(0, 0, 0, .34);\n    }\n\n    .phone--coinw .device-back {\n      inset: 3px 5px -9px -8px;\n    }\n\n    .phone--otc .device-back {\n      inset: 3px -8px -9px 5px;\n    }\n\n    .device-frame {\n      position: absolute;\n      z-index: 4;\n      inset: -1px;\n      padding: 4px;\n      border-radius: inherit;\n      pointer-events: none;\n      background:\n        linear-gradient(135deg,\n          #f4edff 0%,\n          #8a78a8 9%,\n          #2a2733 23%,\n          #74658e 42%,\n          #15141b 62%,\n          #a995c7 82%,\n          #3b3548 100%);\n      -webkit-mask:\n        linear-gradient(#000 0 0) content-box,\n        linear-gradient(#000 0 0);\n      -webkit-mask-composite: xor;\n      mask-composite: exclude;\n    }\n\n    .device-glass {\n      position: absolute;\n      z-index: 3;\n      inset: 5px;\n      border-radius: 42px;\n      pointer-events: none;\n      box-shadow:\n        inset 1px 1px 0 rgba(255, 255, 255, .16),\n        inset -1px -1px 0 rgba(0, 0, 0, .72);\n    }\n\n    .device-button {\n      position: absolute;\n      z-index: 5;\n      width: 7px;\n      border: 1px solid rgba(226, 213, 255, .4);\n      border-radius: 5px;\n      pointer-events: none;\n      background: linear-gradient(90deg, #26222f, #8d7ba8 52%, #2a2634);\n      box-shadow: 0 1px 2px rgba(0, 0, 0, .72);\n    }\n\n    .phone--coinw .device-button { left: -8px; }\n    .phone--coinw .device-button--one { top: 126px; height: 50px; }\n    .phone--coinw .device-button--two { top: 190px; height: 82px; }\n    .phone--coinw .device-button--three { top: 287px; height: 82px; }\n    .phone--otc .device-button { right: -8px; }\n    .phone--otc .device-button--one { top: 132px; height: 62px; }\n    .phone--otc .device-button--two { top: 224px; height: 104px; }\n    .phone--otc .device-button--three { display: none; }\n\n    .device-bottom {\n      position: absolute;\n      z-index: 5;\n      left: 50%;\n      bottom: -8px;\n      width: 112px;\n      height: 8px;\n      border-radius: 0 0 12px 12px;\n      pointer-events: none;\n      transform: translateX(-50%);\n      background: linear-gradient(180deg, #84739e, #292531 72%, #15131a);\n      box-shadow: inset 0 1px rgba(255, 255, 255, .25);\n    }\n\n    .phone iframe {\n      position: absolute;\n      display: block;\n      border: 0;\n      pointer-events: auto;\n    }\n\n    /* 左侧手机：靠后、略向左倾斜 */\n    .phone--coinw {\n      z-index: 1;\n      width: 390px;\n      height: 844px;\n      border-radius: 48px;\n      animation: coinw-enter 1800ms cubic-bezier(.22, 1, .36, 1) both;\n    }\n\n    .phone--coinw iframe {\n      inset: 0;\n      width: 390px;\n      height: 844px;\n    }\n\n    /* 右侧手机：位于前景，压住左侧手机 */\n    .phone--otc {\n      z-index: 2;\n      width: 391px;\n      height: 828px;\n      border-radius: 46px;\n      animation: otc-enter 1800ms cubic-bezier(.22, 1, .36, 1) 80ms both;\n    }\n\n    .phone--otc iframe {\n      inset: 0;\n      width: 390px;\n      height: 844px;\n    }\n\n    @keyframes coinw-enter {\n      0% {\n        opacity: 0;\n        transform: translate3d(-50%, -50%, 0) rotateZ(0deg) scale(.76);\n      }\n      18% { opacity: 1; }\n      68% {\n        opacity: 1;\n        transform: translate3d(-82%, -48%, 0) rotateZ(-8deg) scale(.80);\n      }\n      100% {\n        opacity: 1;\n        transform: translate3d(-72%, -50%, 0) rotateZ(0deg) scale(.80);\n      }\n    }\n\n    @keyframes otc-enter {\n      0% {\n        opacity: 0;\n        transform: translate3d(-50%, -50%, 0) rotateZ(0deg) scale(.78);\n      }\n      18% { opacity: 1; }\n      68% {\n        opacity: 1;\n        transform: translate3d(-18%, -54%, 0) rotateZ(14deg) scale(.815);\n      }\n      100% {\n        opacity: 1;\n        transform: translate3d(-12%, -50%, 0) rotateZ(0deg) scale(.815);\n      }\n    }\n\n    @media (max-width: 760px) {\n      .phones {\n        min-height: 520px;\n      }\n\n      .phone--coinw {\n        animation-name: coinw-enter-tablet;\n      }\n\n      .phone--otc {\n        animation-name: otc-enter-tablet;\n      }\n\n      @keyframes coinw-enter-tablet {\n        0% { opacity: 0; transform: translate3d(-50%, -50%, 0) rotateZ(0deg) scale(.52); }\n        18% { opacity: 1; }\n        68% { opacity: 1; transform: translate3d(-72%, -47%, 0) rotateZ(-8deg) scale(.54); }\n        100% { opacity: 1; transform: translate3d(-68%, -50%, 0) rotateZ(0deg) scale(.54); }\n      }\n\n      @keyframes otc-enter-tablet {\n        0% { opacity: 0; transform: translate3d(-50%, -50%, 0) rotateZ(0deg) scale(.53); }\n        18% { opacity: 1; }\n        68% { opacity: 1; transform: translate3d(-29%, -54%, 0) rotateZ(14deg) scale(.55); }\n        100% { opacity: 1; transform: translate3d(-16%, -50%, 0) rotateZ(0deg) scale(.55); }\n      }\n    }\n\n    @media (max-width: 430px) {\n      .phone--coinw {\n        animation-name: coinw-enter-mobile;\n      }\n\n      .phone--otc {\n        animation-name: otc-enter-mobile;\n      }\n\n      @keyframes coinw-enter-mobile {\n        0% { opacity: 0; transform: translate3d(-50%, -50%, 0) rotateZ(0deg) scale(.43); }\n        18% { opacity: 1; }\n        68% { opacity: 1; transform: translate3d(-67%, -47%, 0) rotateZ(-8deg) scale(.45); }\n        100% { opacity: 1; transform: translate3d(-66%, -50%, 0) rotateZ(0deg) scale(.45); }\n      }\n\n      @keyframes otc-enter-mobile {\n        0% { opacity: 0; transform: translate3d(-50%, -50%, 0) rotateZ(0deg) scale(.44); }\n        18% { opacity: 1; }\n        68% { opacity: 1; transform: translate3d(-34%, -54%, 0) rotateZ(14deg) scale(.46); }\n        100% { opacity: 1; transform: translate3d(-18%, -50%, 0) rotateZ(0deg) scale(.46); }\n      }\n    }\n\n    /* 主站案例卡片为横向短视口，按可用高度完整收纳两台手机。 */\n    @media (max-height: 520px) {\n      .phones {\n        height: 100dvh;\n        min-height: 0;\n      }\n\n      .phone--coinw {\n        animation-name: coinw-enter-embed;\n      }\n\n      .phone--otc {\n        animation-name: otc-enter-embed;\n      }\n\n      @keyframes coinw-enter-embed {\n        0% { opacity: 0; transform: translate3d(-50%, -50%, 0) rotateZ(0deg) scale(.34); }\n        18% { opacity: 1; }\n        68% { opacity: 1; transform: translate3d(-84%, -48%, 0) rotateZ(-8deg) scale(.40); }\n        100% { opacity: 1; transform: translate3d(-76%, -50%, 0) rotateZ(0deg) scale(.40); }\n      }\n\n      @keyframes otc-enter-embed {\n        0% { opacity: 0; transform: translate3d(-50%, -50%, 0) rotateZ(0deg) scale(.35); }\n        18% { opacity: 1; }\n        68% { opacity: 1; transform: translate3d(-25%, -54%, 0) rotateZ(12deg) scale(.41); }\n        100% { opacity: 1; transform: translate3d(-18%, -50%, 0) rotateZ(0deg) scale(.41); }\n      }\n    }\n\n    @media (max-height: 300px) {\n      @keyframes coinw-enter-embed {\n        0% { opacity: 0; transform: translate3d(-50%, -50%, 0) rotateZ(0deg) scale(.18); }\n        18% { opacity: 1; }\n        68% { opacity: 1; transform: translate3d(-84%, -48%, 0) rotateZ(-8deg) scale(.22); }\n        100% { opacity: 1; transform: translate3d(-77%, -50%, 0) rotateZ(0deg) scale(.22); }\n      }\n\n      @keyframes otc-enter-embed {\n        0% { opacity: 0; transform: translate3d(-50%, -50%, 0) rotateZ(0deg) scale(.19); }\n        18% { opacity: 1; }\n        68% { opacity: 1; transform: translate3d(-25%, -54%, 0) rotateZ(12deg) scale(.225); }\n        100% { opacity: 1; transform: translate3d(-17%, -50%, 0) rotateZ(0deg) scale(.225); }\n      }\n    }\n\n    /* 手机外机固定为宣传图构图；仅屏幕内部动画继续播放。 */\n    .phone--coinw {\n      animation: none !important;\n      transform: translate3d(-95%, -48%, 0) rotateZ(-8deg) scale(.80);\n    }\n\n    .phone--otc {\n      animation: none !important;\n      transform: translate3d(-2%, -54%, 0) rotateZ(9deg) scale(.815);\n    }\n\n    @media (max-width: 760px) {\n      .phone--coinw { transform: translate3d(-82%, -47%, 0) rotateZ(-8deg) scale(.54); }\n      .phone--otc { transform: translate3d(-13%, -54%, 0) rotateZ(9deg) scale(.55); }\n      .glass-anchor--badges { transform: translate(-350px, -225px) scale(.72); }\n      .glass-anchor--level { transform: translate(-355px, 155px) scale(.72); }\n      .glass-anchor--action { transform: translate(165px, 155px) scale(.72); }\n    }\n\n    @media (max-width: 430px) {\n      .phone--coinw { transform: translate3d(-77%, -47%, 0) rotateZ(-8deg) scale(.45); }\n      .phone--otc { transform: translate3d(-18%, -54%, 0) rotateZ(9deg) scale(.46); }\n      .glass-anchor--badges { transform: translate(-210px, -195px) scale(.56); }\n      .glass-anchor--level { transform: translate(-215px, 128px) scale(.56); }\n      .glass-anchor--action { transform: translate(70px, 128px) scale(.56); }\n    }\n\n    @media (max-height: 520px) {\n      .phone--coinw { transform: translate3d(-95%, -48%, 0) rotateZ(-8deg) scale(.40); }\n      .phone--otc { transform: translate3d(-9%, -54%, 0) rotateZ(9deg) scale(.41); }\n      .glass-anchor--badges { transform: translate(-370px, -182px) scale(.62); }\n      .glass-anchor--level { transform: translate(-372px, 112px) scale(.62); }\n      .glass-anchor--action { transform: translate(178px, 112px) scale(.62); }\n    }\n\n    @media (max-height: 300px) {\n      .phone--coinw { transform: translate3d(-95%, -48%, 0) rotateZ(-8deg) scale(.22); }\n      .phone--otc { transform: translate3d(-9%, -54%, 0) rotateZ(9deg) scale(.225); }\n      .glass-anchor--badges { transform: translate(-245px, -105px) scale(.38); }\n      .glass-anchor--level { transform: translate(-247px, 62px) scale(.38); }\n      .glass-anchor--action { transform: translate(80px, 62px) scale(.38); }\n    }\n\n    @media (min-height: 301px) and (max-height: 500px) {\n      .phones { min-height: 0; }\n      .phone--coinw { transform: translate3d(-68%, -50%, 0) rotateZ(-8deg) scale(.34); }\n      .phone--otc { transform: translate3d(-32%, -50%, 0) rotateZ(9deg) scale(.35); }\n      .glass-anchor--badges { transform: translate(-278px, -155px) scale(.50); }\n      .glass-anchor--level { transform: translate(-280px, 118px) scale(.50); }\n      .glass-anchor--action { transform: translate(92px, 118px) scale(.50); }\n    }\n\n    .orbit-base,\n    .orbit-front-base,\n    .orbits--back .orbit-flow--two,\n    .orbits--back .orbit-flow--three {\n      display: none;\n    }\n\n    .orbit-flow {\n      stroke-width: 2.5;\n      stroke-dasharray: 14 86;\n    }\n\n    .orbits--front .orbit-front-flow--two,\n    .orbits--front .orbit-front-flow--three {\n      display: none;\n    }\n\n    .orbit-front-flow {\n      stroke-width: 2.5;\n      stroke-dasharray: 16 84;\n      animation-duration: 6.4s;\n    }\n\n    @media (prefers-reduced-motion: reduce) {\n      .phone { animation-duration: 1ms; animation-delay: 0ms; }\n      .orbit-flow,\n      .orbit-front-flow { animation: none; }\n    }\n  </style>\n</head>\n<body>\n  <main class=\"phones\" aria-label=\"Community badge mobile promotion\">\n    <svg class=\"orbits orbits--back\" viewBox=\"0 0 1120 720\" aria-hidden=\"true\">\n      <defs>\n        <linearGradient id=\"orbit-white-a\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n          <stop offset=\"0\" stop-color=\"#b8bfcc\" stop-opacity=\"0\"></stop>\n          <stop offset=\".2\" stop-color=\"#d4d9e3\" stop-opacity=\".18\"></stop>\n          <stop offset=\".4\" stop-color=\"#f7f8fa\" stop-opacity=\".58\"></stop>\n          <stop offset=\".52\" stop-color=\"#fff\" stop-opacity=\".82\"></stop>\n          <stop offset=\".66\" stop-color=\"#f1f3f7\" stop-opacity=\".54\"></stop>\n          <stop offset=\".84\" stop-color=\"#cbd1dc\" stop-opacity=\".16\"></stop>\n          <stop offset=\"1\" stop-color=\"#b5bdca\" stop-opacity=\"0\"></stop>\n        </linearGradient>\n        <linearGradient id=\"orbit-white-b\" x1=\"1\" y1=\"0\" x2=\"0\" y2=\"1\">\n          <stop offset=\"0\" stop-color=\"#b6becb\" stop-opacity=\".1\"></stop>\n          <stop offset=\".2\" stop-color=\"#d1d6e0\" stop-opacity=\".34\"></stop>\n          <stop offset=\".4\" stop-color=\"#f5f6f9\" stop-opacity=\".82\"></stop>\n          <stop offset=\".54\" stop-color=\"#fff\" stop-opacity=\".96\"></stop>\n          <stop offset=\".7\" stop-color=\"#eceef3\" stop-opacity=\".8\"></stop>\n          <stop offset=\".88\" stop-color=\"#cbd1dc\" stop-opacity=\".32\"></stop>\n          <stop offset=\"1\" stop-color=\"#b3bbc8\" stop-opacity=\".1\"></stop>\n        </linearGradient>\n      </defs>\n      <ellipse class=\"orbit orbit-base\" cx=\"560\" cy=\"360\" rx=\"520\" ry=\"350\" stroke=\"url(#orbit-white-a)\" transform=\"rotate(-4 560 360)\"></ellipse>\n      <ellipse class=\"orbit orbit-flow\" pathLength=\"100\" cx=\"560\" cy=\"360\" rx=\"520\" ry=\"350\" stroke=\"url(#orbit-white-a)\" transform=\"rotate(-4 560 360)\"></ellipse>\n      <ellipse class=\"orbit orbit-base\" cx=\"580\" cy=\"360\" rx=\"500\" ry=\"335\" stroke=\"url(#orbit-white-b)\" transform=\"rotate(6 580 360)\"></ellipse>\n      <ellipse class=\"orbit orbit-flow orbit-flow--two\" pathLength=\"100\" cx=\"580\" cy=\"360\" rx=\"500\" ry=\"335\" stroke=\"url(#orbit-white-b)\" transform=\"rotate(6 580 360)\"></ellipse>\n      <ellipse class=\"orbit orbit-base\" cx=\"570\" cy=\"365\" rx=\"480\" ry=\"320\" stroke=\"url(#orbit-white-a)\" transform=\"rotate(-8 570 365)\"></ellipse>\n      <ellipse class=\"orbit orbit-flow orbit-flow--three\" pathLength=\"100\" cx=\"570\" cy=\"365\" rx=\"480\" ry=\"320\" stroke=\"url(#orbit-white-a)\" transform=\"rotate(-8 570 365)\"></ellipse>\n    </svg>\n\n    <div class=\"glass-anchor glass-anchor--badges\" aria-hidden=\"true\">\n      <div class=\"glass-chip\">\n        <img src=\"./assets/cases/community-badge-demo/badge-full-orange.svg\" alt=\"\">\n        <span>7 Badges</span>\n      </div>\n    </div>\n    <div class=\"glass-anchor glass-anchor--level\" aria-hidden=\"true\">\n      <div class=\"glass-chip\">\n        <img src=\"./assets/cases/community-badge-demo/badge-full-orange.svg\" alt=\"\">\n        <span>Lv.2</span>\n      </div>\n    </div>\n    <div class=\"glass-anchor glass-anchor--action\" aria-hidden=\"true\">\n      <div class=\"glass-chip\">\n        <span>Wear Now</span>\n      </div>\n    </div>\n\n    <div class=\"phone phone--coinw\">\n      <span class=\"device-back\" aria-hidden=\"true\"></span>\n      <div class=\"device-screen\">\n        <iframe\n          src=\"./community-badge-detail-demo.html?v=figma-svg-5\"\n          title=\"Badge Details\"\n          allow=\"autoplay\"\n          allowtransparency=\"true\"\n        ></iframe>\n      </div>\n      <span class=\"device-glass\" aria-hidden=\"true\"></span>\n      <span class=\"device-frame\" aria-hidden=\"true\"></span>\n      <span class=\"device-button device-button--one\" aria-hidden=\"true\"></span>\n      <span class=\"device-button device-button--two\" aria-hidden=\"true\"></span>\n      <span class=\"device-button device-button--three\" aria-hidden=\"true\"></span>\n      <span class=\"device-bottom\" aria-hidden=\"true\"></span>\n    </div>\n\n    <div class=\"phone phone--otc\">\n      <span class=\"device-back\" aria-hidden=\"true\"></span>\n      <div class=\"device-screen\">\n        <iframe\n          src=\"./community-badge-wall-demo.html?v=figma-svg-5\"\n          title=\"Badge Wall\"\n          allow=\"autoplay\"\n          allowtransparency=\"true\"\n        ></iframe>\n      </div>\n      <span class=\"device-glass\" aria-hidden=\"true\"></span>\n      <span class=\"device-frame\" aria-hidden=\"true\"></span>\n      <span class=\"device-button device-button--one\" aria-hidden=\"true\"></span>\n      <span class=\"device-button device-button--two\" aria-hidden=\"true\"></span>\n      <span class=\"device-button device-button--three\" aria-hidden=\"true\"></span>\n      <span class=\"device-bottom\" aria-hidden=\"true\"></span>\n    </div>\n\n    <svg class=\"orbits orbits--front\" viewBox=\"0 0 1120 720\" aria-hidden=\"true\">\n      <defs>\n        <linearGradient id=\"orbit-front-white-a\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\">\n          <stop offset=\"0\" stop-color=\"#b7bfcc\" stop-opacity=\"0\"></stop>\n          <stop offset=\".18\" stop-color=\"#d4d9e3\" stop-opacity=\".2\"></stop>\n          <stop offset=\".4\" stop-color=\"#f7f8fa\" stop-opacity=\".68\"></stop>\n          <stop offset=\".52\" stop-color=\"#fff\" stop-opacity=\".96\"></stop>\n          <stop offset=\".68\" stop-color=\"#f1f3f7\" stop-opacity=\".64\"></stop>\n          <stop offset=\".86\" stop-color=\"#cbd1dc\" stop-opacity=\".18\"></stop>\n          <stop offset=\"1\" stop-color=\"#b5bdca\" stop-opacity=\"0\"></stop>\n        </linearGradient>\n        <linearGradient id=\"orbit-front-white-b\" x1=\"1\" y1=\"0\" x2=\"0\" y2=\"0\">\n          <stop offset=\"0\" stop-color=\"#b5bdca\" stop-opacity=\".1\"></stop>\n          <stop offset=\".2\" stop-color=\"#d0d6e0\" stop-opacity=\".34\"></stop>\n          <stop offset=\".42\" stop-color=\"#f5f6f9\" stop-opacity=\".84\"></stop>\n          <stop offset=\".56\" stop-color=\"#fff\" stop-opacity=\".98\"></stop>\n          <stop offset=\".72\" stop-color=\"#eceef3\" stop-opacity=\".78\"></stop>\n          <stop offset=\".88\" stop-color=\"#c9d0db\" stop-opacity=\".3\"></stop>\n          <stop offset=\"1\" stop-color=\"#b3bbc8\" stop-opacity=\".1\"></stop>\n        </linearGradient>\n      </defs>\n      <path class=\"orbit orbit-front-base\" d=\"M 105 570 C 305 775 800 810 1090 550\" stroke=\"url(#orbit-front-white-a)\"></path>\n      <path class=\"orbit orbit-front-flow\" pathLength=\"100\" d=\"M 105 570 C 305 775 800 810 1090 550\" stroke=\"url(#orbit-front-white-a)\"></path>\n      <path class=\"orbit orbit-front-base\" d=\"M 140 602 C 350 792 825 815 1060 585\" stroke=\"url(#orbit-front-white-b)\"></path>\n      <path class=\"orbit orbit-front-flow orbit-front-flow--two\" pathLength=\"100\" d=\"M 140 602 C 350 792 825 815 1060 585\" stroke=\"url(#orbit-front-white-b)\"></path>\n      <path class=\"orbit orbit-front-base\" d=\"M 180 632 C 400 808 790 820 1025 615\" stroke=\"url(#orbit-front-white-a)\"></path>\n      <path class=\"orbit orbit-front-flow orbit-front-flow--three\" pathLength=\"100\" d=\"M 180 632 C 400 808 790 820 1025 615\" stroke=\"url(#orbit-front-white-a)\"></path>\n    </svg>\n\n  </main>\n</body>\n</html>\n"</script>
+  <script>
+    (async () => {
+      const host = document.getElementById("communityDemoMount");
+      if (!host || host.shadowRoot) return;
+
+      const renderCommunityDemo = source => {
+        const parsed = new DOMParser().parseFromString(source, "text/html");
+        const phones = parsed.querySelector(".phones");
+        const sourceStyles = [...parsed.querySelectorAll("style")].map(style => style.textContent).join("\n");
+        if (!phones || !sourceStyles) throw new Error("Community demo source is incomplete");
+
+        const shadow = host.attachShadow({ mode: "open" });
+        shadow.innerHTML = `
+          <style>${sourceStyles}</style>
+          <style>
+            :host {
+              display: block;
+              width: 100%;
+              height: 100%;
+              overflow: visible;
+              container-type: size;
+              background: transparent;
+            }
+            .phones {
+              width: 100% !important;
+              height: 100% !important;
+              min-height: 0 !important;
+              overflow: visible !important;
+              background: transparent !important;
+            }
+            .orbits { width: 96% !important; height: 92% !important; }
+            .phone--coinw { transform: translate3d(-68%, -50%, 0) rotateZ(-8deg) scale(.34) !important; }
+            .phone--otc { transform: translate3d(-32%, -50%, 0) rotateZ(9deg) scale(.35) !important; }
+            .glass-anchor--badges { transform: translate(-278px, -155px) scale(.50) !important; }
+            .glass-anchor--level { transform: translate(-280px, 118px) scale(.50) !important; }
+            .glass-anchor--action { transform: translate(92px, 118px) scale(.50) !important; }
+            @container (max-height: 300px) {
+              .phone--coinw { transform: translate3d(-68%, -50%, 0) rotateZ(-8deg) scale(.19) !important; }
+              .phone--otc { transform: translate3d(-32%, -50%, 0) rotateZ(9deg) scale(.195) !important; }
+              .glass-anchor--badges { transform: translate(-165px, -86px) scale(.30) !important; }
+              .glass-anchor--level { transform: translate(-167px, 65px) scale(.30) !important; }
+              .glass-anchor--action { transform: translate(40px, 65px) scale(.30) !important; }
+            }
+          </style>
+          ${phones.outerHTML}
+        `;
+      };
+
+      const inlineSource = JSON.parse(
+        document.getElementById("communityDemoSource")?.textContent || "null"
+      );
+      if (location.protocol === "file:") {
+        if (!inlineSource) {
+          console.error("Community demo inline source is unavailable");
+          return;
+        }
+        renderCommunityDemo(inlineSource);
+        return;
+      }
+
+      try {
+        const response = await fetch("dual-phone-promo.html?v=community-gradient-9", {
+          cache: "no-store"
+        });
+        if (!response.ok) throw new Error(`Community demo: ${response.status}`);
+        renderCommunityDemo(await response.text());
+      } catch (error) {
+        console.error(error);
+        if (inlineSource) renderCommunityDemo(inlineSource);
+      }
     })();
   </script>
 </body>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Badge Wall</title>
+  <style>
+    @font-face{font-family:Satoshi;src:url("./assets/cases/otc-sell-auto-demo/fonts/Satoshi-Regular.ttf")}@font-face{font-family:Satoshi;src:url("./assets/cases/otc-sell-auto-demo/fonts/Satoshi-Bold.ttf");font-weight:700}
+    *{box-sizing:border-box}html,body{width:390px;height:844px;margin:0;overflow:hidden;background:#191919;color:#fff;font-family:Satoshi,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{position:relative;border:9px solid #050506;border-radius:48px}
+    .island{position:absolute;z-index:4;top:9px;left:50%;width:112px;height:28px;border-radius:20px;background:#020203;transform:translateX(-50%)}.status{height:44px;padding:11px 18px 0;display:flex;justify-content:space-between;font-size:14px;font-weight:700}.signal{font-size:12px;letter-spacing:1px}.nav{height:44px;padding:4px 16px;display:flex;align-items:center;justify-content:space-between;font-size:28px}.share{font-size:20px}
+    .profile{padding:0 16px}.person{display:flex;align-items:center;gap:12px;height:74px}.avatar{width:62px;height:62px;border:1px solid #f2f2f2;border-radius:50%;object-fit:cover}.name{font-size:16px;font-weight:700}.summary{height:112px;border:1px solid #353535;border-radius:16px;padding:16px;position:relative}.summary strong{font-size:16px}.summary b{color:#7c5cff;font-size:18px}.manage{position:absolute;left:16px;bottom:16px;padding:4px 12px;border-radius:4px;background:rgba(82,39,255,.16);color:#8267ff;font-size:11px}.summary .mini{position:absolute;right:16px;top:16px}
+    .tabs{height:46px;margin-top:12px;padding-left:16px;border-bottom:1px solid #232323;display:flex;gap:24px;align-items:center;color:#777;font-size:16px;font-weight:700}.tabs .active{height:46px;padding-top:13px;color:#fff;border-bottom:2px solid #fff}.filters{display:flex;gap:12px;padding:8px 16px}.filters span{padding:4px 12px;border-radius:20px;background:#292929;font-size:14px}.filters .active{border:1px solid #fff;padding:3px 11px}h2{margin:5px 16px 6px;font-size:16px;line-height:24px}.grid{display:grid;grid-template-columns:repeat(3,1fr);column-gap:13px;row-gap:11px;padding:0 16px}.card{text-align:center}
+    .badge-svg{display:block;width:90px;height:90px;margin:auto;transition:opacity .5s ease,transform .5s cubic-bezier(.22,1,.36,1)}.badge-svg.mini{position:absolute;right:16px;top:16px;width:80px;height:80px}.badge-svg.off{opacity:.62;transform:scale(.95)}.badge-svg.flash{transform:scale(1.06)}
+    .label{font-size:12px;font-weight:700;line-height:16px;white-space:nowrap}.date{color:#666;font-size:10px;line-height:12px;margin-top:3px}.divider{height:1px;margin:13px 16px 12px;background:#252525}.home{position:absolute;z-index:5;bottom:8px;left:50%;width:134px;height:5px;border-radius:5px;background:#fff;transform:translateX(-50%)}
+  </style>
+</head>
+<body>
+  <div class="island"></div><div class="status"><span>9:41</span><span class="signal">▮▮▮ WiFi ▰</span></div><div class="nav"><span>‹</span><span class="share">⇧</span></div>
+  <main><div class="profile"><div class="person"><img class="avatar" src="./assets/cases/community-badge-demo/avatar.png" alt=""><span class="name">MeowMeowMeow</span></div><div class="summary"><strong>Earned <b>7 Badges</b></strong><span class="manage">Manage Badges</span><img class="badge-svg mini" src="./assets/cases/community-badge-demo/badge-full-orange.svg" alt=""></div></div>
+    <nav class="tabs"><span>Badge Wall</span><span class="active">Lead</span><span>Strategy</span><span>Live</span></nav><div class="filters"><span class="active">Contract Lead</span><span>Spot Lead</span></div><h2>Earned</h2><section class="grid" id="badge-grid"></section><div class="divider"></div><h2>Not Earned</h2><section class="grid" id="locked-grid"></section>
+  </main><div class="home"></div>
+  <template id="badge-template"><article class="card"><img class="badge-svg off" src="./assets/cases/community-badge-demo/badge-full-gray.svg" alt=""><div class="label">Badge Name Lv.2</div><div class="date">2025.03.12</div></article></template>
+  <script>
+    const root="./assets/cases/community-badge-demo/",tones=["orange","pink","blue"],template=document.querySelector("#badge-template"),earned=document.querySelector("#badge-grid"),locked=document.querySelector("#locked-grid");
+    function add(rootEl,count){for(let i=0;i<count;i++){const fragment=template.content.cloneNode(true),badge=fragment.querySelector(".badge-svg");badge.dataset.color=tones[i%3];rootEl.append(fragment)}}add(earned,3);add(locked,3);
+    const badges=[...document.querySelectorAll(".grid .badge-svg")];let lit=0;
+    function render(){
+      badges.forEach((badge,index)=>{
+        const off=index>=lit,tone=off?"gray":badge.dataset.color,nextClass=`badge-svg${off?" off":index===lit-1?" flash":""}`;
+        if(badge.dataset.tone!==tone){badge.dataset.tone=tone;badge.src=`${root}badge-full-${tone}.svg`}
+        if(badge.className!==nextClass)badge.className=nextClass;
+      })
+    }
+    render();setInterval(()=>{lit=(lit+1)%(badges.length+1);render()},850);
+  </script>
+</body>
+</html>

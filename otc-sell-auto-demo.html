@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <link rel="icon" href="data:,">
+  <title>OTC Sell Auto Demo</title>
+  <style>
+    @font-face {
+      font-family: "Satoshi";
+      src: url("assets/cases/otc-sell-auto-demo/fonts/Satoshi-Regular.ttf") format("truetype");
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Satoshi";
+      src: url("assets/cases/otc-sell-auto-demo/fonts/Satoshi-Medium.ttf") format("truetype");
+      font-style: normal;
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Satoshi";
+      src: url("assets/cases/otc-sell-auto-demo/fonts/Satoshi-Bold.ttf") format("truetype");
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+    }
+    :root {
+      color-scheme: dark;
+      font-family: "Satoshi", "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
+      --ink: #1a1a1a;
+      --muted: #8d8d92;
+      --line: #e8e8ea;
+      --soft: #f4f4f5;
+      --purple: #5227ff;
+      --green: #16ae4b;
+      --motion-enter: cubic-bezier(.22,1,.36,1);
+      --motion-move: cubic-bezier(.25,1,.5,1);
+      --motion-drawer: cubic-bezier(.32,.72,0,1);
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; margin: 0; }
+    button, input { font: inherit; }
+    button, .chip, .key, .sticky-btn, .merchant-actions span {
+      transition:
+        transform 140ms cubic-bezier(.22,1,.36,1),
+        background-color 180ms ease,
+        color 180ms ease,
+        box-shadow 180ms ease;
+    }
+    button:active, .chip:active, .sticky-btn:active, .merchant-actions span:active,
+    .is-auto-pressed {
+      transform: scale(.98) !important;
+    }
+    .key:active, .key.is-auto-pressed { transform: scale(.94) !important; }
+    body {
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 42%, rgba(82,39,255,.15), transparent 35%), #08080b;
+    }
+    body.is-embed { background: transparent; }
+    .demo-shell {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 100%;
+      min-height: 100vh;
+      padding: 26px;
+    }
+    .phone {
+      position: relative;
+      width: 391px;
+      height: 828px;
+      padding: 7px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.22);
+      border-radius: 46px;
+      background: #09090a;
+      box-shadow: 0 36px 90px rgba(0,0,0,.56), 0 0 0 1px rgba(255,255,255,.07) inset;
+      transform: scale(var(--phone-scale,1));
+    }
+    .viewport {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: 39px;
+      background: #fff;
+      color: var(--ink);
+      isolation: isolate;
+    }
+    .screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #fff;
+      opacity: 0;
+      visibility: hidden;
+      transform: translate3d(22px,0,0);
+      transition:
+        opacity 180ms var(--motion-enter),
+        transform 280ms var(--motion-move),
+        visibility 0s 280ms;
+      pointer-events: none;
+    }
+    .screen.is-active {
+      z-index: 5;
+      opacity: 1;
+      visibility: visible;
+      transform: translate3d(0,0,0);
+      transition-delay: 0s;
+    }
+    .screen.is-leaving {
+      z-index: 4;
+      opacity: 0;
+      visibility: visible;
+      transform: translate3d(-10px,0,0);
+      transition:
+        opacity 160ms var(--motion-enter),
+        transform 240ms var(--motion-move),
+        visibility 0s 240ms;
+    }
+    .statusbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 44px;
+      padding: 7px 20px;
+      flex: 0 0 44px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .status-icons {
+      display: block;
+      width: 72.661px;
+      height: 11.333px;
+      background: url("assets/cases/otc-sell-auto-demo/icons/status.svg") center / contain no-repeat;
+    }
+    .status-icons > * { display: none !important; }
+    .signal { display: flex; align-items: end; gap: 2px; height: 11px; }
+    .signal i { width: 3px; border-radius: 2px; background: var(--ink); }
+    .signal i:nth-child(1) { height: 4px; }
+    .signal i:nth-child(2) { height: 6px; }
+    .signal i:nth-child(3) { height: 9px; }
+    .wifi { width: 13px; height: 10px; border-top: 2px solid var(--ink); border-radius: 50%; }
+    .battery { width: 21px; height: 10px; padding: 1px; border: 1.5px solid var(--ink); border-radius: 3px; }
+    .battery::before { content: ""; display: block; width: 14px; height: 5px; border-radius: 1px; background: var(--ink); }
+    .nav {
+      display: flex;
+      align-items: center;
+      height: 44px;
+      padding: 0 16px;
+      flex: 0 0 44px;
+    }
+    .back {
+      width: 24px;
+      height: 24px;
+      border: 0;
+      background: url("assets/cases/otc-sell-auto-demo/icons/back.svg") center / 11.35px 18px no-repeat;
+      transform: none;
+    }
+    .nav-title { margin-left: 26px; font-size: 20px; font-weight: 700; }
+    .home {
+      position: absolute;
+      z-index: 30;
+      bottom: 8px;
+      left: 50%;
+      width: 134px;
+      height: 5px;
+      border-radius: 99px;
+      background: var(--ink);
+      transform: translateX(-50%);
+    }
+    .p2p-head { padding: 0 16px; }
+    .p2p-title { display: flex; align-items: center; gap: 10px; height: 44px; margin: 0 0 0 0; font-size: 18px; font-weight: 700; }
+    .p2p-title .back { margin-right: 6px; }
+    .p2p-title span:last-child { color: #999; }
+    .market-row, .filter-row, .tabs { display: flex; align-items: center; }
+    .market-row { justify-content: space-between; height: 62px; }
+    .tabs { gap: 22px; font-size: 16px; font-weight: 700; }
+    .tabs .active { position: relative; }
+    .tabs .active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -10px; height: 2px; background: var(--ink); }
+    .chips { display: flex; gap: 10px; }
+    .chip { display: flex; align-items: center; gap: 4px; height: 32px; padding: 0 8px; border-radius: 999px; background: var(--soft); font-size: 14px; font-weight: 700; }
+    .svg-icon { display: block; flex: 0 0 auto; object-fit: contain; }
+    .icon-refresh { width: 16px; height: 16px; }
+    .icon-down16 { width: 16px; height: 16px; }
+    .icon-down12 { width: 12px; height: 12px; }
+    .icon-filter { width: 16px; height: 16px; }
+    .icon-info, .icon-close { width: 16px; height: 16px; }
+    .icon-value { width: 16px; height: 16px; }
+    .filter-row { gap: 12px; height: 32px; margin-top: 14px; padding-bottom: 0; border: 0; font-size: 14px; }
+    .filter-row > span { display: flex; align-items: center; gap: 8px; }
+    .notice { display: flex; align-items: center; justify-content: space-between; height: 40px; margin: 8px 16px 16px; padding: 0 8px; border-radius: 8px; background: #f1f1f2; font-size: 12px; }
+    .merchant-list { display: flex; flex: 1; flex-direction: column; gap: 8px; overflow: hidden; padding: 0 16px 78px; }
+    .merchant { display: flex; flex: 0 0 148.5px; flex-direction: column; gap: 8px; height: 148.5px; padding: 0 0 16.5px; border-bottom: .5px solid #d9d9d9; }
+    .merchant-top { flex: 0 0 36px; height: 36px; }
+    .merchant-main { flex: 0 0 56px; height: 56px; }
+    .merchant-top, .merchant-main { display: flex; align-items: center; justify-content: space-between; }
+    .merchant-name { display: flex; align-items: center; gap: 4px; padding-top: 0; font-size: 14px; line-height: 20px; }
+    .avatar { display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; background: #eee9ff; color: var(--purple); font-size: 9px; }
+    .merchant-meta { margin-top: 4px; color: #aaa; font-size: 10px; line-height: 12px; }
+    .price { margin-top: 8px; font-size: 22px; font-weight: 700; line-height: 28px; }
+    .price small { font-size: 12px; font-weight: 500; }
+    .limits { color: #56565b; font-size: 11px; line-height: 14px; }
+    .sell-btn { width: 46px; height: 32px; border: 0; border-radius: 9px; background: #f04e37; color: #fff; font-size: 12px; }
+    .payments { flex: 0 0 16px; height: 16px; margin-top: 0; color: #56565b; font-size: 12px; line-height: 16px; word-spacing: 5px; white-space: nowrap; }
+    .bottom-nav { position: absolute; z-index: 8; left: 15px; right: 15px; bottom: 16px; display: grid; grid-template-columns: repeat(4,1fr); height: 56px; padding: 8px 5px; border-radius: 28px; background: rgba(245,245,245,.96); box-shadow: 0 4px 22px rgba(0,0,0,.08); }
+    .bottom-nav span { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: #8c8c8c; font-size: 12px; }
+    .bottom-nav img { width: 24px; height: 24px; }
+    .bottom-nav .active { color: var(--ink); }
+    .amount-screen {
+      background: transparent;
+      transform: none;
+      transition: opacity 220ms var(--motion-enter), visibility 0s 360ms;
+    }
+    .amount-screen.is-active { transform: none; }
+    .amount-screen.is-leaving { transform: none; }
+    .amount-screen .underlay { position: absolute; inset: 0; }
+    .amount-screen .underlay::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.52);
+      opacity: 0;
+      transition: opacity 240ms var(--motion-enter);
+    }
+    .amount-screen.is-active .underlay::after { opacity: 1; }
+    .sheet {
+      position: absolute;
+      z-index: 5;
+      top: 305px;
+      left: 16px;
+      right: 16px;
+      height: 200px;
+      padding: 32px 16px 16px;
+      border-radius: 24px;
+      background: #fff;
+      transform: translate3d(0,291px,0);
+      transform-origin: 50% 100%;
+      transition: transform 260ms var(--motion-drawer);
+    }
+    .amount-screen.is-active .sheet {
+      transform: translate3d(0,0,0);
+      transition-duration: 380ms;
+      transition-delay: 120ms;
+    }
+    .sheet::before { content: ""; position: absolute; top: 8px; left: 50%; width: 36px; height: 5px; border-radius: 99px; background: #d4d4d5; transform: translateX(-50%); }
+    .sheet h2 { height: 24px; margin: 0 0 16px; font-size: 20px; line-height: 24px; }
+    .amount-field { display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 13px; border-radius: 12px; background: var(--soft); font-size: 14px; }
+    .amount-field strong { display: inline-block; font-size: 14px; font-weight: 500; line-height: 20px; }
+    .amount-field > span { font-size: 16px; line-height: 24px; }
+    .sheet-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .sheet-actions button { height: 48px; border: 0; border-radius: 12px; background: var(--soft); color: var(--ink); font-size: 14px; font-weight: 700; line-height: 20px; }
+    .sheet-actions .primary { background: var(--ink); color: #fff; }
+    .keypad {
+      position: absolute;
+      z-index: 5;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: grid;
+      grid-template-columns: repeat(3,117px);
+      grid-template-rows: 46px 47px 47px 46px;
+      gap: 7px 6px;
+      height: 291px;
+      padding: 6px 6px 78px;
+      background: #d3d7de;
+      transform: translate3d(0,100%,0);
+      transition: transform 300ms var(--motion-drawer) 70ms;
+    }
+    .amount-screen.is-active .keypad {
+      transform: translate3d(0,0,0);
+      transition-duration: 420ms;
+      transition-delay: 0ms;
+    }
+    .key { display: grid; place-items: center; min-height: 0; border-radius: 5px; background: #fafafa; box-shadow: 0 1px 1px rgba(0,0,0,.3); font-family: "SF Pro Display",-apple-system,sans-serif; font-size: 25px; line-height: 30px; }
+    .key small { display: block; margin-top: -4px; font-family: "SF Pro Text",-apple-system,sans-serif; font-size: 10px; font-weight: 700; line-height: 12px; letter-spacing: .18em; }
+    .key.blank { visibility: hidden; }
+    .key.delete { background: transparent; box-shadow: none; font-size: 20px; }
+    .trade-body { flex: 1; min-height: 875px; padding: 8px 16px 120px; overflow: hidden; }
+    [data-screen="confirm"].is-active { overflow-y: auto; scrollbar-width: none; }
+    [data-screen="confirm"].is-active::-webkit-scrollbar { display: none; }
+    .asset-heading { display: flex; align-items: flex-start; gap: 12px; margin: 8px 0 24px; }
+    .coin { display: block; width: 40px; height: 40px; }
+    .coin img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .asset-heading h2 { margin: 0; font-size: 20px; }
+    .asset-heading p { margin: 2px 0 0; color: #666; font-size: 12px; }
+    .amount-card { padding: 14px 16px 16px; border: 1px solid var(--line); border-radius: 16px; }
+    .seg { display: flex; gap: 26px; font-size: 14px; font-weight: 600; }
+    .seg span:first-child { padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+    .big-amount { display: flex; align-items: center; justify-content: space-between; padding: 17px 0 9px; border-bottom: 1px solid var(--line); }
+    .big-amount strong { font-size: 28px; font-weight: 500; }
+    .big-amount span { font-size: 14px; }
+    .big-amount b { color: var(--purple); }
+    .hint { margin-top: 8px; color: #8c8c8c; font-size: 12px; line-height: 24px; }
+    .icon-create {
+      display: inline-block;
+      width: 13.333px;
+      height: 13.333px;
+      margin-left: 4px;
+      object-fit: contain;
+      vertical-align: -2px;
+    }
+    .payment-label { margin-top: 22px; font-size: 14px; font-weight: 600; }
+    .payment-card { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; padding: 12px; border-radius: 12px; background: var(--soft); font-size: 13px; }
+    .icon-chevron {
+      display: block;
+      flex: 0 0 auto;
+      width: 7.56px;
+      height: 12px;
+      margin: 0 4.22px;
+      object-fit: contain;
+      transform: scaleX(-1);
+    }
+    .merchant-info { margin: 28px -16px 0; padding: 18px 16px 0; border-top: 1px solid var(--line); }
+    .merchant-info h3 { margin: 0 0 18px; font-size: 16px; }
+    .info-row { display: flex; align-items: center; justify-content: space-between; margin: 0 0 14px; font-size: 13px; }
+    .info-value { display: flex; align-items: center; gap: 4px; }
+    .merchant-presence { position: relative; display: block; width: 16px; height: 16px; border-radius: 50%; background: #dedede; }
+    .merchant-presence::after { content: ""; position: absolute; right: -2px; bottom: 0; width: 5.33px; height: 5.33px; border: 1.33px solid #fff; border-radius: 50%; background: #14a739; }
+    .trade-copy { color: #8a8a8f; font-size: 11px; line-height: 1.5; }
+    .sticky-btn { position: absolute; z-index: 12; left: 16px; right: 16px; bottom: 34px; display: grid; place-items: center; height: 48px; border-radius: 12px; background: var(--purple); color: #fff; font-size: 15px; font-weight: 700; }
+    .verify-body { flex: 1; padding: 4px 16px 70px; }
+    .verify-body h1 { margin: 4px 0 8px; font-size: 28px; }
+    .verify-body p { margin: 0; font-size: 14px; }
+    .code { display: grid; grid-template-columns: repeat(6,1fr); gap: 6px; margin-top: 28px; }
+    .code span { display: grid; place-items: center; height: 53px; border: 1px solid transparent; border-radius: 12px; background: var(--soft); font-size: 16px; transition: border-color 160ms ease, background-color 160ms ease, transform 160ms var(--motion-enter); }
+    .code span.is-current { border-color: var(--ink); background: #fff; }
+    .paste { margin-top: 25px; color: var(--purple); text-align: center; font-size: 14px; font-weight: 700; }
+    .verify-help { margin-top: 24px; text-align: center; font-size: 13px; font-weight: 600; }
+    .verify-switch { position: absolute; bottom: 55px; left: 0; right: 0; text-align: center; font-size: 13px; font-weight: 600; }
+    .identity-screen { background: transparent; }
+    .identity-underlay {
+      position: absolute;
+      inset: 0;
+      padding: 0 16px;
+      background: #fff;
+    }
+    .identity-underlay::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      opacity: 0;
+      transition: opacity 240ms var(--motion-enter) 80ms;
+    }
+    .identity-screen.is-active .identity-underlay::after { opacity: 1; }
+    .paid-state { padding-top: 104px; text-align: center; }
+    .paid-clock { display: block; width: 48px; height: 48px; margin: 0 auto 12px; }
+    .paid-clock img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .paid-state h2 { margin: 0; font-size: 20px; }
+    .paid-state p { margin: 6px 0 30px; color: #999; font-size: 13px; }
+    .paid-merchant { display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid #ddd; border-radius: 16px; text-align: left; }
+    .paid-rows { display: grid; gap: 16px; margin-top: 24px; color: #555; font-size: 13px; text-align: left; }
+    .paid-rows div { display: flex; justify-content: space-between; }
+    .identity-drawer {
+      position: absolute;
+      z-index: 8;
+      left: 16px;
+      right: 16px;
+      bottom: 24px;
+      padding: 8px 16px 16px;
+      border-radius: 24px;
+      background: #fff;
+      transform-origin: 50% 100%;
+      opacity: 0;
+      transform: translate3d(0,calc(100% + 24px),0);
+      transition:
+        opacity 220ms var(--motion-enter) 80ms,
+        transform 380ms var(--motion-drawer) 80ms;
+    }
+    .identity-screen.is-active .identity-drawer {
+      opacity: 1;
+      transform: translate3d(0,0,0);
+    }
+    .drawer-grabber { width: 36px; height: 5px; margin: 0 auto 15px; border-radius: 2.5px; background: #8c8c8c; }
+    .identity-drawer h2 { margin: 0 0 20px; font-size: 20px; line-height: 24px; }
+    .identity-choice { display: flex; align-items: center; justify-content: space-between; height: 48px; margin-top: 0; padding: 14px; border-radius: 12px; background: rgba(0,0,0,.05); font-size: 14px; font-weight: 700; line-height: 20px; }
+    .identity-choice + .identity-choice { margin-top: 16px; }
+    .identity-choice img { display: block; width: 16.666px; height: 13.334px; margin: 0 1.667px; object-fit: contain; transform: scaleX(-1); }
+    .security-link { margin-top: 16px; color: #8c8c8c; text-align: center; font-size: 14px; line-height: 20px; }
+    .security-link span { color: var(--purple); }
+    .progress { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; margin: 8px 16px 20px; }
+    .progress i { height: 4px; border-radius: 99px; background: #ddd; }
+    .progress i:first-child { background: var(--ink); }
+    [data-screen="order"].is-active { overflow-y: auto; scrollbar-width: none; }
+    [data-screen="order"].is-active::-webkit-scrollbar { display: none; }
+    .order-body { min-height: 798px; padding: 0 16px 112px; overflow: hidden; }
+    .order-body h1 { margin: 0 0 4px; font-size: 20px; }
+    .order-body > p { margin: 0; font-size: 12px; }
+    .countdown { color: var(--purple); font-weight: 700; }
+    .merchant-card { margin-top: 18px; padding: 13px 16px; border: 1px solid #ddd; border-radius: 16px; }
+    .merchant-card .line { display: flex; align-items: center; gap: 8px; }
+    .online-status { display: flex; align-items: center; gap: 4px; color: #14a739; }
+    .online-status i { width: 6px; height: 6px; border-radius: 50%; background: #14a739; }
+    .merchant-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .merchant-actions span { display: grid; place-items: center; height: 32px; border-radius: 8px; background: var(--soft); font-size: 12px; font-weight: 600; }
+    .merchant-actions .follow { background: var(--purple); color: #fff; }
+    .order-title { display: flex; align-items: center; gap: 10px; margin: 16px 0 14px; font-size: 16px; font-weight: 700; }
+    .order-title .coin { width: 24px; height: 24px; }
+    .details {
+      display: grid;
+      gap: 15px;
+      font-size: 14px;
+      font-weight: 500;
+      font-synthesis: none;
+      line-height: 20px;
+      letter-spacing: .1px;
+    }
+    .details div { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,230px); align-items: center; gap: 12px; }
+    .details b { min-width: 0; font-weight: 500; text-align: right; white-space: nowrap; }
+    .icon-copy {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-left: 6px;
+      object-fit: contain;
+      vertical-align: -1px;
+    }
+    .icon-order-chevron {
+      display: inline-block;
+      width: 7.56px;
+      height: 12px;
+      margin-left: 8px;
+      object-fit: contain;
+      transform: scaleX(-1);
+      vertical-align: -1px;
+    }
+    .payment-mark { display: inline-block; width: 2px; height: 8px; margin-right: 4px; border-radius: 10px; background: #c2dff2; vertical-align: 1px; }
+    .details .detail-separator { display: block; grid-column: 1 / -1; width: 100%; height: 1px; margin: 2px 0; background: var(--line); }
+    .success-body { display: flex; flex: 1; flex-direction: column; align-items: center; padding: 48px 16px 110px; text-align: center; }
+    .success-icon { display: block; width: 88px; height: 88px; opacity: 0; transform: translate3d(0,10px,0) scale(.84); }
+    [data-screen="success"].is-active .success-icon { animation: success-pop 520ms cubic-bezier(.34,1.56,.64,1) 90ms both; }
+    .success-icon img { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .success-body h1 { margin: 12px 0 0; font-size: 20px; line-height: 24px; opacity: 0; transform: translate3d(0,6px,0); }
+    .success-body p { margin: 4px 0 0; color: #404040; font-size: 14px; line-height: 22px; letter-spacing: .25px; opacity: 0; transform: translate3d(0,6px,0); }
+    [data-screen="success"].is-active .success-body h1,
+    [data-screen="success"].is-active .success-body p {
+      opacity: 1;
+      transform: translate3d(0,0,0);
+      transition: opacity 300ms var(--motion-enter), transform 340ms var(--motion-enter);
+    }
+    [data-screen="success"].is-active .success-body h1 { transition-delay: 180ms; }
+    [data-screen="success"].is-active .success-body p { transition-delay: 240ms; }
+    .close { display: grid; place-items: center; width: 24px; height: 24px; margin-left: auto; }
+    .close img { display: block; width: 15.91px; height: 15.91px; object-fit: contain; }
+    [data-screen="success"] .sticky-btn {
+      left: 16px;
+      right: 16px;
+      bottom: 42px;
+      height: 56px;
+      border-radius: 16px;
+      font-size: 16px;
+      line-height: 24px;
+    }
+    [data-screen="success"]::after {
+      content: "";
+      position: absolute;
+      z-index: 10;
+      left: 0;
+      right: 0;
+      bottom: 109px;
+      height: 1px;
+      background: #d9d9d9;
+    }
+    .tap {
+      position: absolute;
+      z-index: 40;
+      left: var(--x,50%);
+      top: var(--y,50%);
+      width: 14px;
+      height: 14px;
+      border: 1.25px solid rgba(0,0,0,.78);
+      border-radius: 50%;
+      background: rgba(0,0,0,.2);
+      opacity: 0;
+      transform: translate(-50%,-50%) scale(.65);
+      pointer-events: none;
+    }
+    .tap.go { animation: tap 420ms cubic-bezier(.16,1,.3,1); }
+    .demo-label { position: absolute; bottom: 9px; left: 50%; display: none; padding: 7px 10px; border: 1px solid rgba(255,255,255,.12); border-radius: 999px; color: rgba(255,255,255,.65); font: 10px/1 monospace; letter-spacing: .08em; transform: translateX(-50%); }
+    body:not(.is-embed) .demo-label { display: block; }
+    @media (hover:hover) and (pointer:fine) {
+      .sell-btn:hover { background: #d93d2a; box-shadow: 0 7px 18px rgba(240,78,55,.24); transform: translateY(-1px); }
+      .chip:hover, .key:hover, .sheet-actions button:not(.primary):hover, .merchant-actions span:not(.follow):hover { background: #e8e8ea; }
+      .sheet-actions .primary:hover { background: #303033; box-shadow: 0 8px 18px rgba(0,0,0,.16); transform: translateY(-1px); }
+      .sticky-btn:hover, .merchant-actions .follow:hover { background: #4420df; box-shadow: 0 10px 24px rgba(82,39,255,.26); transform: translateY(-1px); }
+    }
+    @keyframes tap { 0%{opacity:0} 28%{opacity:.82} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.65)} }
+    @keyframes digit-rise { from{opacity:.35;transform:translate3d(0,4px,0) scale(.96)} to{opacity:1;transform:translate3d(0,0,0) scale(1)} }
+    @keyframes success-pop { from{opacity:0;transform:translate3d(0,10px,0) scale(.84)} to{opacity:1;transform:translate3d(0,0,0) scale(1)} }
+    .digit-pop { animation: digit-rise 180ms var(--motion-enter); }
+    @media (prefers-reduced-motion:reduce) {
+      .screen,
+      .sheet,
+      .keypad,
+      .amount-screen .underlay::after,
+      .identity-underlay::after,
+      .identity-drawer,
+      .success-body h1,
+      .success-body p { transition: none!important; }
+      .tap,
+      .success-icon,
+      .digit-pop { animation: none!important; }
+      .success-icon,
+      .success-body h1,
+      .success-body p { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="demo-shell" data-demo>
+    <div class="phone">
+      <div class="viewport">
+        <section class="screen is-active" data-screen="entry">
+          <div class="statusbar"><span>9:41</span><div class="status-icons"><span class="signal"><i></i><i></i><i></i></span><span class="wifi"></span><span class="battery"></span></div></div>
+          <div class="p2p-head">
+            <div class="p2p-title"><i class="back"></i><span>P2P</span><span>Express buy</span></div>
+            <div class="market-row"><div class="tabs"><span>Buy</span><span class="active">Sell</span></div><div class="chips"><span class="chip"><img class="svg-icon icon-refresh" src="assets/cases/otc-sell-auto-demo/icons/refresh.svg" alt="">30<img class="svg-icon icon-down16" src="assets/cases/otc-sell-auto-demo/icons/down16.svg" alt=""></span><span class="chip">CNY<img class="svg-icon icon-down16" src="assets/cases/otc-sell-auto-demo/icons/down16.svg" alt=""></span></div></div>
+            <div class="filter-row"><span>BTC <img class="svg-icon icon-down12" src="assets/cases/otc-sell-auto-demo/icons/down12.svg" alt=""></span><span>Amount <img class="svg-icon icon-down12" src="assets/cases/otc-sell-auto-demo/icons/down12.svg" alt=""></span><span>Payment <img class="svg-icon icon-down12" src="assets/cases/otc-sell-auto-demo/icons/down12.svg" alt=""></span><img class="svg-icon icon-filter" style="margin-left:auto" src="assets/cases/otc-sell-auto-demo/icons/filter.svg" alt=""></div>
+          </div>
+          <div class="notice"><span style="display:flex;align-items:center;gap:4px"><img class="svg-icon icon-info" src="assets/cases/otc-sell-auto-demo/icons/info.svg" alt="">T+2 withdrawal limits apply for fund security</span><img class="svg-icon icon-close" src="assets/cases/otc-sell-auto-demo/icons/close.svg" alt=""></div>
+          <div class="merchant-list">
+            <article class="merchant"><div class="merchant-top"><div><div class="merchant-name"><span class="avatar">F</span>Funding <img class="svg-icon icon-value" src="assets/cases/otc-sell-auto-demo/icons/value.svg" alt=""></div><div class="merchant-meta">37 Orders｜95.48%</div></div></div><div class="merchant-main"><div><div class="price">¥ 7.29 <small>/USDT</small></div><div class="limits">Limit: 100.00–10000000.00 CNY<br>Available: 5000.00 USDT</div></div><button class="sell-btn">Sell</button></div><div class="payments">│ Alipay　│ Wechat　│ Bank　│ BankBankBank　│ Bank</div></article>
+            <article class="merchant"><div class="merchant-top"><div><div class="merchant-name"><span class="avatar">F</span>Funding <img class="svg-icon icon-value" src="assets/cases/otc-sell-auto-demo/icons/value.svg" alt=""></div><div class="merchant-meta">37 Orders｜95.48%</div></div></div><div class="merchant-main"><div><div class="price">¥ 7.29 <small>/USDT</small></div><div class="limits">Limit: 100.00–1000000.00 CNY<br>Available: 5000.00 USDT</div></div><button class="sell-btn">Sell</button></div><div class="payments">│Alipay │Wechat │Bank │Bank</div></article>
+            <article class="merchant"><div class="merchant-top"><div><div class="merchant-name"><span class="avatar">F</span>Funding <img class="svg-icon icon-value" src="assets/cases/otc-sell-auto-demo/icons/value.svg" alt=""></div><div class="merchant-meta">37 Orders｜95.48%</div></div></div><div class="merchant-main"><div><div class="price">¥ 7.29 <small>/USDT</small></div><div class="limits">Limit: 100.00–1000000.00 CNY<br>Available: 5000.00 USDT</div></div><button class="sell-btn">Sell</button></div></article>
+            <article class="merchant"><div class="merchant-top"><div><div class="merchant-name"><span class="avatar">F</span>Funding <img class="svg-icon icon-value" src="assets/cases/otc-sell-auto-demo/icons/value.svg" alt=""></div><div class="merchant-meta">37 Orders｜95.48%</div></div></div><div class="merchant-main"><div><div class="price">¥ 7.29 <small>/USDT</small></div><div class="limits">Limit: 100.00–1000000.00 CNY<br>Available: 5000.00 USDT</div></div><button class="sell-btn">Sell</button></div><div class="payments">│Alipay │Wechat │Bank │Bank</div></article>
+            <article class="merchant"><div class="merchant-top"><div><div class="merchant-name"><span class="avatar">F</span>Funding <img class="svg-icon icon-value" src="assets/cases/otc-sell-auto-demo/icons/value.svg" alt=""></div><div class="merchant-meta">37 Orders｜95.48%</div></div></div><div class="merchant-main"><div><div class="price">¥ 7.29 <small>/USDT</small></div><div class="limits">Limit: 100.00–1000000.00 CNY<br>Available: 5000.00 USDT</div></div><button class="sell-btn">Sell</button></div></article>
+          </div>
+          <div class="bottom-nav"><span class="active"><img src="assets/cases/otc-sell-auto-demo/icons/c2c.svg" alt=""><small>P2P</small></span><span><img src="assets/cases/otc-sell-auto-demo/icons/bill.svg" alt=""><small>Orders</small></span><span><img src="assets/cases/otc-sell-auto-demo/icons/megaphone.svg" alt=""><small>Ads</small></span><span><img src="assets/cases/otc-sell-auto-demo/icons/profile.svg" alt=""><small>Profile</small></span></div>
+        </section>
+
+        <section class="screen amount-screen" data-screen="amount">
+          <div class="underlay"></div>
+          <div class="sheet"><h2>I want to sell</h2><div class="amount-field"><strong data-amount-input>Enter amount</strong><span>USDT</span></div><div class="sheet-actions"><button>Reset</button><button class="primary">Confirm</button></div></div>
+          <div class="keypad"><span class="key" data-key="1">1</span><span class="key" data-key="2">2<small>ABC</small></span><span class="key" data-key="3">3<small>DEF</small></span><span class="key" data-key="4">4<small>GHI</small></span><span class="key" data-key="5">5<small>JKL</small></span><span class="key" data-key="6">6<small>MNO</small></span><span class="key" data-key="7">7<small>PQRS</small></span><span class="key" data-key="8">8<small>TUV</small></span><span class="key" data-key="9">9<small>WXYZ</small></span><span class="key blank"></span><span class="key" data-key="0">0</span><span class="key delete"><img class="svg-icon" style="width:22px;height:17px" src="assets/cases/otc-sell-auto-demo/icons/delete.svg" alt=""></span></div>
+          <div class="home"></div>
+        </section>
+
+        <section class="screen" data-screen="confirm">
+          <div class="statusbar"><span>9:41</span><div class="status-icons"><span class="signal"><i></i><i></i><i></i></span><span class="wifi"></span><span class="battery"></span></div></div>
+          <div class="nav"><i class="back"></i></div>
+          <div class="trade-body">
+            <div class="asset-heading"><span class="coin"><img src="assets/cases/otc-sell-auto-demo/icons/usdt.svg" alt=""></span><div><h2>Sell USDT</h2><p>Unit price: 0.97 USD&nbsp;&nbsp;00:46 sec</p></div></div>
+            <div class="amount-card"><div class="seg"><span>By amount</span><span style="color:#999">By quantity</span></div><div class="big-amount"><strong>100.00</strong><span>CNY&nbsp;│&nbsp;<b>Max</b></span></div><div class="hint">Limit&nbsp; 1,000.00 - 3,000.00 CNY<br>Available&nbsp; 200.00 USDT <img class="icon-create" src="assets/cases/otc-sell-auto-demo/icons/create.svg" alt=""></div><div style="margin-top:13px;font-size:13px;font-weight:600">Payment amount&nbsp; <span style="color:#999">0.00 USDT</span></div></div>
+            <div class="payment-label">Payment method</div><div class="payment-card"><span><i class="payment-mark"></i>Alipay<br><small>1234 3333 4455 6666</small></span><img class="icon-chevron" src="assets/cases/otc-sell-auto-demo/icons/chevron-right.svg" alt=""></div>
+            <div class="merchant-info"><h3>Merchant details</h3><div class="info-row"><span>Payment window</span><span>60 min</span></div><div class="info-row"><span>Merchant</span><span class="info-value"><i class="merchant-presence"></i>Trusted Merchant <img class="icon-chevron" src="assets/cases/otc-sell-auto-demo/icons/chevron-right.svg" alt=""></span></div><div class="trade-copy">For long-term cooperation, follow this merchant. Buying and selling are both supported. Please avoid sensitive payment notes and contact support if you need help.</div></div>
+          </div>
+          <div class="sticky-btn">Sell USDT with 0 fees</div><div class="home"></div>
+        </section>
+
+        <section class="screen identity-screen" data-screen="identity">
+          <div class="identity-underlay">
+            <div class="statusbar"><span>9:41</span><div class="status-icons"><span class="signal"><i></i><i></i><i></i></span><span class="wifi"></span><span class="battery"></span></div></div>
+            <div class="nav"><i class="back"></i></div>
+            <div class="paid-state"><span class="paid-clock"><img src="assets/cases/otc-sell-auto-demo/icons/paid-time.svg" alt=""></span><h2>Paid</h2><p>Waiting for your receipt</p><div class="paid-merchant"><b style="display:flex;align-items:center;gap:8px"><img class="svg-icon" style="width:24px;height:24px" src="assets/cases/otc-sell-auto-demo/icons/zec.svg" alt="">Trusted Merchant</b><img class="svg-icon" style="width:24px;height:24px" src="assets/cases/otc-sell-auto-demo/icons/chat.svg" alt=""></div><div class="paid-rows"><div><span>Order ID</span><b>#3278906954354 <img class="svg-icon" style="display:inline-block;width:16px;height:16px" src="assets/cases/otc-sell-auto-demo/icons/copy.svg" alt=""></b></div><div><span>Counterparty</span><b>Trusted Merchant</b></div><div><span>Order amount</span><b>478.32 CNY</b></div><div><span>Unit price</span><b>7.58 CNY/USDT</b></div><div><span>Quantity</span><b>40.00 USDT</b></div><div><span>Payment reference</span><b>456782 <img class="svg-icon" style="display:inline-block;width:16px;height:16px" src="assets/cases/otc-sell-auto-demo/icons/copy.svg" alt=""></b></div></div></div>
+          </div>
+          <div class="identity-drawer"><div class="drawer-grabber"></div><h2>Choose a verification method</h2><div class="identity-choice"><span>Trading password</span><img src="assets/cases/otc-sell-auto-demo/icons/arrow-right.svg" alt=""></div><div class="identity-choice"><span>Other verification methods</span><img src="assets/cases/otc-sell-auto-demo/icons/arrow-right.svg" alt=""></div><div class="security-link">Go to the <span>Security Center</span> to review your methods</div></div>
+          <div class="home"></div>
+        </section>
+
+        <section class="screen" data-screen="verify">
+          <div class="statusbar"><span>9:41</span><div class="status-icons"><span class="signal"><i></i><i></i><i></i></span><span class="wifi"></span><span class="battery"></span></div></div>
+          <div class="nav"><i class="back"></i></div>
+          <div class="verify-body"><h1>Google Authenticator</h1><p>Enter the 6-digit code from Google Authenticator</p><div class="code"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="paste">Paste</div><div class="verify-help">Verification unavailable?</div></div>
+          <div class="verify-switch">Use another verification method</div><div class="home"></div>
+        </section>
+
+        <section class="screen" data-screen="order">
+          <div class="statusbar"><span>9:41</span><div class="status-icons"><span class="signal"><i></i><i></i><i></i></span><span class="wifi"></span><span class="battery"></span></div></div>
+          <div class="nav"><i class="back"></i></div><div class="progress"><i></i><i></i><i></i></div>
+          <div class="order-body"><h1>Waiting for buyer payment</h1><p>The order will be cancelled if payment is not completed within <span class="countdown" data-countdown>60:00</span></p><div class="merchant-card"><div class="line"><span class="avatar">F</span><b>Trusted Merchant</b><img class="svg-icon" style="width:16px;height:16px" src="assets/cases/otc-sell-auto-demo/icons/order-value.svg" alt=""></div><small class="online-status"><i></i>Online</small><div class="merchant-actions"><span>Chat</span><span class="follow">Follow</span></div></div><div class="order-title"><span class="coin"><img src="assets/cases/otc-sell-auto-demo/icons/usdt.svg" alt=""></span>Sell USDT</div><div class="details"><div><span>Unit price</span><b>7.58 CNY/USDT</b></div><div><span>Quantity</span><b>40.00 USDT</b></div><div><span>Order amount</span><b>478.32 CNY</b></div><div><span>Payment method</span><b><i class="payment-mark"></i>Alipay</b></div><div><span>Receiving account</span><b>3278906954354<img class="icon-copy" src="assets/cases/otc-sell-auto-demo/icons/order-copy.svg" alt=""></b></div><div><span>Buyer name</span><b>Alex Lee<img class="icon-copy" src="assets/cases/otc-sell-auto-demo/icons/order-copy.svg" alt=""></b></div><div><span>Buyer nickname</span><b>Trusted Merchant<img class="icon-order-chevron" src="assets/cases/otc-sell-auto-demo/icons/order-chevron.svg" alt=""></b></div><div class="detail-separator"></div><div><span>Order ID</span><b>89333333333892<img class="icon-copy" src="assets/cases/otc-sell-auto-demo/icons/order-copy.svg" alt=""></b></div><div><span>Payment reference</span><b>399001<img class="icon-copy" src="assets/cases/otc-sell-auto-demo/icons/order-copy.svg" alt=""></b></div></div></div>
+          <div class="sticky-btn">Remind buyer to pay</div><div class="home"></div>
+        </section>
+
+        <section class="screen" data-screen="success">
+          <div class="statusbar"><span>9:41</span><div class="status-icons"><span class="signal"><i></i><i></i><i></i></span><span class="wifi"></span><span class="battery"></span></div></div>
+          <div class="nav"><span class="close"><img src="assets/cases/otc-sell-auto-demo/icons/success-close.svg" alt=""></span></div><div class="success-body"><span class="success-icon"><img src="assets/cases/otc-sell-auto-demo/icons/success-status.svg" alt=""></span><h1>100.00 HKD</h1><p>You successfully sold 100.00 USDT</p></div><div class="sticky-btn">View assets</div><div class="home"></div>
+        </section>
+        <span class="tap" aria-hidden="true"></span>
+      </div>
+    </div>
+    <span class="demo-label">AUTO DEMO · 17.3S LOOP</span>
+  </main>
+  <script>
+    (() => {
+      const isEmbed = new URLSearchParams(location.search).get("embed") === "1";
+      const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const root = document.querySelector("[data-demo]");
+      const screens = [...document.querySelectorAll("[data-screen]")];
+      const tap = document.querySelector(".tap");
+      const input = document.querySelector("[data-amount-input]");
+      const codeBoxes = [...document.querySelectorAll(".code span")];
+      const countdown = document.querySelector("[data-countdown]");
+      const code = ["1","3","4","5","7","8"];
+      const phone = document.querySelector(".phone");
+      const sequence = [
+        { state:"entry", duration:1400, tap:[325,330], press:".merchant:first-child .sell-btn" },
+        { state:"amount", duration:3000, tap:[290,487], press:".sheet-actions .primary" },
+        { state:"confirm", duration:1900, tap:[188,735], press:".sticky-btn" },
+        { state:"identity", duration:2500, tap:[188,704], press:".identity-choice:nth-of-type(3)" },
+        { state:"verify", duration:2400 },
+        { state:"order", duration:3600, tap:[188,790], press:".sticky-btn" },
+        { state:"success", duration:2500 }
+      ];
+      let timer = 0, startDelay = 0, token = 0, index = 0, playing = false;
+      let externallyVisible = !isEmbed;
+      if (isEmbed) document.body.classList.add("is-embed");
+      const fitPhone = () => {
+        const scale = Math.min(1, (innerWidth - 32) / 391, (innerHeight - 32) / 828);
+        phone.style.setProperty("--phone-scale", Math.max(.1, scale).toFixed(5));
+      };
+      fitPhone();
+      addEventListener("resize", fitPhone);
+
+      const resetDynamic = () => {
+        input.textContent = "Enter amount";
+        input.style.color = "#8d8d92";
+        input.classList.remove("digit-pop");
+        codeBoxes.forEach(box => {
+          box.textContent = "";
+          box.classList.remove("is-current","digit-pop");
+        });
+        countdown.textContent = "60:00";
+      };
+      const setScreen = state => {
+        screens.forEach(screen => {
+          const active = screen.dataset.screen === state || (state === "amount" && screen.dataset.screen === "entry");
+          const wasActive = screen.classList.contains("is-active");
+          if (wasActive && !active) {
+            screen.classList.remove("is-active");
+            screen.classList.add("is-leaving");
+            setTimeout(() => screen.classList.remove("is-leaving"), 300);
+          } else if (active) {
+            screen.classList.remove("is-leaving");
+            screen.classList.add("is-active");
+            if (!wasActive) screen.scrollTop = 0;
+          } else {
+            screen.classList.remove("is-leaving");
+          }
+        });
+        if (state === "amount") {
+          const run = token;
+          const digits = ["1","0","0"];
+          let value = "";
+          digits.forEach((digit, i) => setTimeout(() => {
+            if (run !== token || !playing) return;
+            value += digit;
+            input.textContent = value;
+            input.style.color = "#1a1a1a";
+            input.classList.remove("digit-pop");
+            void input.offsetWidth;
+            input.classList.add("digit-pop");
+            const key = document.querySelector(`[data-key="${digit}"]`);
+            key?.classList.add("is-auto-pressed");
+            showTap([], `[data-key="${digit}"]`);
+            setTimeout(() => key?.classList.remove("is-auto-pressed"), 150);
+          }, 650 + i * 420));
+        }
+        if (state === "verify") {
+          const run = token;
+          codeBoxes.forEach(box => box.classList.remove("is-current","digit-pop"));
+          codeBoxes[0]?.classList.add("is-current");
+          codeBoxes.forEach((box,i) => setTimeout(() => {
+            if (run !== token || !playing) return;
+            codeBoxes.forEach(item => item.classList.remove("is-current"));
+            box.textContent = code[i];
+            box.classList.remove("digit-pop");
+            void box.offsetWidth;
+            box.classList.add("digit-pop","is-current");
+          }, 420 + i * 160));
+        }
+        if (state === "order") {
+          let seconds = 60;
+          const run = token;
+          const tick = () => {
+            if (run !== token || !playing) return;
+            seconds -= 1;
+            countdown.textContent = `59:${String(seconds).padStart(2,"0")}`;
+            if (seconds > 56) setTimeout(tick, 550);
+          };
+          setTimeout(tick, 550);
+        }
+      };
+      const findPressTarget = selector => {
+        if (!selector) return null;
+        const activeScreen = [...screens].reverse().find(screen => screen.classList.contains("is-active"));
+        return activeScreen?.querySelector(selector) || document.querySelector(selector);
+      };
+      const showTap = ([x,y] = [], selector) => {
+        if (reduceMotion) return;
+        const target = findPressTarget(selector);
+        if (target) {
+          const targetRect = target.getBoundingClientRect();
+          const viewportRect = document.querySelector(".viewport").getBoundingClientRect();
+          x = targetRect.left - viewportRect.left + targetRect.width / 2;
+          y = targetRect.top - viewportRect.top + targetRect.height / 2;
+        }
+        if (x == null) return;
+        tap.style.setProperty("--x", `${x}px`);
+        tap.style.setProperty("--y", `${y}px`);
+        tap.classList.remove("go");
+        void tap.offsetWidth;
+        tap.classList.add("go");
+      };
+      const press = selector => {
+        if (!selector) return;
+        const target = findPressTarget(selector);
+        if (!target) return;
+        target.classList.add("is-auto-pressed");
+        setTimeout(() => target.classList.remove("is-auto-pressed"), 180);
+      };
+      const stop = () => { playing = false; token += 1; clearTimeout(timer); clearTimeout(startDelay); };
+      const reset = () => { stop(); index = 0; resetDynamic(); setScreen("entry"); };
+      const advance = run => {
+        if (!playing || run !== token || document.hidden || !externallyVisible) return;
+        const step = sequence[index];
+        setScreen(step.state);
+        const feedbackAt = Math.max(120, step.duration - 360);
+        setTimeout(() => {
+          if (run !== token || !playing) return;
+          showTap(step.tap, step.press);
+          press(step.press);
+        }, feedbackAt);
+        timer = setTimeout(() => {
+          if (run !== token) return;
+          index += 1;
+          if (index >= sequence.length) {
+            dispatchEvent(new CustomEvent("otc-demo-loop"));
+            parent.postMessage({type:"otc-demo-loop"},"*");
+            index = 0;
+            resetDynamic();
+          }
+          advance(run);
+        }, step.duration);
+      };
+      const start = () => {
+        if (reduceMotion || playing || document.hidden || !externallyVisible) return;
+        playing = true; token += 1; advance(token);
+      };
+      const schedule = () => { clearTimeout(startDelay); if (externallyVisible && !reduceMotion) startDelay = setTimeout(start,1000); };
+      window.OtcSellDemo = { start, stop, reset };
+      if (reduceMotion) setScreen("success");
+      else if (!isEmbed) {
+        const observer = new IntersectionObserver(([entry]) => {
+          externallyVisible = entry.isIntersecting && entry.intersectionRatio >= .55;
+          externallyVisible ? schedule() : reset();
+        }, {threshold:[0,.55,1]});
+        observer.observe(root);
+      }
+      addEventListener("message", event => {
+        if (event.data?.type !== "otc-demo-visibility") return;
+        externallyVisible = Boolean(event.data.visible);
+        externallyVisible ? schedule() : reset();
+      });
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stop(); else if (externallyVisible) { reset(); schedule(); }
+      });
+    })();
+  </script>
+</body>
+</html>

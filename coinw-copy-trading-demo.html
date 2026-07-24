@@ -1,0 +1,670 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>CoinW Copy Trading App Demo</title>
+  <script>
+    if (new URLSearchParams(location.search).has("embed")) {
+      document.documentElement.classList.add("is-embed");
+    }
+  </script>
+  <style>
+    :root{
+      --purple:#5227ff;--green:#14a739;--red:#e95032;--ink:#1a1a1a;
+      --secondary:#404040;--muted:#8c8c8c;--line:#f2f2f2;--soft:#f4f4f4;
+      --font:"Satoshi",-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Helvetica Neue",Arial,sans-serif
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      display:grid;place-items:center;overflow:hidden;background:
+      radial-gradient(circle at 50% 20%,#202026 0,#0c0c0f 43%,#050506 100%);
+      color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased
+    }
+    button,input,textarea{font:inherit;color:inherit}
+    button{border:0;background:none;padding:0;cursor:pointer}
+    .stage{display:grid;place-items:center;gap:16px}
+    .device{
+      position:relative;width:407px;height:844px;padding:15px 16px 17px;border-radius:64px;
+      background:linear-gradient(145deg,#3a3a3d 0,#111215 27%,#050506 76%,#303033 100%);
+      box-shadow:0 36px 90px #000b,0 0 0 1px #56565b,inset 0 0 0 2px #050506
+    }
+    .device:before,.device:after{content:"";position:absolute;left:-4px;width:4px;border-radius:3px 0 0 3px;background:#26272b}
+    .device:before{top:164px;height:52px}.device:after{top:234px;height:88px}
+    .screen{position:relative;width:375px;height:812px;overflow:hidden;background:#fff;border-radius:49px}
+    .screen-scroll{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;background:#fff;padding-bottom:94px}
+    .screen-scroll::-webkit-scrollbar{display:none}
+    .statusbar{
+      position:absolute;z-index:40;top:0;left:0;width:100%;height:44px;padding:7px 20px;
+      display:flex;align-items:center;justify-content:space-between;pointer-events:none
+    }
+    .screen.scrolled>.statusbar{background:#fff}
+    .time{font-size:16px;font-weight:800;line-height:24px;letter-spacing:.15px}
+    .status-icons{display:flex;align-items:center;height:15px}
+    .status-svg{display:block;width:72.661px;height:11.333px}
+    .signal{display:flex;gap:2px;align-items:flex-end;height:12px}
+    .signal i{display:block;width:3px;border-radius:2px;background:#1a1a1a}.signal i:nth-child(1){height:4px}.signal i:nth-child(2){height:7px}.signal i:nth-child(3){height:10px}.signal i:nth-child(4){height:12px}
+    .wifi{width:14px;height:10px;border:2px solid #1a1a1a;border-left-color:transparent;border-right-color:transparent;border-bottom:0;border-radius:50% 50% 0 0;position:relative}
+    .wifi:after{content:"";position:absolute;left:4px;top:4px;width:4px;height:4px;border-radius:50%;background:#1a1a1a}
+    .battery{width:23px;height:11px;border:1.5px solid #1a1a1a;border-radius:3px;padding:1px;position:relative}
+    .battery:before{content:"";display:block;width:16px;height:6px;border-radius:1px;background:#1a1a1a}
+    .battery:after{content:"";position:absolute;right:-3px;top:3px;width:2px;height:4px;border-radius:0 2px 2px 0;background:#1a1a1a}
+    .hero{height:150px;background:url("assets/coinw-copy-trading/trader-hero.png") center/cover no-repeat;position:relative}
+    .hero-back{position:absolute;left:20px;top:55px;width:24px;height:24px}
+    .back-svg{display:block;width:11.34px;height:18px;margin:3px 6.33px}
+    .back-svg.rotated{width:16.8px;height:11.48px;margin:6.26px 3.6px;transform:rotate(-90deg)}
+    .profile{position:relative;margin-top:-12px;border-radius:16px 16px 0 0;background:#fff}
+    .profile-main{padding:16px 16px 12px}
+    .profile-row{display:flex;gap:12px;align-items:center}
+    .avatar{width:72px;height:72px;border-radius:50%;border:1.3px solid #f2f2f2;object-fit:cover;flex:0 0 auto}
+    .profile-copy{min-width:0;flex:1}
+    .name-row{display:flex;align-items:center;justify-content:space-between;height:24px}
+    .name{font-size:16px;line-height:24px;font-weight:800;letter-spacing:.15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:216px}
+    .more{width:12px;height:3px;margin:6.5px 2px}
+    .badge-row{display:flex;gap:4px;align-items:center;height:20px}
+    .badge-row img{width:16px;height:16px}
+    .social{display:flex;gap:8px;align-items:center;margin-top:4px;height:20px;font-size:12px;color:var(--secondary)}
+    .social b{font-size:14px;color:var(--ink)}
+    .social .xmark{display:inline-flex;gap:3px;align-items:center}.social .xmark img{width:12px;height:12px}
+    .bio{margin-top:8px;font-size:14px;line-height:22px;letter-spacing:.25px}
+    .bio-line{display:flex;align-items:center;justify-content:space-between;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .bio-line span{overflow:hidden;text-overflow:ellipsis}
+    .bio-chevron{width:10px;height:10px;margin-left:8px}
+    .translate{margin-top:8px;color:var(--muted);font-size:14px;line-height:20px;font-weight:700}
+    .profile-actions{display:flex;gap:16px;padding:0 16px;height:44px}
+    .profile-actions button{flex:1;border-radius:12px;font-size:14px;font-weight:800;letter-spacing:.1px;background:#f2f2f2}
+    .profile-actions .follow{background:var(--purple);color:#fff}
+    .primary-tabs,.secondary-tabs{display:flex;align-items:flex-end;background:#fff}
+    .primary-tabs{height:60px;padding:0 16px;gap:28px}
+    .primary-tabs button{height:44px;padding-top:15px;font-size:18px;line-height:24px;font-weight:800;color:#9a9a9a}
+    .primary-tabs .active{color:var(--ink)}
+    .secondary-tabs{height:48px;border-bottom:1px solid var(--line);padding:0 16px;gap:24px}
+    .secondary-tabs button{height:48px;position:relative;font-size:16px;line-height:24px;font-weight:800;color:#999;white-space:nowrap}
+    .secondary-tabs .active{color:var(--ink)}
+    .secondary-tabs .active:after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:#1a1a1a}
+    .view{display:none}.view.active{display:block}
+    .summary-card{margin:12px 16px 14px;padding:12px 16px 0;border:1px solid #e5e5e5;border-radius:12px}
+    .summary-stats{display:grid;grid-template-columns:1fr 1.25fr 1fr;padding-bottom:12px;border-bottom:1px solid #e5e5e5}
+    .stat:nth-child(2){text-align:center}.stat:nth-child(3){text-align:right}
+    .stat label{display:block;font-size:12px;line-height:16px;color:var(--muted)}.stat b{font-size:16px;line-height:24px}
+    .summary-row{height:57px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e5e5e5;font-size:14px}
+    .summary-row:last-child{border:0}.summary-row small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+    .money{color:var(--green)}
+    .pills{display:flex;gap:12px;align-items:center;overflow:hidden;padding:6px 16px 4px;background:#fff}
+    .pills button{flex:0 0 auto;padding:4px 12px;border-radius:99px;background:#f2f2f2;font-size:14px;line-height:20px;font-weight:600}
+    .pills .active{border:1px solid #1a1a1a;padding:3px 11px;background:#f2f2f2;font-weight:800}
+    .periods{display:flex;justify-content:space-between;padding:4px 16px 10px;font-size:12px}
+    .periods button{padding:6px 12px;border-radius:99px}.periods .active{background:#f2f2f2}
+    .section{padding:12px 16px 8px;border-bottom:8px solid #fafafa}
+    .section-title{display:flex;align-items:center;justify-content:space-between;height:28px;margin-bottom:8px;font-size:16px;font-weight:800}
+    .chart{width:343px;height:206px;display:block;overflow:visible}
+    .grid line{stroke:#ececec;stroke-width:.8;stroke-dasharray:2 2}.axis{font-size:10px;fill:#8c8c8c}
+    .bar{transform-box:fill-box;transform-origin:center bottom;animation:grow 900ms cubic-bezier(.2,.85,.3,1) both}
+    .bar:nth-of-type(2){animation-delay:70ms}.bar:nth-of-type(3){animation-delay:140ms}.bar:nth-of-type(4){animation-delay:210ms}.bar:nth-of-type(5){animation-delay:280ms}.bar:nth-of-type(6){animation-delay:350ms}.bar:nth-of-type(7){animation-delay:420ms}.bar:nth-of-type(8){animation-delay:490ms}
+    @keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+    .tooltip-line{stroke:#d9d9d9;stroke-dasharray:2 2}
+    .tooltip{animation:tipMove 5.4s ease-in-out infinite}
+    @keyframes tipMove{0%,18%{transform:translateX(-86px)}45%{transform:translateX(-28px)}72%,100%{transform:translateX(0)}}
+    .curve{fill:none;stroke:var(--green);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:520;stroke-dashoffset:520;animation:draw 2.4s cubic-bezier(.22,1,.36,1) forwards}
+    .curve-fill{opacity:0;animation:fade .6s 1.1s forwards}@keyframes draw{to{stroke-dashoffset:0}}@keyframes fade{to{opacity:1}}
+    .metric-value{font-size:20px;line-height:28px;color:var(--green);font-weight:800;margin:0 0 10px}
+    .switcher{display:flex;padding:3px;border:1px solid #d9d9d9;border-radius:56px;font-size:11px}
+    .switcher span{padding:6px 10px;border-radius:99px}.switcher .on{background:#1a1a1a;color:#fff}
+    .performance{padding:14px 16px 6px;border-bottom:8px solid #fafafa}
+    .perf-head,.perf-grid{display:grid;grid-template-columns:1fr 1fr}
+    .perf-head div:last-child,.perf-grid div:nth-child(even){text-align:right}
+    .big-green{font-size:18px;line-height:24px;color:var(--green);font-weight:800}
+    .caption{font-size:12px;line-height:16px;color:var(--secondary)}
+    .winrow{display:flex;justify-content:space-between;margin-top:18px;font-size:12px}.winrate{color:var(--green)}
+    .winbar{height:4px;border-radius:4px;margin:6px 0 8px;background:linear-gradient(90deg,var(--green) 0 87.39%,var(--red) 87.39%)}
+    .overview{padding:12px 16px;border-bottom:8px solid #fafafa}
+    .overview h3,.preference h3{font-size:16px;margin:0 0 10px}
+    .data-row{display:flex;justify-content:space-between;align-items:center;min-height:28px;font-size:12px}.data-row strong{font-weight:700}
+    .preference{padding:14px 16px 40px}.range{font-size:12px}
+    .dist{display:flex;height:5px;border-radius:6px;overflow:hidden;margin:12px 0 10px}.dist i:nth-child(1){width:60%;background:var(--red)}.dist i:nth-child(2){width:18%;background:#ffd400}.dist i:nth-child(3){width:13%;background:var(--green)}.dist i:nth-child(4){flex:1;background:#2d90cf}
+    .coin-block{padding:8px 0;border-bottom:1px solid var(--line);font-size:12px}.coin-head{display:flex;justify-content:space-between;margin-bottom:8px}.coin-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:10px}
+    .coin-grid{display:grid;grid-template-columns:1fr 1fr;text-align:right;line-height:18px;color:var(--muted)}.coin-grid span:nth-child(odd){text-align:left;padding-left:16px}.coin-grid b{color:var(--ink)}
+    .orders{padding:8px 16px 40px}.order{padding:12px 0 16px;border-bottom:1px solid var(--line)}.order h3{font-size:14px;margin:0 0 14px}
+    .order-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}.order-grid div:nth-child(even){text-align:right}.order-grid label{display:block;color:var(--muted);font-size:12px}.order-grid span{font-size:14px}.order-grid .positive{color:var(--green)}
+    .qa-toolbar{height:54px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid var(--line);gap:10px}
+    .qa-filter{padding:5px 14px;border-radius:99px;background:#f2f2f2;font-size:14px}.qa-filter.active{border:1px solid #1a1a1a;background:#fff;padding:4px 13px}
+    .ask{margin-left:auto;color:var(--purple);font-size:14px;font-weight:800;display:flex;gap:4px;align-items:center}
+    .ask:before{content:"";width:20px;height:20px;background:url("assets/coinw-copy-trading/pencil.svg") center/contain no-repeat}
+    .qa-list{padding:4px 16px 36px}.qa-item{padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+    .qa-question{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;line-height:24px}.qa-question img,.answer-preview img,.detail-user img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+    .qa-question .dots{margin-left:auto;width:12px;height:3px;flex:0 0 auto}.answer-preview{display:flex;gap:8px;margin-top:8px}.answer-preview p{margin:0;font-size:14px;line-height:22px;color:var(--secondary)}
+    .compact{
+      display:none;position:absolute;z-index:35;top:44px;left:0;right:0;background:#fff;
+      box-shadow:0 1px 0 #f2f2f2
+    }
+    .compact.show{display:block}
+    .compact-nav{height:44px;display:flex;align-items:center;padding:0 16px}
+    .compact-nav .title{font-size:14px;font-weight:800;margin-left:12px}.compact-nav .right{margin-left:auto;display:flex;gap:18px;align-items:center}
+    .compact-nav .follow-mini{color:var(--purple);font-size:12px;font-weight:800}
+    .share-mini{width:24px;height:24px}.share-mini img{display:block;width:19.2px;height:19.2px;margin:2.4px}.compact-more{display:block;width:18px;height:4.5px}
+    .compact .pills{padding-top:8px}.compact .periods{padding-bottom:8px}
+    .bottom-action{position:absolute;z-index:32;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 16px 34px}
+    .bottom-action button{height:56px;width:100%;border-radius:16px;background:var(--purple);color:#fff;font-size:16px;font-weight:800}
+    .home-indicator{position:absolute;z-index:60;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:99px;background:#1a1a1a;pointer-events:none}
+    .overlay{display:none;position:absolute;z-index:50;inset:0;background:#fff}.overlay.open{display:block}
+    .overlay-scroll{height:100%;overflow-y:auto;padding-top:44px;padding-bottom:34px}
+    .overlay-nav{height:44px;display:flex;align-items:center;justify-content:center;padding:0 16px;position:relative;font-size:20px;font-weight:800}
+    .overlay-nav .left{position:absolute;left:16px}.overlay-nav .right{position:absolute;right:16px}.circle-more{width:24px;height:24px}.circle-more img{display:block;width:24px;height:24px}
+    .detail{padding:16px}.detail-user{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}.detail-date{margin-left:auto}
+    .detail-question{font-size:16px;line-height:24px;font-weight:800;margin:10px 0 16px}.detail-answer{border-top:1px solid var(--line);padding-top:16px;font-size:16px;line-height:24px;color:#505050}
+    .detail-answer .detail-user{margin-bottom:10px}.translate-link{color:var(--purple);font-size:12px;font-weight:800;margin-top:30px}
+    .answer-wait{border-top:1px solid var(--line);padding-top:16px;color:#999;font-size:14px}
+    .detail-action{position:absolute;left:0;right:0;bottom:0;padding:12px 16px 43px;border-top:1px solid var(--line);background:#fff}
+    .detail-action button{width:100%;height:54px;border-radius:16px;color:#fff;background:var(--purple);font-weight:800;font-size:16px}
+    .composer{padding-top:44px}.composer-head{height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:14px;font-weight:800}.composer-head .disabled{color:#bfbfbf}.composer-head .ready{color:var(--purple)}
+    .compose-area{position:absolute;top:88px;left:0;right:0;bottom:292px;padding:14px 16px}.compose-area textarea{width:100%;height:100%;border:0;outline:0;resize:none;font-size:16px;line-height:24px}.compose-area textarea::placeholder{color:#999}
+    .compose-count{position:absolute;left:16px;right:16px;bottom:292px;height:44px;border-top:1px solid var(--line);display:flex;align-items:center;color:var(--muted);font-size:12px}
+    .answer-context{position:absolute;top:88px;left:16px;right:16px;height:169px;padding-top:14px;border-bottom:1px solid var(--line)}
+    .answer-context .detail-question{margin:10px 0 24px}.answer-context .translate-link{margin:0 0 14px}
+    .answer-editor .compose-area{top:257px}.answer-editor .compose-count{bottom:292px}
+    .keyboard{position:absolute;left:0;right:0;bottom:0;height:292px;background:#d1d5dc;padding:8px 3px 34px}
+    .keyrow{display:flex;justify-content:center;gap:5px;margin-bottom:10px}.key{height:42px;min-width:32px;padding:0 7px;border-radius:5px;background:#fff;display:grid;place-items:center;box-shadow:0 1px 0 #8d929a;font-size:18px}.key.wide{min-width:86px;font-size:14px}.key.space{min-width:182px}.key.dark{background:#abb2bd}
+    .share-overlay{display:flex;background:rgba(64,64,64,.7);align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity 260ms cubic-bezier(.22,1,.36,1)}.share-overlay.open{display:flex;opacity:1;pointer-events:auto}
+    .share-stack{width:375px;display:flex;flex-direction:column;align-items:center;opacity:0;transform:translateY(22px) scale(.99);transition:transform 320ms cubic-bezier(.32,.72,0,1),opacity 220ms ease-out}.share-overlay.open .share-stack{opacity:1;transform:translateY(0) scale(1)}
+    .share-card{width:320px;border-radius:24px;overflow:hidden;background:#fff}
+    .share-top{height:400px;padding:16px;position:relative;color:#fff;background:linear-gradient(215deg,#0c234c 0,#1b0e2b 49%,#0c343b 97%)}
+    .brand{display:flex;align-items:center;gap:6px;font-weight:900;font-size:18px}.brand img{width:22px;height:22px}
+    .share-person{display:flex;gap:8px;margin-top:24px}.share-person img{width:48px;height:48px;border:2px solid #fff;border-radius:50%;object-fit:cover}.share-person b{font-size:18px;line-height:24px}.share-badges{display:flex;gap:4px;margin-top:4px}.share-badges img{width:16px;height:16px}
+    .share-metrics{margin-top:24px}.share-metrics b{display:block;font-size:18px;line-height:24px}.share-metrics .hero-value{font-size:32px;line-height:40px;color:var(--green)}.share-metrics small{display:block;margin:2px 0 16px;font-size:12px;opacity:.6}
+    .share-art{position:absolute;right:-8px;bottom:18px;width:180px}.share-caption{position:absolute;left:8px;right:8px;bottom:8px;display:flex;justify-content:space-between;font-size:12px;opacity:.6}
+    .share-foot{height:94px;padding:12px 16px 16px;display:flex;align-items:center}.invite{flex:1}.invite .brand{color:var(--purple);font-size:20px}.invite p{margin:4px 0 0;font-size:12px}.invite small{font-size:11px;color:var(--muted)}.share-qr{width:58px;height:58px}
+    .share-drawer{width:343px;height:214px;margin:16px;border-radius:24px;background:#fff;padding:8px 16px}.grabber{width:36px;height:5px;border-radius:5px;background:#d9d9d9;margin:0 auto 10px}.share-title{text-align:center;font-size:20px;font-weight:800}.share-switch{height:42px;display:flex;align-items:center;justify-content:space-between;font-size:14px}.toggle{width:39px;height:24px;border-radius:20px;background:var(--purple);padding:3px}.toggle:after{content:"";display:block;width:18px;height:18px;border-radius:50%;background:#fff;margin-left:15px}.share-link{display:flex;justify-content:space-between;font-size:12px;color:var(--secondary);white-space:nowrap;overflow:hidden}.share-link img{width:12px;height:12px;margin:2px}.social-icons{display:flex;justify-content:space-between;margin-top:14px}.social-item{text-align:center;font-size:10px}.social-circle{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;margin:0 auto 4px;background:#f2f2f2}.social-facebook{width:7.875px;height:17.5px}.social-telegram{width:17.5px;height:14.875px}.social-twitter{width:14.875px;height:14px}.social-download{width:18.879px;height:18.866px}.social-more{width:18.9px;height:4.725px}.fb{background:#2c64f6}.tg{background:#3290ec}.tw{background:#000}
+    .chart-focus-scrim{
+      position:absolute;z-index:70;inset:15px 16px 17px;border-radius:49px;background:rgba(5,5,7,.62);
+      opacity:0;pointer-events:none;transition:opacity 280ms cubic-bezier(.22,1,.36,1)
+    }
+    .chart-focus-card{
+      position:absolute;z-index:71;top:50%;left:50%;width:455px;overflow:hidden;border-radius:20px;background:#fff;
+      box-shadow:0 28px 72px rgba(0,0,0,.48);opacity:0;pointer-events:none;
+      transform:translate(-50%,calc(-50% + 24px)) scale(.84);
+      transition:transform 420ms cubic-bezier(.22,1,.36,1),opacity 220ms ease-out
+    }
+    .chart-focus-card .section{padding:18px 20px 16px;border:0}.chart-focus-card .section-title{font-size:18px;margin-bottom:10px}
+    .chart-focus-card .metric-value{font-size:24px;line-height:32px}.chart-focus-card .chart{width:100%;height:auto}
+    .device.chart-focus-active .chart-focus-scrim{opacity:1}
+    .device.chart-focus-active .chart-focus-card{opacity:1;transform:translate(-50%,-50%) scale(1)}
+    .trend-runner{filter:drop-shadow(0 0 4px rgba(20,167,57,.5))}
+    .hint{color:#888;font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+    @media(max-width:460px){.device{width:375px;height:812px;padding:0;border-radius:0;background:#fff}.screen{border-radius:0}.device:before,.device:after{display:none}.chart-focus-scrim{inset:0;border-radius:0}.chart-focus-card{width:359px}.hint{display:none}}
+    html.is-embed,
+    html.is-embed body{
+      background-color:transparent!important;
+      background-image:none!important;
+    }
+    html.is-embed .stage{gap:0}
+    html.is-embed .hint{display:none}
+    @media(max-width:460px){
+      html.is-embed .device{
+        width:407px;height:844px;padding:15px 16px 17px;border-radius:64px;
+        background:linear-gradient(145deg,#3a3a3d 0,#111215 27%,#050506 76%,#303033 100%)
+      }
+      html.is-embed .screen{border-radius:49px}
+      html.is-embed .device:before,html.is-embed .device:after{display:block}
+      html.is-embed .chart-focus-scrim{inset:15px 16px 17px;border-radius:49px}
+      html.is-embed .chart-focus-card{width:391px}
+    }
+    @media(prefers-reduced-motion:reduce){.bar,.curve,.curve-fill,.tooltip{animation:none}.curve{stroke-dashoffset:0}.curve-fill{opacity:1}.share-overlay,.share-stack,.chart-focus-scrim,.chart-focus-card{transition:none}}
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="device">
+      <section class="screen" aria-label="CoinW copy trading app demo">
+        <div class="screen-scroll" id="screenScroll">
+          <div class="hero">
+            <button class="hero-back" aria-label="Back"><img class="back-svg rotated" src="assets/coinw-copy-trading/back.svg" alt=""></button>
+          </div>
+          <header class="profile">
+            <div class="profile-main">
+              <div class="profile-row">
+                <img class="avatar" src="assets/coinw-copy-trading/trader-avatar.png" alt="">
+                <div class="profile-copy">
+                  <div class="name-row"><div class="name">Crypto Meow...</div><img class="more" src="assets/coinw-copy-trading/more.svg" alt=""></div>
+                  <div class="badge-row"><img src="assets/coinw-copy-trading/verified.svg" alt=""><img src="assets/coinw-copy-trading/level.svg" alt=""></div>
+                  <div class="social"><span>Following <b>888</b></span><span>Followers <b>8,888</b></span><span class="xmark"><img src="assets/coinw-copy-trading/x.svg" alt=""><b>30k</b></span></div>
+                </div>
+              </div>
+              <div class="bio">
+                <div class="bio-line"><span>When you have a trusted person to aid you aid you</span></div>
+                <div class="bio-line"><span>makeit huge makeit huge makeit huge makeit hh...</span><img class="bio-chevron" src="assets/coinw-copy-trading/chevron.svg" alt=""></div>
+                <div class="translate">Translate</div>
+              </div>
+            </div>
+            <div class="profile-actions"><button id="shareButton">Share</button><button class="follow" id="followButton">Follow</button></div>
+          </header>
+          <nav class="primary-tabs"><button>Posts</button><button class="active">Copy Trading</button></nav>
+          <nav class="secondary-tabs" id="secondaryTabs">
+            <button class="active" data-view="contract">Futures</button>
+            <button data-view="spot">Spot</button>
+            <button data-view="qa">Q&amp;A (<span id="qaCount">1</span>)</button>
+          </nav>
+
+          <section class="view active" id="contractView">
+            <div class="summary-card">
+              <div class="summary-stats">
+                <div class="stat"><label>Trading Days</label><b>586</b></div>
+                <div class="stat"><label>Total Followers</label><b>5800</b></div>
+                <div class="stat"><label>AUM</label><b>586</b></div>
+              </div>
+              <div class="summary-row"><span>Est. Profit Share Today<small>Profit Share 12%</small></span><span class="money">+5.45 USDT　›</span></div>
+              <div class="summary-row"><span>Total Profit Share</span><span class="money">+45,785.45 USDT　›</span></div>
+            </div>
+            <div class="pills sticky-source"><button class="active">Statistics</button><button>Positions</button><button>Order History</button><button>Followers</button></div>
+            <div class="periods sticky-periods"><button class="active">7D</button><button>15D</button><button>30D</button><button>90D</button><button>180D</button></div>
+            <section class="section">
+              <div class="section-title">Total P&amp;L</div>
+              <svg class="chart" id="barChart" viewBox="0 0 343 206" role="img" aria-label="Total profit and loss bar chart">
+                <g class="grid"><line x1="32" y1="20" x2="343" y2="20"/><line x1="32" y1="52" x2="343" y2="52"/><line x1="32" y1="84" x2="343" y2="84"/><line x1="32" y1="116" x2="343" y2="116"/><line x1="32" y1="148" x2="343" y2="148"/><line x1="32" y1="180" x2="343" y2="180"/></g>
+                <g class="axis"><text x="0" y="23">60%</text><text x="0" y="55">40%</text><text x="0" y="87">20%</text><text x="5" y="119">0%</text><text x="0" y="151">-20%</text><text x="0" y="183">-40%</text></g>
+                <g><rect class="bar" x="42" y="96" width="24" height="20" fill="#14a739"/><rect class="bar" x="70" y="116" width="24" height="5" fill="#e95032"/><rect class="bar" x="98" y="86" width="24" height="30" fill="#14a739"/><rect class="bar" x="126" y="66" width="24" height="50" fill="#14a739"/><rect class="bar" x="154" y="24" width="24" height="92" fill="#14a739"/><rect class="bar" x="182" y="116" width="24" height="56" fill="#e95032"/><rect class="bar" x="238" y="116" width="24" height="26" fill="#e95032"/><rect class="bar" x="266" y="78" width="24" height="38" fill="#14a739"/></g>
+                <g class="tooltip"><line class="tooltip-line" x1="194" y1="18" x2="194" y2="178"/><circle cx="194" cy="116" r="4" fill="#e95032" stroke="#fff" stroke-width="1.5"/><g transform="translate(198 82)"><rect width="67" height="30" rx="4" fill="#e95032"/><text x="4" y="12" fill="#fff" font-size="10">12/03 02:45</text><text x="4" y="24" fill="#fff" font-size="10">48.78%</text></g></g>
+                <g class="axis"><text x="37" y="199">5-1</text><text x="68" y="199">6-1</text><text x="96" y="199">7-1</text><text x="124" y="199">8-1</text><text x="180" y="199">9-1</text><text x="232" y="199">10-1</text><text x="282" y="199">11-1</text><text x="326" y="199">12-1</text></g>
+              </svg>
+            </section>
+            <section class="section" id="yieldSection">
+              <div class="section-title"><span>ROI</span><span class="switcher"><span class="on">ROI</span><span>P&amp;L</span></span></div>
+              <p class="metric-value">+367.28%</p>
+              <svg class="chart" id="lineChart" viewBox="0 0 343 206" role="img" aria-label="ROI trend chart">
+                <defs><linearGradient id="greenFade" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#14a739" stop-opacity=".18"/><stop offset="1" stop-color="#14a739" stop-opacity="0"/></linearGradient></defs>
+                <g class="grid"><line x1="32" y1="18" x2="343" y2="18"/><line x1="32" y1="62" x2="343" y2="62"/><line x1="32" y1="105" x2="343" y2="105"/><line x1="32" y1="148" x2="343" y2="148"/><line x1="32" y1="182" x2="343" y2="182"/></g>
+                <g class="axis"><text x="0" y="21">120%</text><text x="6" y="65">60%</text><text x="6" y="108">30%</text><text x="10" y="151">0%</text><text x="0" y="185">-20%</text></g>
+                <path d="M42 157 L54 161 64 173 76 166 86 180 98 177 108 182 119 163 126 128 136 119 144 102 156 100 165 87 176 75 187 64 198 60 207 70 216 89 225 74 234 83 244 80 254 94 265 65 276 77 287 52 298 61 307 35 316 42 326 38 336 49 L336 182 L42 182 Z" fill="url(#greenFade)" class="curve-fill"/>
+                <path d="M42 157 L54 161 64 173 76 166 86 180 98 177 108 182 119 163 126 128 136 119 144 102 156 100 165 87 176 75 187 64 198 60 207 70 216 89 225 74 234 83 244 80 254 94 265 65 276 77 287 52 298 61 307 35 316 42 326 38 336 49" class="curve"/>
+                <g class="trend-runner">
+                  <circle r="4.5" fill="#14a739" stroke="#fff" stroke-width="1.5"/>
+                  <g transform="translate(-24 -34)"><rect width="48" height="24" rx="4" fill="#14a739"/><text x="6" y="16" fill="#fff" font-size="10">48.78%</text></g>
+                  <animateMotion dur="3.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;1" keySplines=".45 0 .55 1" path="M42 157 L54 161 64 173 76 166 86 180 98 177 108 182 119 163 126 128 136 119 144 102 156 100 165 87 176 75 187 64 198 60 207 70 216 89 225 74 234 83 244 80 254 94 265 65 276 77 287 52 298 61 307 35 316 42 326 38 336 49"/>
+                </g>
+                <g class="axis"><text x="32" y="200">12-01 12:00</text><text x="122" y="200">12-02 12:00</text><text x="215" y="200">12-03 12:00</text><text x="302" y="200">12-04</text></g>
+              </svg>
+            </section>
+            <section class="performance">
+              <div class="section-title"><span>Trading Performance</span><span class="range">7D⌄</span></div>
+              <div class="perf-head"><div><div class="big-green">+88.02%</div><div class="caption">ROI</div></div><div><div class="big-green">+$21,592.38</div><div class="caption">Total P&amp;L</div></div></div>
+              <div class="winrow"><span>Win Rate</span><span class="winrate">87.39%</span></div><div class="winbar"></div>
+              <div class="perf-grid caption"><div>Wins <span class="winrate">320</span></div><div>Losses <span style="color:var(--red)">20</span></div></div>
+            </section>
+            <section class="overview">
+              <h3>Copy Trading Overview</h3>
+              <div class="data-row"><strong>Trading Capital</strong><span>$121,592.38</span></div><div class="data-row"><strong>AUM</strong><span>$121,592.38</span></div><div class="data-row"><strong>Follower P&amp;L</strong><span>+$1231.12</span></div><div class="data-row"><strong>Current Followers</strong><span>2738</span></div><div class="data-row"><strong>Total Followers</strong><span>2738</span></div><div class="data-row"><strong>Total Trades</strong><span>678</span></div><div class="data-row"><strong>Trading Days</strong><span>430 days</span></div><div class="data-row"><strong>Trade Frequency</strong><span>152.38</span></div><div class="data-row"><strong>Avg. Holding Time</strong><span>19:54:40</span></div><div class="data-row"><strong>Avg. Profit</strong><span class="money">+$2.5675</span></div><div class="data-row"><strong>Avg. Loss</strong><span style="color:var(--red)">−$2.5675</span></div><div class="data-row"><strong>Profit/Loss Ratio</strong><span>0.6611:1</span></div><div class="data-row"><strong>Profit Share Ratio</strong><span>0.6611:1</span></div><div class="data-row"><strong>Referral Share Ratio</strong><span>0.6611:1</span></div>
+            </section>
+            <section class="preference">
+              <div class="section-title"><span>Trade Preferences</span><span class="range">30D⌄</span></div>
+              <div class="dist"><i></i><i></i><i></i><i></i></div>
+              <div class="coin-block"><div class="coin-head"><span><i class="coin-dot" style="background:var(--red)"></i>BTC</span><span>60.00%</span></div><div class="coin-grid"><span>Trades</span><span>Share</span><span><b>586</b></span><span><b>58.43%</b></span><span>P&amp;L</span><span>Win Rate</span><span><b>$542678.42</b></span><span><b>78.03%</b></span></div></div>
+              <div class="coin-block"><div class="coin-head"><span><i class="coin-dot" style="background:#ffd400"></i>ETH</span><span>18.34%</span></div><div class="coin-grid"><span>Trades</span><span>Share</span><span><b>586</b></span><span><b>58.43%</b></span><span>P&amp;L</span><span>Win Rate</span><span><b>$542678.42</b></span><span><b>78.03%</b></span></div></div>
+              <div class="coin-block"><div class="coin-head"><span><i class="coin-dot" style="background:var(--green)"></i>LTC</span><span>12.37%</span></div></div>
+              <div class="coin-block"><div class="coin-head"><span><i class="coin-dot" style="background:#2d90cf"></i>Other</span><span>5%</span></div></div>
+            </section>
+          </section>
+
+          <section class="view" id="spotView">
+            <div class="summary-card">
+              <div class="summary-stats"><div class="stat"><label>Trading Days</label><b>586</b></div><div class="stat"><label>Total Followers</label><b>5800</b></div><div class="stat"><label>AUM</label><b>586</b></div></div>
+              <div class="summary-row"><span>Est. Profit Share Today<small>Profit Share 12%</small></span><span class="money">+5.45 USDT　›</span></div>
+              <div class="summary-row"><span>Total Profit Share</span><span class="money">+45,785.45 USDT　›</span></div>
+            </div>
+            <div class="pills"><button class="active">Statistics</button><button>Positions</button><button>Order History</button><button>Followers</button></div>
+            <div class="periods"><button class="active">7D</button><button>15D</button><button>30D</button><button>90D</button><button>180D</button></div>
+            <div class="orders" id="orders"></div>
+          </section>
+
+          <section class="view" id="qaView">
+            <div class="qa-toolbar"><button class="qa-filter active">All (3)</button><button class="qa-filter">Mine (3)</button><button class="ask" id="askButton">Ask</button></div>
+            <div class="qa-list" id="qaList">
+              <article class="qa-item" data-state="answered" data-detail-question="Can the cycle be shortened a bit?"><div class="qa-question"><img src="assets/coinw-copy-trading/qa-asker.png" alt="">Can the cycle be shortened a bit?<img class="dots" src="assets/coinw-copy-trading/qa-more.svg" alt=""></div><div class="answer-preview"><img src="assets/coinw-copy-trading/qa-trader.png" alt=""><p>The conservative strategy lowers the average entry price while taking profit frequently, helping reduce risk. Shortening the cycle may increase both cost and risk.</p></div></article>
+              <article class="qa-item" data-state="unanswered" data-detail-question="What risk controls do you use?"><div class="qa-question"><img src="assets/coinw-copy-trading/qa-asker-alt.png" alt="">What risk controls do you use?<img class="dots" src="assets/coinw-copy-trading/qa-more.svg" alt=""></div><div class="answer-preview"><img src="assets/coinw-copy-trading/qa-trader.png" alt=""><p>The conservative strategy lowers the average entry price while taking profit frequently, helping reduce overall risk.</p></div></article>
+              <article class="qa-item" data-state="answered" data-detail-question="How do you choose the right scaling cycle?"><div class="qa-question"><img src="assets/coinw-copy-trading/qa-asker-alt.png" alt="">How do you choose the right scaling cycle?<img class="dots" src="assets/coinw-copy-trading/qa-more.svg" alt=""></div><div class="answer-preview"><img src="assets/coinw-copy-trading/qa-trader.png" alt=""><p>I assess market volatility, drawdown, and position size before adjusting the scaling cycle...</p></div></article>
+            </div>
+          </section>
+        </div>
+
+        <div class="statusbar"><span class="time">9:41</span><span class="status-icons"><img class="status-svg" src="assets/coinw-copy-trading/status-icons.svg" alt=""></span></div>
+        <div class="compact" id="compactHeader">
+          <div class="compact-nav"><button aria-label="Back"><img class="back-svg rotated" src="assets/coinw-copy-trading/back.svg" alt=""></button><span class="title">Crypto Meow</span><span class="right"><button class="follow-mini" id="miniFollow">Follow</button><button class="share-mini" id="miniShare" aria-label="Share"><img src="assets/coinw-copy-trading/share.svg" alt=""></button><img class="compact-more" src="assets/coinw-copy-trading/more-24.svg" alt=""></span></div>
+          <div class="pills"><button class="active">Statistics</button><button>Positions</button><button>Order History</button><button>Followers</button></div>
+          <div class="periods"><button class="active">7D</button><button>15D</button><button>30D</button><button>90D</button><button>180D</button></div>
+        </div>
+        <div class="bottom-action" id="bottomAction"><button>Copy Trade</button></div>
+        <div class="home-indicator"></div>
+
+        <section class="overlay" id="qaDetail" aria-hidden="true">
+          <div class="statusbar"><span class="time">9:41</span><span class="status-icons"><img class="status-svg" src="assets/coinw-copy-trading/status-icons.svg" alt=""></span></div>
+          <div class="overlay-scroll">
+            <nav class="overlay-nav"><button class="left close-detail"><img class="back-svg" src="assets/coinw-copy-trading/back-detail.svg" alt=""></button>Q&amp;A Details<button class="right circle-more"><img src="assets/coinw-copy-trading/more-detail.svg" alt=""></button></nav>
+            <div class="detail" id="detailContent"></div>
+          </div>
+          <div class="detail-action" id="answerAction"><button>Answer</button></div>
+        </section>
+
+        <section class="overlay composer" id="composer" aria-hidden="true">
+          <div class="statusbar"><span class="time">9:41</span><span class="status-icons"><img class="status-svg" src="assets/coinw-copy-trading/status-icons.svg" alt=""></span></div>
+          <div class="composer-head"><button id="cancelCompose">Cancel</button><button id="submitQuestion" class="disabled">Ask</button></div>
+          <div class="compose-area"><textarea id="questionInput" maxlength="500" placeholder="Describe your question clearly and briefly."></textarea></div>
+          <div class="compose-count"><span id="questionCount">0</span>/500</div>
+          <div class="keyboard" aria-hidden="true">
+            <div class="keyrow"><span class="key">Q</span><span class="key">W</span><span class="key">E</span><span class="key">R</span><span class="key">T</span><span class="key">Y</span><span class="key">U</span><span class="key">I</span><span class="key">O</span><span class="key">P</span></div>
+            <div class="keyrow"><span class="key">A</span><span class="key">S</span><span class="key">D</span><span class="key">F</span><span class="key">G</span><span class="key">H</span><span class="key">J</span><span class="key">K</span><span class="key">L</span></div>
+            <div class="keyrow"><span class="key">⇧</span><span class="key">Z</span><span class="key">X</span><span class="key">C</span><span class="key">V</span><span class="key">B</span><span class="key">N</span><span class="key">M</span><span class="key dark">⌫</span></div>
+            <div class="keyrow"><span class="key wide dark">123</span><span class="key space">space</span><span class="key wide dark">Go</span></div>
+          </div>
+        </section>
+
+        <section class="overlay composer answer-editor" id="answerEditor" aria-hidden="true">
+          <div class="statusbar"><span class="time">9:41</span><span class="status-icons"><img class="status-svg" src="assets/coinw-copy-trading/status-icons.svg" alt=""></span></div>
+          <div class="composer-head"><button id="cancelAnswer">Cancel</button><button id="submitAnswer" class="disabled">Submit</button></div>
+          <div class="answer-context"><div class="detail-user"><img src="assets/coinw-copy-trading/qa-asker.png" alt=""><span>@Cindeyango</span></div><div class="detail-question" id="answerQuestion">Can the cycle be shortened a bit?</div><div class="translate-link">Translate Question</div></div>
+          <div class="compose-area"><textarea id="answerInput" maxlength="1000" placeholder="Share your answer to this question."></textarea></div>
+          <div class="compose-count"><span id="answerCount">0</span>/1000</div>
+          <div class="keyboard" aria-hidden="true">
+            <div class="keyrow"><span class="key">Q</span><span class="key">W</span><span class="key">E</span><span class="key">R</span><span class="key">T</span><span class="key">Y</span><span class="key">U</span><span class="key">I</span><span class="key">O</span><span class="key">P</span></div>
+            <div class="keyrow"><span class="key">A</span><span class="key">S</span><span class="key">D</span><span class="key">F</span><span class="key">G</span><span class="key">H</span><span class="key">J</span><span class="key">K</span><span class="key">L</span></div>
+            <div class="keyrow"><span class="key">⇧</span><span class="key">Z</span><span class="key">X</span><span class="key">C</span><span class="key">V</span><span class="key">B</span><span class="key">N</span><span class="key">M</span><span class="key dark">⌫</span></div>
+            <div class="keyrow"><span class="key wide dark">123</span><span class="key space">space</span><span class="key wide dark">Go</span></div>
+          </div>
+        </section>
+
+        <section class="overlay share-overlay" id="shareOverlay" aria-hidden="true">
+          <div class="share-stack">
+            <div class="share-card">
+              <div class="share-top">
+                <div class="brand"><img src="assets/coinw-copy-trading/coinw-white.svg" alt="">CoinW</div>
+                <div class="share-person"><img src="assets/coinw-copy-trading/share-avatar.png" alt=""><div><b>Ethan Davidson</b><div class="share-badges"><img src="assets/coinw-copy-trading/verified.svg" alt=""><img src="assets/coinw-copy-trading/level.svg" alt=""></div></div></div>
+                <div class="share-metrics"><b class="hero-value">+300%</b><small>Futures ROI</small><b>+1212.12</b><small>Futures P&amp;L (USDT)</small><b>9987</b><small>Total Followers</small></div>
+                <img class="share-art" src="assets/coinw-copy-trading/share-illustration.png" alt="">
+                <div class="share-caption"><span>Futures Copy Trading</span><span>2025-12-12 12:30</span></div>
+              </div>
+              <div class="share-foot"><div class="invite"><div class="brand"><img src="assets/coinw-copy-trading/coinw-purple.svg" alt="">CoinW</div><p>Invite Code: <b>15784272</b></p><small>Sign up with this code to unlock exclusive rewards.</small></div><img class="share-qr" src="assets/coinw-copy-trading/share-qr.png" alt=""></div>
+            </div>
+            <div class="share-drawer">
+              <div class="grabber"></div><div class="share-title">Share</div>
+              <div class="share-switch"><span>Share trading data</span><button class="toggle"></button></div>
+              <div class="share-link"><span>https://www.coinw.com/wallet/overview?activeTab=...</span><img src="assets/coinw-copy-trading/copy.svg" alt=""></div>
+              <div class="social-icons"><div class="social-item"><div class="social-circle fb"><img class="social-facebook" src="assets/coinw-copy-trading/share-facebook.svg" alt=""></div>Facebook</div><div class="social-item"><div class="social-circle tg"><img class="social-telegram" src="assets/coinw-copy-trading/share-telegram.svg" alt=""></div>Telegram</div><div class="social-item"><div class="social-circle tw"><img class="social-twitter" src="assets/coinw-copy-trading/share-twitter.svg" alt=""></div>Twitter</div><div class="social-item"><div class="social-circle"><img class="social-download" src="assets/coinw-copy-trading/share-download.svg" alt=""></div>Download</div><div class="social-item"><div class="social-circle"><img class="social-more" src="assets/coinw-copy-trading/share-more.svg" alt=""></div>More</div></div>
+            </div>
+          </div>
+        </section>
+      </section>
+      <div class="chart-focus-scrim" aria-hidden="true"></div>
+      <div class="chart-focus-card" id="chartFocusCard" aria-hidden="true"></div>
+    </div>
+    <div class="hint">Auto play · Tap to explore</div>
+  </main>
+
+  <script>
+    const scroll = document.getElementById('screenScroll');
+    const compact = document.getElementById('compactHeader');
+    const bottomAction = document.getElementById('bottomAction');
+    const device = document.querySelector('.device');
+    const chartFocusCard = document.getElementById('chartFocusCard');
+    const views = {contract:document.getElementById('contractView'),spot:document.getElementById('spotView'),qa:document.getElementById('qaView')};
+    let currentView = 'contract';
+    let autoRunId = 0;
+    let autoRestartTimer = 0;
+    let isAutoAction = false;
+
+    function setView(name,behavior='smooth'){
+      currentView=name;
+      Object.entries(views).forEach(([key,node])=>node.classList.toggle('active',key===name));
+      document.querySelectorAll('#secondaryTabs button').forEach(button=>button.classList.toggle('active',button.dataset.view===name));
+      scroll.scrollTo({top:0,behavior});
+      compact.classList.remove('show');
+      document.querySelector('.screen').classList.remove('scrolled');
+      bottomAction.style.display=name==='qa'?'none':'block';
+      if(name==='contract') restartCharts();
+    }
+    document.getElementById('secondaryTabs').addEventListener('click',event=>{
+      const button=event.target.closest('[data-view]');if(button)setView(button.dataset.view);
+    });
+    scroll.addEventListener('scroll',()=>{
+      const show=currentView==='contract' && scroll.scrollTop>425;
+      compact.classList.toggle('show',show);
+      document.querySelector('.screen').classList.toggle('scrolled',show);
+    },{passive:true});
+    function restartSingleChart(chart){
+      if(!chart)return;
+      chart.querySelectorAll('.bar,.curve,.curve-fill,.tooltip').forEach(node=>{
+        node.style.animation='none';void node.getBoundingClientRect();node.style.removeProperty('animation');
+      });
+      if(typeof chart.setCurrentTime==='function')chart.setCurrentTime(0);
+    }
+    function restartCharts(){
+      document.querySelectorAll('.chart').forEach(restartSingleChart);
+    }
+    const chartObserver=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{if(entry.isIntersecting)restartSingleChart(entry.target)});
+    },{root:scroll,threshold:.42});
+    [document.getElementById('barChart'),document.getElementById('lineChart')].forEach(chart=>chartObserver.observe(chart));
+    document.querySelectorAll('.periods button').forEach(button=>button.addEventListener('click',event=>{
+      event.currentTarget.parentElement.querySelectorAll('button').forEach(item=>item.classList.remove('active'));
+      event.currentTarget.classList.add('active');restartCharts();
+    }));
+    document.querySelectorAll('.pills button').forEach(button=>button.addEventListener('click',event=>{
+      event.currentTarget.parentElement.querySelectorAll('button').forEach(item=>item.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+    }));
+
+    const orders=document.getElementById('orders');
+    orders.innerHTML=Array.from({length:4},()=>`<article class="order"><h3>BTC/USDT</h3><div class="order-grid"><div><label>Buy Price</label><span>92,008.7 USDT</span></div><div><label>Sell Price</label><span>93,008.7 USDT</span></div><div><label>Quantity</label><span>0.04</span></div><div><label>Followers</label><span>12</span></div><div><label>ROI</label><span class="positive">+346.45%</span></div><div><label>P&amp;L</label><span class="positive">10.97 USDT</span></div><div><label>Sell Time</label><span>2024/5/23 12:45:23</span></div><div><label>Order ID</label><span>3205026307</span></div></div></article>`).join('');
+
+    const shareOverlay=document.getElementById('shareOverlay');
+    function openShare(){shareOverlay.classList.add('open');shareOverlay.setAttribute('aria-hidden','false')}
+    function closeShare(){shareOverlay.classList.remove('open');shareOverlay.setAttribute('aria-hidden','true')}
+    document.getElementById('shareButton').addEventListener('click',openShare);
+    document.getElementById('miniShare').addEventListener('click',openShare);
+    shareOverlay.addEventListener('click',event=>{if(event.target===shareOverlay)closeShare()});
+    document.querySelector('.grabber').addEventListener('click',closeShare);
+
+    function toggleFollow(button){
+      const followed=button.dataset.followed==='true';button.dataset.followed=String(!followed);button.textContent=followed?'Follow':'Following';
+      document.getElementById('followButton').textContent=button.textContent;
+      document.getElementById('miniFollow').textContent=button.textContent;
+    }
+    document.getElementById('followButton').addEventListener('click',event=>toggleFollow(event.currentTarget));
+    document.getElementById('miniFollow').addEventListener('click',event=>toggleFollow(event.currentTarget));
+
+    const composer=document.getElementById('composer'),input=document.getElementById('questionInput'),submit=document.getElementById('submitQuestion'),counter=document.getElementById('questionCount');
+    function openComposer(prefill=''){composer.classList.add('open');composer.setAttribute('aria-hidden','false');input.value=prefill;input.dispatchEvent(new Event('input'));setTimeout(()=>input.focus(),50)}
+    function closeComposer(){composer.classList.remove('open');composer.setAttribute('aria-hidden','true');input.blur()}
+    document.getElementById('askButton').addEventListener('click',()=>openComposer());
+    document.getElementById('cancelCompose').addEventListener('click',closeComposer);
+    input.addEventListener('input',()=>{counter.textContent=input.value.length;submit.className=input.value.trim()?'ready':'disabled'});
+    submit.addEventListener('click',()=>{
+      const value=input.value.trim();if(!value)return;
+      const article=document.createElement('article');article.className='qa-item';article.dataset.state='unanswered';if(isAutoAction)article.dataset.autoDemo='true';article.innerHTML=`<div class="qa-question"><img src="assets/coinw-copy-trading/qa-asker.png" alt="">${value.replace(/[<>]/g,'')}<img class="dots" src="assets/coinw-copy-trading/qa-more.svg" alt=""></div><div class="answer-preview"><p style="color:#8c8c8c">Awaiting trader response</p></div>`;
+      document.getElementById('qaList').prepend(article);
+      document.getElementById('qaCount').textContent=String(document.querySelectorAll('.qa-item').length);
+      closeComposer();input.value='';input.dispatchEvent(new Event('input'));setView('qa',isAutoAction?'auto':'smooth');
+    });
+
+    const detail=document.getElementById('qaDetail'),detailContent=document.getElementById('detailContent'),answerAction=document.getElementById('answerAction');
+    let detailQuestion='Can the cycle be shortened a bit? Can the cycle be shortened a bit?';
+    function detailHeader(question){
+      return `<div class="detail-user"><img src="assets/coinw-copy-trading/qa-asker.png" alt=""><span>@Cindeyango</span><span class="detail-date">2025-01-01</span></div><div class="detail-question">${question}</div>`;
+    }
+    function openDetail(state,question=detailQuestion){
+      detailQuestion=question;detail.classList.add('open');detail.setAttribute('aria-hidden','false');
+      if(state==='answered'){
+        detailContent.innerHTML=detailHeader(question)+`<div class="detail-answer"><div class="detail-user"><img src="assets/coinw-copy-trading/qa-trader.png" alt=""><span>@Snow.ouyang</span><span class="detail-date">2025-01-01</span></div>While taking profit frequently to pursue faster returns, the conservative strategy lowers the average entry price to reduce risk. Shortening the cycle may raise both costs and risk. Position sizing should always match current market volatility.</div><div class="translate-link">Translate</div>`;
+        answerAction.style.display='none';
+      }else{
+        detailContent.innerHTML=detailHeader(question)+`<div class="translate-link" style="margin:0 0 16px">Translate Question</div><div class="answer-wait">Awaiting Answer</div>`;
+        answerAction.style.display='block';
+      }
+    }
+    document.getElementById('qaList').addEventListener('click',event=>{
+      const item=event.target.closest('.qa-item');if(!item)return;
+      const text=item.dataset.detailQuestion||item.querySelector('.qa-question').childNodes[1]?.textContent?.trim()||detailQuestion;openDetail(item.dataset.state,text);
+    });
+    function closeDetail(){detail.classList.remove('open');detail.setAttribute('aria-hidden','true')}
+    document.querySelector('.close-detail').addEventListener('click',closeDetail);
+    const answerEditor=document.getElementById('answerEditor'),answerInput=document.getElementById('answerInput'),answerSubmit=document.getElementById('submitAnswer'),answerCount=document.getElementById('answerCount');
+    function openAnswerEditor(){
+      detail.classList.remove('open');answerEditor.classList.add('open');answerEditor.setAttribute('aria-hidden','false');
+      document.getElementById('answerQuestion').textContent=detailQuestion;answerInput.value='';answerInput.dispatchEvent(new Event('input'));setTimeout(()=>answerInput.focus(),50);
+    }
+    function closeAnswerEditor(){answerEditor.classList.remove('open');answerEditor.setAttribute('aria-hidden','true');answerInput.blur()}
+    document.querySelector('#answerAction button').addEventListener('click',openAnswerEditor);
+    document.getElementById('cancelAnswer').addEventListener('click',closeAnswerEditor);
+    answerInput.addEventListener('input',()=>{answerCount.textContent=answerInput.value.length;answerSubmit.className=answerInput.value.trim()?'ready':'disabled'});
+    answerSubmit.addEventListener('click',()=>{
+      const answer=answerInput.value.trim();if(!answer)return;closeAnswerEditor();openDetail('answered',detailQuestion);
+      const answerBlock=detailContent.querySelector('.detail-answer');if(answerBlock)answerBlock.lastChild.textContent=answer;
+    });
+
+    const wait=(ms,id)=>new Promise(resolve=>{
+      const started=performance.now();
+      const tick=()=>id===autoRunId&&performance.now()-started<ms?requestAnimationFrame(tick):resolve();
+      requestAnimationFrame(tick);
+    });
+    function autoScrollTo(target,duration,id){
+      return new Promise(resolve=>{
+        const start=scroll.scrollTop,delta=target-start,began=performance.now();
+        const frame=now=>{
+          if(id!==autoRunId)return resolve();
+          const progress=Math.min(1,(now-began)/duration);
+          const eased=1-Math.pow(1-progress,3);
+          scroll.scrollTop=start+delta*eased;
+          progress<1?requestAnimationFrame(frame):resolve();
+        };
+        requestAnimationFrame(frame);
+      });
+    }
+    function roiScrollTarget(){
+      const section=document.getElementById('yieldSection');
+      return Math.max(0,section.offsetTop+section.offsetHeight/2-scroll.clientHeight/2);
+    }
+    async function typeDemo(text,id){
+      input.value='';input.dispatchEvent(new Event('input'));
+      for(const character of text){
+        if(id!==autoRunId)return;
+        input.value+=character;input.dispatchEvent(new Event('input'));
+        await wait(72,id);
+      }
+    }
+    function closeChartFocus(immediate=false){
+      device.classList.remove('chart-focus-active');
+      chartFocusCard.setAttribute('aria-hidden','true');
+      if(immediate)chartFocusCard.replaceChildren();
+    }
+    async function showChartFocus(id){
+      const clone=document.getElementById('yieldSection').cloneNode(true);
+      clone.removeAttribute('id');
+      const chart=clone.querySelector('#lineChart');
+      chart.id='focusLineChart';
+      const gradient=clone.querySelector('#greenFade');
+      gradient.id='greenFadeFocus';
+      clone.querySelector('[fill="url(#greenFade)"]').setAttribute('fill','url(#greenFadeFocus)');
+      chartFocusCard.replaceChildren(clone);
+      chartFocusCard.setAttribute('aria-hidden','false');
+      restartSingleChart(chart);
+      void chartFocusCard.offsetWidth;
+      device.classList.add('chart-focus-active');
+      await wait(420,id);
+      if(id!==autoRunId)return closeChartFocus(true);
+      await wait(2000,id);
+      if(id!==autoRunId)return closeChartFocus(true);
+      closeChartFocus();
+      await wait(320,id);
+      chartFocusCard.replaceChildren();
+    }
+    function resetAutoScene(){
+      closeShare();closeComposer();closeAnswerEditor();closeDetail();closeChartFocus(true);
+      document.querySelectorAll('[data-auto-demo="true"]').forEach(node=>node.remove());
+      document.getElementById('qaCount').textContent='1';
+      setView('contract','auto');scroll.scrollTop=0;
+    }
+    async function playAutoDemo(){
+      const id=++autoRunId;
+      clearTimeout(autoRestartTimer);
+      isAutoAction=true;
+      resetAutoScene();
+      let roiFocusPromise=null;
+      const triggerRoiFocus=()=>{
+        if(roiFocusPromise||id!==autoRunId)return;
+        document.documentElement.dataset.autoPhase='chart-focus';
+        roiFocusPromise=showChartFocus(id);
+      };
+      const watchRoiCenter=()=>{
+        if(id!==autoRunId||roiFocusPromise)return;
+        const roi=document.getElementById('yieldSection').getBoundingClientRect();
+        const viewport=scroll.getBoundingClientRect();
+        const roiCenter=roi.top+roi.height/2;
+        const viewportCenter=viewport.top+viewport.height/2;
+        if(roiCenter<=viewportCenter)triggerRoiFocus();
+        else requestAnimationFrame(watchRoiCenter);
+      };
+      requestAnimationFrame(watchRoiCenter);
+      document.documentElement.dataset.autoPhase='contract-start';
+      await wait(1300,id);
+      document.documentElement.dataset.autoPhase='contract-scroll';
+      await autoScrollTo(690,2800,id);
+      await autoScrollTo(roiScrollTarget(),1100,id);
+      triggerRoiFocus();
+      if(id!==autoRunId)return;
+      await roiFocusPromise;
+      await wait(500,id);
+      if(id!==autoRunId)return;
+      document.documentElement.dataset.autoPhase='spot';
+      setView('spot','auto');
+      await wait(1200,id);
+      await autoScrollTo(650,2200,id);
+      await wait(1400,id);
+      if(id!==autoRunId)return;
+      document.documentElement.dataset.autoPhase='qa-list';
+      setView('qa','auto');
+      await wait(1400,id);
+      document.documentElement.dataset.autoPhase='qa-typing';
+      openComposer();
+      await wait(700,id);
+      await typeDemo('Can the trading cycle be shortened?',id);
+      await wait(900,id);
+      if(id!==autoRunId)return;
+      submit.click();
+      await wait(1400,id);
+      document.documentElement.dataset.autoPhase='qa-answered';
+      openDetail('answered');
+      await wait(2300,id);
+      closeDetail();
+      document.documentElement.dataset.autoPhase='qa-unanswered';
+      openDetail('unanswered');
+      await wait(1800,id);
+      document.documentElement.dataset.autoPhase='qa-editing';
+      openAnswerEditor();
+      await wait(2100,id);
+      closeAnswerEditor();
+      setView('contract','auto');
+      await wait(1000,id);
+      document.documentElement.dataset.autoPhase='share';
+      openShare();
+      await wait(2800,id);
+      closeShare();
+      await wait(700,id);
+      if(id!==autoRunId)return;
+      isAutoAction=false;
+      document.documentElement.dataset.autoPhase='restart';
+      playAutoDemo();
+    }
+    function pauseForManualUse(){
+      if(isAutoAction){
+        autoRunId++;
+        isAutoAction=false;
+        closeChartFocus(true);
+        clearTimeout(autoRestartTimer);
+        autoRestartTimer=setTimeout(playAutoDemo,12000);
+      }
+    }
+    document.querySelector('.screen').addEventListener('pointerdown',pauseForManualUse,{passive:true});
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Escape'){closeShare();closeComposer();closeAnswerEditor();detail.classList.remove('open')}
+    });
+    if(!matchMedia('(prefers-reduced-motion: reduce)').matches)playAutoDemo();
+  </script>
+</body>
+</html>

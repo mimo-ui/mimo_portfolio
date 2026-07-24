@@ -1,0 +1,932 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="data:,">
+  <title>CoinW App Launch Demo</title>
+  <style>
+    :root {
+      --brand: #5227ff;
+      --stage: #08090b;
+      --splash: #1a1a1a;
+      --ease-out: cubic-bezier(.16, 1, .3, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      background: var(--stage);
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .stage {
+      position: relative;
+      width: 100%;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 14px;
+      isolation: isolate;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(82, 39, 255, .13), transparent 28%),
+        radial-gradient(circle at 50% 105%, rgba(255, 255, 255, .08), transparent 30%),
+        #08090b;
+    }
+
+    .device {
+      position: relative;
+      width: min(390px, calc(100vw - 28px), calc((100dvh - 28px) * .462));
+      aspect-ratio: 390 / 844;
+      padding: 0;
+      border: 0;
+      border-radius: clamp(30px, 7vw, 48px);
+      background: transparent;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, .18),
+        0 28px 62px rgba(0, 0, 0, .54),
+        0 10px 24px rgba(0, 0, 0, .42);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .device::before,
+    .device::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      left: -3px;
+      width: 3px;
+      border-radius: 2px 0 0 2px;
+      background: #24262b;
+    }
+
+    .device::before { top: 18%; height: 9%; }
+    .device::after { top: 30%; height: 15%; }
+
+    .screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border-radius: clamp(30px, 7vw, 48px);
+      background: var(--splash);
+      transform: translateZ(0);
+    }
+
+    .app-home {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 390px;
+      height: 844px;
+      overflow: hidden;
+      background: #fff;
+      color: #202124;
+      opacity: 0;
+      transform-origin: top left;
+      filter: blur(8px);
+    }
+
+    .app-hero {
+      position: relative;
+      height: 450px;
+      overflow: hidden;
+      color: #fff;
+      background: #fff;
+    }
+
+    .hero-media {
+      position: absolute;
+      width: 390px;
+      object-fit: fill;
+    }
+
+    .hero-media {
+      inset: 0 0 auto;
+      height: 390px;
+      object-fit: cover;
+    }
+
+    .hero-shade {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(4, 11, 20, .34) 0%, transparent 31%),
+        linear-gradient(180deg, transparent 0 334px, #000 358px 410px, #fff 450px);
+    }
+
+    .hero-halftone {
+      position: absolute;
+      z-index: 2;
+      top: 363px;
+      left: 0;
+      width: 390px;
+      height: 83px;
+      pointer-events: none;
+      background: url("assets/coinw-logo-launch/hero-dot-mask.png") 0 0 / 390px 83px no-repeat;
+    }
+
+    .statusbar {
+      position: absolute;
+      z-index: 3;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .status-icons {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .signal {
+      display: flex;
+      align-items: end;
+      gap: 2px;
+      height: 13px;
+    }
+
+    .signal i {
+      width: 3px;
+      border-radius: 1px;
+      background: #fff;
+    }
+
+    .signal i:nth-child(1) { height: 4px; }
+    .signal i:nth-child(2) { height: 7px; }
+    .signal i:nth-child(3) { height: 10px; }
+    .signal i:nth-child(4) { height: 13px; }
+
+    .wifi {
+      width: 15px;
+      height: 11px;
+      border-top: 2px solid #fff;
+      border-radius: 50%;
+      transform: scaleY(.78);
+    }
+
+    .battery {
+      position: relative;
+      width: 22px;
+      height: 10px;
+      border: 1.5px solid rgba(255,255,255,.9);
+      border-radius: 3px;
+    }
+
+    .battery::before {
+      content: "";
+      position: absolute;
+      inset: 1.5px;
+      border-radius: 1px;
+      background: #fff;
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      right: -4px;
+      width: 2px;
+      height: 5px;
+      border-radius: 0 2px 2px 0;
+      background: rgba(255,255,255,.7);
+    }
+
+    .app-nav {
+      position: absolute;
+      z-index: 3;
+      top: 44px;
+      left: 0;
+      width: 100%;
+      height: 44px;
+      display: grid;
+      grid-template-columns: 72px 1fr 72px;
+      align-items: center;
+      padding: 0 16px;
+    }
+
+    .grid-icon {
+      width: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, 4px);
+      gap: 3px;
+    }
+
+    .grid-icon i {
+      width: 4px;
+      height: 4px;
+      background: #fff;
+    }
+
+    .announcement {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(12px);
+      color: rgba(255,255,255,.48);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .announcement b { color: #ff6a2f; font-size: 15px; }
+
+    .announcement-window {
+      flex: 1;
+      height: 40px;
+      overflow: hidden;
+    }
+
+    .announcement-list {
+      animation: announcement-cycle 8s cubic-bezier(.25, 1, .5, 1) 2.58s infinite;
+    }
+
+    .announcement-item {
+      height: 40px;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-icon {
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+      border: 2px solid #fff;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .search-icon::after {
+      content: "";
+      position: absolute;
+      width: 6px;
+      height: 2px;
+      right: -5px;
+      bottom: -2px;
+      background: #fff;
+      transform: rotate(48deg);
+    }
+
+    .bell {
+      justify-self: end;
+      position: relative;
+      width: 15px;
+      height: 15px;
+      border-radius: 8px 8px 4px 4px;
+      background: #fff;
+    }
+
+    .bell::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      bottom: -4px;
+      width: 7px;
+      height: 2px;
+      border-radius: 0 0 5px 5px;
+      background: #fff;
+    }
+
+    .hero-copy {
+      position: absolute;
+      z-index: 3;
+      top: 270px;
+      left: 36px;
+      width: 318px;
+      margin: 0;
+      text-align: center;
+      font-size: 24px;
+      line-height: 1.34;
+      font-weight: 800;
+      letter-spacing: -.4px;
+    }
+
+    .hero-copy em {
+      color: #6538ff;
+      font-style: normal;
+    }
+
+    .hero-actions {
+      position: absolute;
+      z-index: 3;
+      top: 358px;
+      left: 16px;
+      display: grid;
+      grid-template-columns: 174px 168px;
+      gap: 16px;
+    }
+
+    .hero-button {
+      height: 56px;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 16px;
+      color: #fff;
+      font: 700 16px/1 Arial, sans-serif;
+      background: #1c1c1c;
+    }
+
+    .hero-button.primary { background: var(--brand); }
+
+    .market {
+      height: 386px;
+      padding-top: 0;
+      background: #fff;
+    }
+
+    .market-tabs {
+      height: 46px;
+      display: flex;
+      align-items: end;
+      gap: 25px;
+      padding: 0 16px;
+      border-bottom: 1px solid #ededed;
+      overflow: hidden;
+    }
+
+    .market-tab {
+      position: relative;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      color: #8b8b8b;
+      font-size: 16px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .market-tab.active { color: #252525; font-weight: 700; }
+
+    .market-tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: #202020;
+    }
+
+    .market-filters {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 16px;
+    }
+
+    .filter-chip {
+      height: 28px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 15px;
+      color: #333;
+      background: #f2f2f3;
+      font-size: 12px;
+    }
+
+    .filter-chip.active {
+      border: 1px solid #1d1d1f;
+      background: #fff;
+    }
+
+    .market-head,
+    .coin-row {
+      display: grid;
+      grid-template-columns: 1fr 162px;
+      align-items: center;
+      padding: 0 23px;
+    }
+
+    .market-head {
+      height: 32px;
+      color: #939393;
+      font-size: 13px;
+    }
+
+    .market-head span:last-child { text-align: right; }
+
+    .coin-row { height: 72px; }
+
+    .coin-main {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .coin-icon {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: #ff9418;
+      font-size: 23px;
+      font-weight: 800;
+    }
+
+    .coin-icon.cwt {
+      border-radius: 12px;
+      background: var(--brand);
+    }
+
+    .mini-mark {
+      position: relative;
+      width: 22px;
+      height: 22px;
+    }
+
+    .mini-mark::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 15px;
+      height: 15px;
+      border: 5px solid #fff;
+      border-top: 0;
+      border-right: 0;
+      border-radius: 0 0 0 9px;
+    }
+
+    .mini-mark::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 13px;
+      height: 8px;
+      background: #fff;
+    }
+
+    .coin-name {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .coin-name small {
+      color: #9a9a9a;
+      font-size: 11px;
+      font-weight: 400;
+    }
+
+    .coin-volume {
+      margin-top: 5px;
+      color: #696969;
+      font-size: 13px;
+    }
+
+    .tag {
+      margin-left: 4px;
+      padding: 3px 7px;
+      border-radius: 8px;
+      color: var(--brand);
+      background: #eee9ff;
+      font-size: 11px;
+    }
+
+    .coin-price { text-align: right; font-size: 16px; }
+    .coin-change { margin-top: 5px; font-size: 16px; }
+    .coin-change.up { color: #00a43b; }
+    .coin-change.down { color: #f04438; }
+
+    .bottom-nav {
+      position: absolute;
+      left: 0;
+      top: 758px;
+      z-index: 2;
+      width: 390px;
+      height: 86px;
+      background: #fff;
+    }
+
+    .nav-item {
+      position: absolute;
+      top: 8px;
+      width: 48px;
+      height: 44px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 4px;
+      color: #909090;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 500;
+    }
+
+    .nav-item.active { color: #202124; }
+    .nav-item:nth-child(1) { left: 16px; }
+    .nav-item:nth-child(2) { left: 93.5px; }
+    .nav-item:nth-child(3) { left: 171px; }
+    .nav-item:nth-child(4) { left: 248.5px; }
+    .nav-item:nth-child(5) { left: 326px; }
+
+    .nav-glyph {
+      width: 24px;
+      height: 24px;
+      display: block;
+      object-fit: contain;
+    }
+
+    .home-indicator {
+      position: absolute;
+      left: 50%;
+      bottom: 5px;
+      width: 134px;
+      height: 5px;
+      border-radius: 5px;
+      background: #111;
+      transform: translateX(-50%);
+    }
+
+    .splash {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: var(--splash);
+      opacity: 1;
+    }
+
+    .lockup {
+      position: relative;
+      width: 186px;
+      height: 52px;
+    }
+
+    .brand-mark {
+      position: absolute;
+      top: 3px;
+      left: 70px;
+      width: 38px;
+      height: 46px;
+      transform-origin: center;
+    }
+
+    .brand-piece {
+      position: absolute;
+      display: block;
+      overflow: visible;
+      fill: var(--brand);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    .brand-body {
+      left: 0;
+      bottom: 0;
+      width: 38px;
+      height: 31px;
+      transform: translateY(13px) scale(.84);
+      transform-origin: 50% 75%;
+    }
+
+    .brand-tile {
+      top: 0;
+      right: 0;
+      width: 23px;
+      height: 15px;
+      transform: translate(14px, -12px) scale(.62);
+      transform-origin: bottom left;
+    }
+
+    .wordmark {
+      position: absolute;
+      top: 50%;
+      left: 57px;
+      margin: 0;
+      color: #fff;
+      font-size: 40px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -1.8px;
+      opacity: 0;
+      transform: translate(16px, -52%);
+      will-change: transform, opacity;
+    }
+
+    .is-playing .brand-body {
+      animation: body-in .3s var(--ease-out) .06s forwards;
+    }
+
+    .is-playing .brand-tile {
+      animation: tile-in .32s var(--ease-out) .13s forwards;
+    }
+
+    .is-playing .brand-mark {
+      animation: mark-shift .28s var(--ease-out) .52s forwards;
+    }
+
+    .is-playing .wordmark {
+      animation: word-in .28s var(--ease-out) .61s forwards;
+    }
+
+    .is-playing .lockup {
+      animation: lockup-exit .48s var(--ease-out) 2.02s forwards;
+    }
+
+    .is-playing .splash {
+      animation: splash-out .62s var(--ease-out) 2.18s forwards;
+    }
+
+    .is-playing .app-home {
+      animation: home-in .72s var(--ease-out) 2.05s forwards;
+    }
+
+    .is-playing .app-home .hero-copy,
+    .is-playing .app-home .hero-actions,
+    .is-playing .app-home .market {
+      animation: content-rise .62s var(--ease-out) 2.22s both;
+    }
+
+    .is-playing .app-home .hero-actions { animation-delay: 2.3s; }
+    .is-playing .app-home .market { animation-delay: 2.38s; }
+
+    .is-playing .brand-body {
+      animation-duration: .48s;
+      animation-delay: .18s;
+    }
+
+    .is-playing .brand-tile {
+      animation-duration: .5s;
+      animation-delay: .34s;
+    }
+
+    .is-playing .brand-mark {
+      animation-duration: .42s;
+      animation-delay: 1.04s;
+    }
+
+    .is-playing .wordmark {
+      animation-duration: .44s;
+      animation-delay: 1.18s;
+    }
+
+    @keyframes body-in {
+      0% { opacity: 0; transform: translateY(13px) scale(.84); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes tile-in {
+      0% { opacity: 0; transform: translate(14px, -12px) scale(.62); }
+      72% { opacity: 1; transform: translate(-1px, 1px) scale(1.04); }
+      100% { opacity: 1; transform: translate(0, 0) scale(1); }
+    }
+
+    @keyframes mark-shift {
+      from { transform: translateX(0); }
+      to { transform: translateX(-70px); }
+    }
+
+    @keyframes word-in {
+      from { opacity: 0; transform: translate(16px, -52%); }
+      to { opacity: 1; transform: translate(0, -52%); }
+    }
+
+    @keyframes lockup-exit {
+      from { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+      to { opacity: 0; transform: translateY(-22px) scale(.96); filter: blur(6px); }
+    }
+
+    @keyframes splash-out {
+      0% { opacity: 1; visibility: visible; }
+      100% { opacity: 0; visibility: hidden; }
+    }
+
+    @keyframes home-in {
+      0% { opacity: 0; filter: blur(8px); }
+      100% { opacity: 1; filter: blur(0); }
+    }
+
+    @keyframes content-rise {
+      0% { opacity: 0; transform: translateY(18px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes announcement-cycle {
+      0%, 21.5% { transform: translateY(0); }
+      25%, 46.5% { transform: translateY(-40px); }
+      50%, 71.5% { transform: translateY(-80px); }
+      75%, 96.5% { transform: translateY(-120px); }
+      100% { transform: translateY(-160px); }
+    }
+
+    @media (max-width: 520px) {
+      .stage { padding: 10px; }
+      .device {
+        width: min(390px, calc(100vw - 20px), calc((100dvh - 20px) * .462));
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .brand-body,
+      .brand-tile,
+      .brand-mark,
+      .wordmark,
+      .splash,
+      .home-screen {
+        animation-duration: .01ms !important;
+        animation-delay: .01ms !important;
+      }
+
+      .announcement-list { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="stage" aria-label="CoinW App launch demo">
+    <div class="device is-playing" id="device" aria-label="CoinW App">
+      <div class="screen">
+        <section class="app-home" id="appHome" aria-label="CoinW App home">
+          <div class="app-hero">
+            <video
+              class="hero-media"
+              src="assets/coinw-logo-launch/hero-video.mp4"
+              poster="assets/coinw-logo-launch/hero.png"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="auto"
+              aria-hidden="true"
+            ></video>
+            <div class="hero-shade" aria-hidden="true"></div>
+            <div class="hero-halftone" aria-hidden="true"></div>
+
+            <div class="statusbar">
+              <span>9:41</span>
+              <span class="status-icons" aria-hidden="true">
+                <span class="signal"><i></i><i></i><i></i><i></i></span>
+                <span class="wifi"></span>
+                <span class="battery"></span>
+              </span>
+            </div>
+
+            <nav class="app-nav" aria-label="Home navigation">
+              <span class="grid-icon" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+              </span>
+              <div class="announcement">
+                <b aria-hidden="true">♦</b>
+                <div class="announcement-window" aria-label="New listing announcements">
+                  <div class="announcement-list">
+                    <span class="announcement-item">BARD is now listed</span>
+                    <span class="announcement-item">WLFI is now listed</span>
+                    <span class="announcement-item">XPL is now listed</span>
+                    <span class="announcement-item">LINEA is now listed</span>
+                    <span class="announcement-item" aria-hidden="true">BARD is now listed</span>
+                  </div>
+                </div>
+                <i class="search-icon" aria-hidden="true"></i>
+              </div>
+              <i class="bell" aria-hidden="true"></i>
+            </nav>
+
+            <h1 class="hero-copy">Sign up and get <em>1,000</em><br>USDT</h1>
+            <div class="hero-actions">
+              <button class="hero-button primary" type="button">Register</button>
+              <button class="hero-button" type="button">Log In</button>
+            </div>
+          </div>
+
+          <section class="market" aria-label="Markets">
+            <nav class="market-tabs" aria-label="Market categories">
+              <span class="market-tab active">Favorites</span>
+              <span class="market-tab">Hot</span>
+              <span class="market-tab">New Listings</span>
+              <span class="market-tab">Gainers</span>
+              <span class="market-tab">24h Vol</span>
+            </nav>
+            <div class="market-filters">
+              <button class="filter-chip active" type="button">Spot</button>
+              <button class="filter-chip" type="button">Futures</button>
+            </div>
+            <div class="market-head"><span>Name / Vol</span><span>Last Price / 24H Change</span></div>
+
+            <div class="coin-row">
+              <div class="coin-main">
+                <span class="coin-icon">₿</span>
+                <div><div class="coin-name">BTC<small>/USDT</small></div><div class="coin-volume">Amt 74.49K</div></div>
+              </div>
+              <div class="coin-price"><div>2025.1158</div><div class="coin-change down">-8.89%</div></div>
+            </div>
+
+            <div class="coin-row">
+              <div class="coin-main">
+                <span class="coin-icon cwt"><i class="mini-mark" aria-hidden="true"></i></span>
+                <div><div class="coin-name">CWT<small>/USDT</small></div><div class="coin-volume">Amt 74.49K <span class="tag">R&amp;S</span></div></div>
+              </div>
+              <div class="coin-price"><div>2025.1158</div><div class="coin-change up">+38.89%</div></div>
+            </div>
+
+            <div class="coin-row">
+              <div class="coin-main">
+                <span class="coin-icon">₿</span>
+                <div><div class="coin-name">BTC<small>/USDT</small></div><div class="coin-volume">Amt 74.49K</div></div>
+              </div>
+              <div class="coin-price"><div>2025.1158</div><div class="coin-change down">-8.89%</div></div>
+            </div>
+          </section>
+
+          <nav class="bottom-nav" aria-label="App navigation">
+            <span class="nav-item active"><img class="nav-glyph" src="assets/coinw-logo-launch/icons/tab-home.svg" alt=""><span>Home</span></span>
+            <span class="nav-item"><img class="nav-glyph" src="assets/coinw-logo-launch/icons/tab-market.svg" alt=""><span>Markets</span></span>
+            <span class="nav-item"><img class="nav-glyph" src="assets/coinw-logo-launch/icons/tab-trade.svg" alt=""><span>Spot</span></span>
+            <span class="nav-item"><img class="nav-glyph" src="assets/coinw-logo-launch/icons/tab-futures.svg" alt=""><span>Futures</span></span>
+            <span class="nav-item"><img class="nav-glyph" src="assets/coinw-logo-launch/icons/tab-wallet.svg" alt=""><span>Assets</span></span>
+            <i class="home-indicator" aria-hidden="true"></i>
+          </nav>
+        </section>
+
+        <section class="splash" aria-label="CoinW launch animation">
+          <div class="lockup" aria-label="CoinW">
+            <div class="brand-mark" aria-hidden="true">
+              <svg class="brand-piece brand-body" viewBox="0 45 115.892 95">
+                <path d="M45.3916 84.7734C45.3916 90.0899 49.6815 94.4002 54.9736 94.4004H115.892V140H54.9736C24.6126 140 0 115.274 0 84.7734V45H45.3916V84.7734Z"/>
+              </svg>
+              <svg class="brand-piece brand-tile" viewBox="45.3916 0 70.5004 45">
+                <path d="M115.892 45H45.3916V0H115.892V45Z"/>
+              </svg>
+            </div>
+            <p class="wordmark">CoinW</p>
+          </div>
+        </section>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    const device = document.querySelector("#device");
+    const appHome = document.querySelector("#appHome");
+    const heroVideo = document.querySelector(".hero-media");
+    const heroLoopEnd = 9.2;
+    const animationMs = 3100;
+    let completeTimer;
+
+    function fitApp() {
+      const screen = document.querySelector(".screen");
+      const scale = screen.clientWidth / 390;
+      appHome.style.setProperty("--app-scale", scale);
+      appHome.style.transform = `scale(${scale})`;
+    }
+
+    function play() {
+      clearTimeout(completeTimer);
+      heroVideo.currentTime = 0;
+      heroVideo.play().catch(() => {});
+      device.classList.remove("is-playing", "is-complete");
+      void device.offsetWidth;
+      device.classList.add("is-playing");
+      completeTimer = window.setTimeout(() => {
+        device.classList.add("is-complete");
+      }, animationMs);
+    }
+
+    heroVideo.addEventListener("timeupdate", () => {
+      if (heroVideo.currentTime >= heroLoopEnd) {
+        heroVideo.currentTime = 0;
+        heroVideo.play().catch(() => {});
+      }
+    });
+
+    new ResizeObserver(fitApp).observe(document.querySelector(".screen"));
+    window.addEventListener("load", () => {
+      fitApp();
+      play();
+    }, { once: true });
+  </script>
+</body>
+</html>
