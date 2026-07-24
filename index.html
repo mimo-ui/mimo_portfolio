@@ -558,6 +558,19 @@
     .hero-actions .btn {
       min-width: 148px;
       text-align: center;
+      background: rgba(255,255,255,.05);
+      border-color: rgba(255,255,255,.18);
+      -webkit-backdrop-filter: blur(48px) saturate(180%) contrast(108%);
+      backdrop-filter: blur(48px) saturate(180%) contrast(108%);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.14),
+        0 8px 24px rgba(0,0,0,.12);
+      transition: border-color .2s ease, background-color .2s ease, color .2s ease;
+    }
+    .hero-actions .btn:hover {
+      background: #fff;
+      border-color: #fff;
+      color: #050505;
     }
     .hero-actions .btn.is-primary {
       border-color: #fff;
@@ -3110,7 +3123,7 @@
           <span class="pixel-cat brand-image" role="img" aria-label="Mimo"></span>
           <span class="brand mono">MIMO</span>
         </a>
-        <button class="wave" id="soundToggle" type="button" aria-label="Enable interface sounds" aria-pressed="false" data-i18n-aria="sound.enableAria" data-i18n-cursor="sound.enableCursor">
+        <button class="wave" id="soundToggle" type="button" aria-label="Disable interface sounds" aria-pressed="true" data-i18n-aria="sound.disableAria" data-i18n-cursor="sound.disableCursor">
           <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
         </button>
       </div>
@@ -3163,7 +3176,7 @@
       </div>
       <p data-i18n="hero.body">With 7+ years of experience, I turn complex financial and data-heavy workflows into clear product systems, reusable design foundations and testable high-fidelity prototypes.</p>
       <div class="hero-actions">
-        <a href="otc-case-detail.html" class="btn is-primary mono" id="heroFlagshipLink" data-open-otc-case data-i18n-aria="hero.flagshipAria" data-i18n-cursor="hero.flagshipCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="hero.flagshipLabel">FLAGSHIP CASE</span></a>
+        <a href="otc-case-detail.html" class="btn mono" id="heroFlagshipLink" data-open-otc-case data-i18n-aria="hero.flagshipAria" data-i18n-cursor="hero.flagshipCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="hero.flagshipLabel">OTC CASE</span></a>
         <a href="output/pdf/MIMO-Resume.pdf" target="_blank" rel="noopener" class="btn mono" data-i18n-aria="hero.resumeAria" data-i18n-cursor="hero.resumeCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="hero.resumeLabel">RESUME</span></a>
         <a href="mailto:mokusama001@gmail.com" class="btn mono" data-i18n-aria="hero.contactAria" data-i18n-cursor="hero.contactCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="hero.contactLabel">CONTACT</span></a>
       </div>
@@ -3234,18 +3247,18 @@
             <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
           </div>
           <div class="case-info">
-            <ul class="tags mono"><li data-i18n="case3.tag1">0→1 Product</li><li data-i18n="case3.tag2">Data hierarchy</li><li data-i18n="case3.tag3">Copy Trading</li></ul>
+            <ul class="tags mono"><li data-i18n="case3.tag1">Trading Flow</li><li data-i18n="case3.tag2">Follow Management</li><li data-i18n="case3.tag3">Copy Trading</li></ul>
             <h3 data-i18n="case3.title">Copy Trading System</h3>
-            <p data-i18n="case3.desc">A 0-to-1 copy trading product covering trader ranking, follow settings, real-time PnL, and social trust signals.</p>
+            <p data-i18n="case3.desc">Optimized the copy-trading flow and follow management across trader ranking, follow settings, real-time PnL, and social trust signals.</p>
             <a class="btn mono" id="copyCaseLink" href="copy-trading-case-detail.html" data-i18n-cursor="case.viewCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="case.viewLabel">VIEW CASE</span></a>
           </div>
         </article>
         <article class="case reveal" id="case-community">
           <div class="image-mask community-mask"><div class="community-demo-preview"><div class="community-demo-mount" id="communityDemoMount" aria-label="社区徽章双手机动态展示"></div></div><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></div>
           <div class="case-info">
-            <ul class="tags mono"><li data-i18n="case4.tag1">Community Growth</li><li data-i18n="case4.tag2">Content Structure</li><li data-i18n="case4.tag3">Retention</li></ul>
+            <ul class="tags mono"><li data-i18n="case4.tag1">Content Flow</li><li data-i18n="case4.tag2">Ad Management</li><li data-i18n="case4.tag3">Interaction</li></ul>
             <h3 data-i18n="case4.title">Community Redesign</h3>
-            <p data-i18n="case4.desc">A V1-to-V3 community redesign connecting content discovery, creator rewards, interaction, and retention loops.</p>
+            <p data-i18n="case4.desc">Optimized community content discovery, creator incentives, interaction components, and advertising management workflows.</p>
             <a class="btn mono" id="communityCaseLink" href="community-case-detail.html" data-i18n-cursor="case.viewCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="case.viewLabel">VIEW CASE</span></a>
           </div>
         </article>
@@ -3578,9 +3591,9 @@
         "hero.eyebrow": "MIMO / PRODUCT DESIGNER",
         "hero.heading": "Product designer for fintech, trading and complex systems",
         "hero.body": "With 7+ years of experience, I turn complex financial and data-heavy workflows into clear product systems, reusable design foundations and testable high-fidelity prototypes.",
-        "hero.flagshipAria": "View Mimo's flagship OTC case",
-        "hero.flagshipCursor": "VIEW FLAGSHIP CASE",
-        "hero.flagshipLabel": "FLAGSHIP CASE",
+        "hero.flagshipAria": "View Mimo's OTC case",
+        "hero.flagshipCursor": "VIEW OTC CASE",
+        "hero.flagshipLabel": "OTC CASE",
         "hero.resumeAria": "Open Mimo's bilingual resume",
         "hero.resumeCursor": "OPEN RESUME",
         "hero.resumeLabel": "RESUME",
@@ -3628,17 +3641,17 @@
         "case2.title": "OTC Trading Flow",
         "case2.desc": "A cross-platform OTC experience covering merchant discovery, quote confirmation, payment, and order status across web and mobile.",
         "case3.galleryTitle": "Copy Trading System",
-        "case3.tag1": "0→1 Product",
-        "case3.tag2": "Data hierarchy",
+        "case3.tag1": "Trading Flow",
+        "case3.tag2": "Follow Management",
         "case3.tag3": "Copy Trading",
         "case3.title": "Copy Trading System",
-        "case3.desc": "A 0-to-1 copy trading product covering trader ranking, follow settings, real-time PnL, and social trust signals.",
+        "case3.desc": "Optimized the copy-trading flow and follow management across trader ranking, follow settings, real-time PnL, and social trust signals.",
         "case4.galleryTitle": "Community Redesign",
-        "case4.tag1": "Community Growth",
-        "case4.tag2": "Content Structure",
-        "case4.tag3": "Retention",
+        "case4.tag1": "Content Flow",
+        "case4.tag2": "Ad Management",
+        "case4.tag3": "Interaction",
         "case4.title": "Community Redesign",
-        "case4.desc": "A V1-to-V3 community redesign connecting content discovery, creator rewards, interaction, and retention loops.",
+        "case4.desc": "Optimized community content discovery, creator incentives, interaction components, and advertising management workflows.",
         "case5.galleryTitle": "Landing Page Matrix",
         "case5.tag1": "A/B Testing",
         "case5.tag2": "Conversion",
@@ -3717,9 +3730,9 @@
         "hero.eyebrow": "MIMO / 产品设计师",
         "hero.heading": "专注金融科技、交易产品与复杂系统的产品设计师",
         "hero.body": "拥有 7+ 年产品设计经验，将复杂的金融与数据流程转化为清晰的产品系统、可复用的设计基础和可验证的高保真原型。",
-        "hero.flagshipAria": "查看 Mimo 的 OTC 旗舰案例",
-        "hero.flagshipCursor": "查看旗舰案例",
-        "hero.flagshipLabel": "旗舰案例",
+        "hero.flagshipAria": "查看 Mimo 的 OTC 案例",
+        "hero.flagshipCursor": "查看 OTC 案例",
+        "hero.flagshipLabel": "OTC 案例",
         "hero.resumeAria": "打开 Mimo 的双语简历",
         "hero.resumeCursor": "打开简历",
         "hero.resumeLabel": "查看简历",
@@ -3767,17 +3780,17 @@
         "case2.title": "OTC 交易链路",
         "case2.desc": "覆盖商家筛选、报价确认、支付与订单状态的 Web 与移动端 OTC 交易体验。",
         "case3.galleryTitle": "跟单交易系统",
-        "case3.tag1": "0→1 产品",
-        "case3.tag2": "数据层级",
+        "case3.tag1": "交易链路优化",
+        "case3.tag2": "跟单管理",
         "case3.tag3": "社交跟单",
         "case3.title": "跟单交易系统",
-        "case3.desc": "从 0 到 1 设计跟单交易产品，覆盖交易员排行、跟单设置、实时 PnL 与社交信任机制。",
+        "case3.desc": "优化跟单交易链路与跟单管理，覆盖交易员排行、跟单设置、实时 PnL 与社交信任机制。",
         "case4.galleryTitle": "社区功能改版",
-        "case4.tag1": "社区增长",
-        "case4.tag2": "内容结构",
-        "case4.tag3": "用户留存",
+        "case4.tag1": "内容链路优化",
+        "case4.tag2": "广告管理",
+        "case4.tag3": "互动体验",
         "case4.title": "社区功能改版",
-        "case4.desc": "从 V1 到 V3 重构内容发现、创作者激励、互动组件与留存闭环。",
+        "case4.desc": "优化社区内容发现、创作者激励、互动组件与广告管理链路。",
         "case5.galleryTitle": "落地页矩阵",
         "case5.tag1": "A/B 测试",
         "case5.tag2": "转化优化",
@@ -3878,10 +3891,19 @@
     ];
     const MARKET_CACHE_KEY = "mimo-v3-market-cache";
     const MARKET_CACHE_TTL = 15 * 60 * 1000;
+    const SOUND_PREFERENCE_KEY = "mimo-sound-enabled-v2";
     let marketRequestId = 0;
     let currentLocale = "en";
-    let soundEnabled = false;
+    let soundEnabled = (() => {
+      try {
+        const preference = localStorage.getItem(SOUND_PREFERENCE_KEY);
+        return preference === null ? true : preference === "true";
+      } catch {
+        return true;
+      }
+    })();
     let audioContext = null;
+    let audioUnlockPromise = null;
     let lastHoverSoundAt = 0;
     let heroMotionProgress = 0;
     let heroMotionVelocity = 0;
@@ -3896,15 +3918,13 @@
 
     function setSoundEnabled(enabled) {
       soundEnabled = Boolean(enabled);
+      try { localStorage.setItem(SOUND_PREFERENCE_KEY, String(soundEnabled)); } catch {}
       soundToggle.setAttribute("aria-pressed", String(soundEnabled));
       const strings = I18N[currentLocale];
       soundToggle.setAttribute("aria-label", soundEnabled ? strings["sound.disableAria"] : strings["sound.enableAria"]);
       soundToggle.dataset.cursorText = soundEnabled ? strings["sound.disableCursor"] : strings["sound.enableCursor"];
 
       if (soundEnabled) {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (AudioContext && !audioContext) audioContext = new AudioContext();
-        if (audioContext?.state === "suspended") audioContext.resume().catch(() => {});
         return;
       }
 
@@ -3912,6 +3932,37 @@
         try { oscillator.stop(); } catch {}
       });
       activeOscillators.clear();
+    }
+
+    function ensureAudioContext() {
+      if (audioContext) return audioContext;
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return null;
+      audioContext = new AudioContext({ latencyHint: "interactive" });
+      return audioContext;
+    }
+
+    function unlockAudio(playFeedback = false) {
+      if (!soundEnabled) return Promise.resolve(false);
+      const context = ensureAudioContext();
+      if (!context) return Promise.resolve(false);
+      if (context.state === "running") {
+        if (playFeedback) playButtonHover();
+        return Promise.resolve(true);
+      }
+      if (audioUnlockPromise) return audioUnlockPromise;
+
+      audioUnlockPromise = context.resume()
+        .then(() => {
+          const unlocked = context.state === "running";
+          if (unlocked && playFeedback) playButtonHover();
+          return unlocked;
+        })
+        .catch(() => false)
+        .finally(() => {
+          audioUnlockPromise = null;
+        });
+      return audioUnlockPromise;
     }
 
     function clearScrambleState() {
@@ -4090,7 +4141,8 @@
     }
 
     function playButtonHover() {
-      if (!soundEnabled || !audioContext || audioContext.state !== "running") return;
+      if (!soundEnabled) return;
+      if (!audioContext || audioContext.state !== "running") return;
       const nowMs = performance.now();
       if (nowMs - lastHoverSoundAt < 70) return;
       lastHoverSoundAt = nowMs;
@@ -4101,13 +4153,13 @@
       const bodyTone = audioContext.createOscillator();
       high.type = "sine";
       bodyTone.type = "triangle";
-      high.frequency.setValueAtTime(1680, now);
-      high.frequency.exponentialRampToValueAtTime(980, now + .065);
-      bodyTone.frequency.setValueAtTime(620, now);
-      bodyTone.frequency.exponentialRampToValueAtTime(440, now + .08);
+      high.frequency.setValueAtTime(1540, now);
+      high.frequency.exponentialRampToValueAtTime(920, now + .09);
+      bodyTone.frequency.setValueAtTime(560, now);
+      bodyTone.frequency.exponentialRampToValueAtTime(380, now + .12);
       gain.gain.setValueAtTime(.0001, now);
-      gain.gain.exponentialRampToValueAtTime(.028, now + .008);
-      gain.gain.exponentialRampToValueAtTime(.0001, now + .085);
+      gain.gain.exponentialRampToValueAtTime(.075, now + .01);
+      gain.gain.exponentialRampToValueAtTime(.0001, now + .135);
       high.connect(gain);
       bodyTone.connect(gain);
       gain.connect(audioContext.destination);
@@ -4115,8 +4167,8 @@
       activeOscillators.add(bodyTone);
       high.start(now);
       bodyTone.start(now);
-      high.stop(now + .09);
-      bodyTone.stop(now + .09);
+      high.stop(now + .14);
+      bodyTone.stop(now + .14);
       const release = () => {
         activeOscillators.delete(high);
         activeOscillators.delete(bodyTone);
@@ -4188,7 +4240,25 @@
       }
     }
 
-    soundToggle.addEventListener("click", () => setSoundEnabled(!soundEnabled));
+    soundToggle.addEventListener("click", () => {
+      if (!soundEnabled) {
+        setSoundEnabled(true);
+        unlockAudio(true);
+        return;
+      }
+      if (!audioContext || audioContext.state !== "running") {
+        unlockAudio(true);
+        return;
+      }
+      setSoundEnabled(false);
+    });
+    window.addEventListener("pointerdown", (event) => {
+      if (event.target.closest?.("#soundToggle")) return;
+      unlockAudio();
+    }, { capture: true, passive: true });
+    window.addEventListener("keydown", () => {
+      unlockAudio();
+    }, { capture: true });
     langToggle.addEventListener("click", toggleLanguage);
     document.querySelectorAll(".btn, .main-menu a, .main-menu button, .gallery-close, .wave, .kinetic-band.b3, .import-carousel-control, .import-carousel-dot, .mimo-booking-shell button, .mimo-booking-shell a").forEach((control) => {
       control.addEventListener("pointerenter", playButtonHover);
