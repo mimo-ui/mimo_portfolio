@@ -470,7 +470,13 @@
     document.getElementById('miniFollow').addEventListener('click',event=>toggleFollow(event.currentTarget));
 
     const composer=document.getElementById('composer'),input=document.getElementById('questionInput'),submit=document.getElementById('submitQuestion'),counter=document.getElementById('questionCount');
-    function openComposer(prefill=''){composer.classList.add('open');composer.setAttribute('aria-hidden','false');input.value=prefill;input.dispatchEvent(new Event('input'));setTimeout(()=>input.focus(),50)}
+    function openComposer(prefill='',shouldFocus=true){
+      composer.classList.add('open');
+      composer.setAttribute('aria-hidden','false');
+      input.value=prefill;
+      input.dispatchEvent(new Event('input'));
+      if(shouldFocus)setTimeout(()=>input.focus({preventScroll:true}),50);
+    }
     function closeComposer(){composer.classList.remove('open');composer.setAttribute('aria-hidden','true');input.blur()}
     document.getElementById('askButton').addEventListener('click',()=>openComposer());
     document.getElementById('cancelCompose').addEventListener('click',closeComposer);
@@ -505,9 +511,10 @@
     function closeDetail(){detail.classList.remove('open');detail.setAttribute('aria-hidden','true')}
     document.querySelector('.close-detail').addEventListener('click',closeDetail);
     const answerEditor=document.getElementById('answerEditor'),answerInput=document.getElementById('answerInput'),answerSubmit=document.getElementById('submitAnswer'),answerCount=document.getElementById('answerCount');
-    function openAnswerEditor(){
+    function openAnswerEditor(shouldFocus=true){
       detail.classList.remove('open');answerEditor.classList.add('open');answerEditor.setAttribute('aria-hidden','false');
-      document.getElementById('answerQuestion').textContent=detailQuestion;answerInput.value='';answerInput.dispatchEvent(new Event('input'));setTimeout(()=>answerInput.focus(),50);
+      document.getElementById('answerQuestion').textContent=detailQuestion;answerInput.value='';answerInput.dispatchEvent(new Event('input'));
+      if(shouldFocus)setTimeout(()=>answerInput.focus({preventScroll:true}),50);
     }
     function closeAnswerEditor(){answerEditor.classList.remove('open');answerEditor.setAttribute('aria-hidden','true');answerInput.blur()}
     document.querySelector('#answerAction button').addEventListener('click',openAnswerEditor);
@@ -568,10 +575,10 @@
       device.classList.add('chart-focus-active');
       await wait(420,id);
       if(id!==autoRunId)return closeChartFocus(true);
-      await wait(2000,id);
+      await wait(1400,id);
       if(id!==autoRunId)return closeChartFocus(true);
       closeChartFocus();
-      await wait(320,id);
+      await wait(260,id);
       chartFocusCard.replaceChildren();
     }
     function resetAutoScene(){
@@ -602,50 +609,49 @@
       };
       requestAnimationFrame(watchRoiCenter);
       document.documentElement.dataset.autoPhase='contract-start';
-      await wait(1300,id);
+      await wait(500,id);
       document.documentElement.dataset.autoPhase='contract-scroll';
-      await autoScrollTo(690,2800,id);
-      await autoScrollTo(roiScrollTarget(),1100,id);
+      await autoScrollTo(roiScrollTarget(),3000,id);
       triggerRoiFocus();
       if(id!==autoRunId)return;
       await roiFocusPromise;
-      await wait(500,id);
+      await wait(200,id);
       if(id!==autoRunId)return;
       document.documentElement.dataset.autoPhase='spot';
       setView('spot','auto');
-      await wait(1200,id);
-      await autoScrollTo(650,2200,id);
-      await wait(1400,id);
+      await wait(80,id);
+      await autoScrollTo(650,1600,id);
+      await wait(120,id);
       if(id!==autoRunId)return;
       document.documentElement.dataset.autoPhase='qa-list';
       setView('qa','auto');
-      await wait(1400,id);
+      await wait(450,id);
       document.documentElement.dataset.autoPhase='qa-typing';
-      openComposer();
-      await wait(700,id);
+      openComposer('',false);
+      await wait(300,id);
       await typeDemo('Can the trading cycle be shortened?',id);
-      await wait(900,id);
+      await wait(250,id);
       if(id!==autoRunId)return;
       submit.click();
-      await wait(1400,id);
+      await wait(500,id);
       document.documentElement.dataset.autoPhase='qa-answered';
       openDetail('answered');
-      await wait(2300,id);
+      await wait(1400,id);
       closeDetail();
       document.documentElement.dataset.autoPhase='qa-unanswered';
       openDetail('unanswered');
-      await wait(1800,id);
+      await wait(1000,id);
       document.documentElement.dataset.autoPhase='qa-editing';
-      openAnswerEditor();
-      await wait(2100,id);
+      openAnswerEditor(false);
+      await wait(700,id);
       closeAnswerEditor();
       setView('contract','auto');
-      await wait(1000,id);
+      await wait(300,id);
       document.documentElement.dataset.autoPhase='share';
       openShare();
-      await wait(2800,id);
+      await wait(1800,id);
       closeShare();
-      await wait(700,id);
+      await wait(300,id);
       if(id!==autoRunId)return;
       isAutoAction=false;
       document.documentElement.dataset.autoPhase='restart';

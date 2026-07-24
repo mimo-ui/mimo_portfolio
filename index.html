@@ -903,6 +903,8 @@
       min-height: clamp(430px, 42vw, 500px);
       overflow: visible;
       background: transparent;
+      perspective: 1400px;
+      perspective-origin: 54% 42%;
     }
     .copy-trading-demo-device {
       position: absolute;
@@ -910,14 +912,54 @@
       left: 50%;
       width: 407px;
       height: 844px;
-      overflow: hidden;
+      overflow: visible;
       border-radius: 64px;
       background: transparent;
-      filter: drop-shadow(0 24px 32px rgba(0,0,0,.36));
-      transform: translate(-50%,-50%) scale(.54);
+      transform-style: preserve-3d;
+      filter: drop-shadow(34px 42px 34px rgba(0,0,0,.48));
+      transform: translate(-50%,-50%) rotateX(45deg) rotateY(0deg) rotateZ(-20deg) scale(.70);
       transform-origin: 50% 50%;
     }
-    .copy-trading-demo-device iframe {
+    .copy-trading-demo-device::before {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      inset: 8px -17px -15px 12px;
+      border-radius: 62px;
+      background:
+        linear-gradient(90deg, #121217 0%, #5d5b65 18%, #1a1a20 46%, #77747f 72%, #101015 100%);
+      box-shadow:
+        inset 1px 0 rgba(255,255,255,.38),
+        inset -2px -2px 4px rgba(0,0,0,.72),
+        0 18px 30px rgba(0,0,0,.36);
+      transform: translateZ(-22px);
+    }
+    .copy-trading-demo-device::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      right: -17px;
+      top: 78px;
+      width: 18px;
+      height: 686px;
+      border-radius: 0 14px 14px 0;
+      background: linear-gradient(90deg, #25242c, #85818d 46%, #24232a);
+      box-shadow: inset 1px 0 rgba(255,255,255,.34);
+      transform: translateZ(-11px);
+    }
+    .copy-device-screen {
+      position: absolute;
+      z-index: 3;
+      inset: 5px;
+      overflow: hidden;
+      border-radius: 58px;
+      background: #050506;
+      box-shadow:
+        inset 0 0 0 2px rgba(255,255,255,.05),
+        0 0 0 2px #08080b;
+      transform: translateZ(8px);
+    }
+    .copy-device-screen iframe {
       display: block;
       width: 100%;
       height: 100%;
@@ -926,6 +968,50 @@
       color-scheme: dark;
       pointer-events: none;
     }
+    .copy-device-frame,
+    .copy-device-glass,
+    .copy-device-button {
+      position: absolute;
+      pointer-events: none;
+    }
+    .copy-device-frame {
+      z-index: 5;
+      inset: 0;
+      border: 4px solid transparent;
+      border-radius: 64px;
+      background:
+        linear-gradient(138deg, #dbd8df 0%, #62606a 10%, #17171d 28%, #85828c 48%, #1b1b21 68%, #a19da8 86%, #2a2930 100%) border-box;
+      -webkit-mask:
+        linear-gradient(#000 0 0) padding-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      transform: translateZ(13px);
+    }
+    .copy-device-glass {
+      z-index: 4;
+      inset: 8px;
+      border-radius: 55px;
+      background:
+        linear-gradient(118deg, rgba(255,255,255,.15), transparent 18%, transparent 64%, rgba(255,255,255,.045));
+      box-shadow:
+        inset 1px 1px rgba(255,255,255,.16),
+        inset -1px -1px rgba(0,0,0,.62);
+      transform: translateZ(14px);
+    }
+    .copy-device-button {
+      z-index: 2;
+      left: -11px;
+      width: 10px;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 5px 0 0 5px;
+      background: linear-gradient(90deg, #222127, #77737e 56%, #24232a);
+      box-shadow: 0 2px 3px rgba(0,0,0,.55);
+      transform: translateZ(-4px);
+    }
+    .copy-device-button.is-one { top: 132px; height: 62px; }
+    .copy-device-button.is-two { top: 218px; height: 92px; }
+    .copy-device-button.is-three { top: 326px; height: 92px; }
     .community-demo-preview {
       position: relative;
       width: 100%;
@@ -942,22 +1028,53 @@
       background: transparent !important;
       overflow: visible;
     }
+    @media (min-width: 901px) {
+      .case-list {
+        max-width: 1120px;
+      }
+      .case {
+        width: min(100%, 1000px);
+        margin-inline: auto;
+      }
+      #case-otc,
+      #case-copy-trading,
+      #case-community {
+        width: 100%;
+      }
+      #case-otc .image-mask,
+      #case-copy-trading .image-mask,
+      #case-community .image-mask {
+        flex-basis: 720px;
+      }
+      #case-otc .case-info,
+      #case-copy-trading .case-info,
+      #case-community .case-info {
+        flex: 0 1 320px;
+        max-width: 320px;
+      }
+      #case-community .community-demo-preview {
+        height: 400px;
+        aspect-ratio: auto;
+      }
+    }
     @keyframes dual-phone-coinw {
-      0% { opacity: 0; transform: translate3d(-50%,-50%,0) rotateZ(0) scale(.38); }
+      0% { opacity: 0; transform: translate3d(-50%,-50%,0) rotateZ(0) scale(.46); }
       18% { opacity: 1; }
-      68% { opacity: 1; transform: translate3d(-75%,-48%,0) rotateZ(-8deg) scale(.47); }
-      100% { opacity: 1; transform: translate3d(-70.5%,-50%,0) rotateZ(0) scale(.46); }
+      68% { opacity: 1; transform: translate3d(-75%,-48%,0) rotateZ(-8deg) scale(.57); }
+      100% { opacity: 1; transform: translate3d(-70.5%,-50%,0) rotateZ(0) scale(.56); }
     }
     @keyframes dual-phone-otc {
-      0% { opacity: 0; transform: translate3d(-50%,-50%,0) rotateZ(0) scale(.39); }
+      0% { opacity: 0; transform: translate3d(-50%,-50%,0) rotateZ(0) scale(.47); }
       18% { opacity: 1; }
-      68% { opacity: 1; transform: translate3d(-31%,-54%,0) rotateZ(14deg) scale(.48); }
-      100% { opacity: 1; transform: translate3d(-21.5%,-50%,0) rotateZ(0) scale(.47); }
+      68% { opacity: 1; transform: translate3d(-31%,-54%,0) rotateZ(14deg) scale(.58); }
+      100% { opacity: 1; transform: translate3d(-21.5%,-50%,0) rotateZ(0) scale(.57); }
     }
     @media (max-width: 760px) {
       .dual-phone-promo-preview { min-height: 250px; }
       .copy-trading-demo-preview { min-height: 270px; }
-      .copy-trading-demo-device { transform: translate(-50%,-50%) scale(.29); }
+      .copy-trading-demo-device {
+        transform: translate(-50%,-50%) rotateX(40deg) rotateY(0deg) rotateZ(-18deg) scale(.30);
+      }
       @keyframes dual-phone-coinw {
         0% { opacity: 0; transform: translate3d(-50%,-50%,0) rotateZ(0) scale(.20); }
         18% { opacity: 1; }
@@ -3104,7 +3221,14 @@
           <div class="image-mask copy-mask">
             <div class="copy-trading-demo-preview">
               <div class="copy-trading-demo-device">
-                <iframe src="coinw-copy-trading-demo.html?embed=1&v=roi-center-3" title="CoinW 跟单系统动态原型" loading="lazy" tabindex="-1" aria-hidden="true" allowtransparency="true"></iframe>
+                <div class="copy-device-screen">
+                  <iframe src="coinw-copy-trading-demo.html?embed=1&v=scroll-stable-1" title="CoinW 跟单系统动态原型" loading="lazy" tabindex="-1" aria-hidden="true" allowtransparency="true"></iframe>
+                </div>
+                <span class="copy-device-glass" aria-hidden="true"></span>
+                <span class="copy-device-frame" aria-hidden="true"></span>
+                <span class="copy-device-button is-one" aria-hidden="true"></span>
+                <span class="copy-device-button is-two" aria-hidden="true"></span>
+                <span class="copy-device-button is-three" aria-hidden="true"></span>
               </div>
             </div>
             <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
@@ -5547,11 +5671,11 @@
               background: transparent !important;
             }
             .orbits { width: 96% !important; height: 92% !important; }
-            .phone--coinw { transform: translate3d(-68%, -50%, 0) rotateZ(-8deg) scale(.34) !important; }
-            .phone--otc { transform: translate3d(-32%, -50%, 0) rotateZ(9deg) scale(.35) !important; }
-            .glass-anchor--badges { transform: translate(-278px, -155px) scale(.50) !important; }
-            .glass-anchor--level { transform: translate(-280px, 118px) scale(.50) !important; }
-            .glass-anchor--action { transform: translate(92px, 118px) scale(.50) !important; }
+            .phone--coinw { transform: translate3d(-68%, -50%, 0) rotateZ(-8deg) scale(.40) !important; }
+            .phone--otc { transform: translate3d(-32%, -50%, 0) rotateZ(9deg) scale(.41) !important; }
+            .glass-anchor--badges { transform: translate(-300px, -165px) scale(.58) !important; }
+            .glass-anchor--level { transform: translate(-302px, 124px) scale(.58) !important; }
+            .glass-anchor--action { transform: translate(100px, 124px) scale(.58) !important; }
             @container (max-height: 300px) {
               .phone--coinw { transform: translate3d(-68%, -50%, 0) rotateZ(-8deg) scale(.19) !important; }
               .phone--otc { transform: translate3d(-32%, -50%, 0) rotateZ(9deg) scale(.195) !important; }
