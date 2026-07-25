@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="data:,">
+  <title>Rena Labs — Shader Lines</title>
+  <style>
+    :root {
+      --bg: #0a0004;
+      --pink: rgb(255, 41, 130);
+      --ease: cubic-bezier(.16, 1, .3, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #050505;
+      color: #fff;
+      font-family: "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    html.is-embed,
+    html.is-embed body {
+      min-height: 100%;
+      height: 100%;
+      background: transparent;
+    }
+
+    html.is-embed body {
+      display: block;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .card {
+      position: relative;
+      width: min(920px, 100%);
+      aspect-ratio: 2.007 / 1;
+      border-radius: 18px;
+      overflow: hidden;
+      background: var(--bg);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+    }
+
+    html.is-embed .card {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    html.is-embed .note { display: none; }
+
+    #shader {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .logo {
+      position: absolute;
+      left: 50%;
+      top: 42.6%;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: max-content;
+      max-width: calc(100% - 48px);
+      height: auto;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      filter: drop-shadow(0 0 18px rgba(255, 41, 130, 0.35));
+      animation: logoIn 1.1s var(--ease) both;
+    }
+
+    .logo svg {
+      display: block;
+      width: min(245px, 42vw);
+      height: auto;
+    }
+
+    .logo-cta {
+      display: none;
+      position: relative;
+      padding: 10px 12px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(12,12,14,.55);
+      color: rgba(255,255,255,.78);
+      font: 10px/1 "SF Mono", "Fragment Mono", ui-monospace, monospace;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      backdrop-filter: blur(10px);
+    }
+    .logo-cta::before {
+      content: "+";
+      position: absolute;
+      top: 2px;
+      left: 4px;
+      font-size: 9px;
+      opacity: .7;
+    }
+    html.is-embed .logo-cta { display: inline-flex; }
+
+    .meta {
+      position: absolute;
+      inset: auto 0 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      padding: 18px 20px 16px;
+      background: linear-gradient(180deg, rgba(15, 14, 12, 0) 0%, rgba(15, 14, 12, 0.7) 100%);
+      pointer-events: none;
+    }
+
+    .meta h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+    }
+
+    .meta p {
+      margin: 4px 0 0;
+      font-size: 12px;
+      opacity: 0.45;
+      line-height: 1.35;
+    }
+
+    .meta .right {
+      text-align: right;
+      font-size: 12px;
+      opacity: 0.45;
+      white-space: nowrap;
+    }
+
+    .note {
+      position: absolute;
+      left: 16px;
+      top: 14px;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    @keyframes logoIn {
+      from { opacity: 0; transform: translate(-50%, calc(-50% + 8px)) scale(0.98); }
+      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .meta { padding: 14px 14px 12px; }
+      .meta h1 { font-size: 13px; }
+      .meta p, .meta .right { font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <article class="card" aria-label="Rena Labs dynamic cover">
+    <div id="shader" role="presentation"></div>
+    <div class="note">Shader Lines · dynamic</div>
+    <div class="logo" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 193 28" overflow="visible">
+        <g>
+          <path d="M 69.521 22.287 L 74.597 27.554 L 63.164 27.554 L 57.015 20.382 L 43.89 20.382 L 43.89 27.554 L 35.347 27.554 L 35.347 13.696 L 59.368 13.696 C 62.009 13.696 64.073 12.521 64.073 10.657 C 64.073 8.55 62.298 7.496 59.368 7.496 L 35.347 7.496 L 40.919 0.446 L 58.666 0.446 C 64.939 0.446 72.863 2.391 72.863 10.13 C 72.863 14.344 70.181 17.829 65.641 18.721 C 66.59 19.41 67.622 20.382 69.521 22.287 Z M 86.254 20.585 L 109.738 20.585 L 104.248 27.554 L 77.669 27.554 L 77.669 0.446 L 109.655 0.446 L 104.125 7.496 L 86.254 7.496 L 86.254 10.738 L 108.128 10.738 L 103.216 16.897 L 86.254 16.897 Z M 140.636 28 C 139.563 28 138.531 27.757 137.211 26.541 L 120.289 11.63 L 120.289 27.554 L 112.53 27.554 L 112.53 5.065 C 112.53 1.459 114.759 0 117.194 0 C 118.225 0 119.257 0.243 120.619 1.459 L 137.541 16.37 L 137.541 0.446 L 145.341 0.446 L 145.341 22.894 C 145.341 26.501 143.113 28 140.636 28 Z M 193 27.554 L 160.89 27.554 L 166.049 20.585 L 172.983 20.585 C 174.634 20.585 176.574 20.585 177.894 20.666 C 177.152 19.693 175.996 18.032 175.088 16.735 L 170.135 9.563 L 157.176 27.554 L 147.064 27.554 L 164.77 3.039 C 165.926 1.459 167.618 0 170.3 0 C 172.859 0 174.551 1.337 175.748 3.039 L 193 27.554 Z" fill="rgb(255,255,255)"></path>
+          <path d="M 0 26.317 L 0 9.135 C 0.001 7.562 0.626 6.052 1.741 4.931 C 4.128 2.526 8.056 2.501 10.474 4.875 L 26.61 20.717 C 26.85 20.952 26.985 21.272 26.985 21.606 C 26.985 21.94 26.85 22.259 26.61 22.494 L 22.341 26.685 C 21.841 27.176 21.031 27.176 20.531 26.685 L 9.731 16.082 C 9.328 15.686 8.638 15.966 8.638 16.526 L 8.638 26.317 C 8.638 27.011 8.065 27.574 7.359 27.574 L 1.28 27.574 C 0.573 27.574 0 27.011 0 26.317 Z M 13.703 2.705 C 12.896 1.913 13.467 0.56 14.607 0.56 L 26.235 0.56 C 26.942 0.56 27.515 1.122 27.515 1.816 L 27.515 7.785 C 27.515 8.478 26.942 9.041 26.235 9.041 L 20.686 9.041 C 20.347 9.041 20.021 8.908 19.781 8.673 Z" fill="rgb(251,64,141)"></path>
+        </g>
+      </svg>
+      <span class="logo-cta">View Case</span>
+    </div>
+    <footer class="meta">
+      <div>
+        <h1 data-i18n="title">Rena Labs</h1>
+        <p data-i18n="tagline">Make AI trustless and secure by default</p>
+      </div>
+      <div class="right"><span data-i18n="year">2024</span><br><span data-i18n="snapshot">Snapshot</span></div>
+    </footer>
+  </article>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    if (params.has("embed")) document.documentElement.classList.add("is-embed");
+
+    const BANNER_I18N = {
+      en: {
+        title: "Rena Labs",
+        tagline: "Make AI trustless and secure by default",
+        year: "2024",
+        snapshot: "Snapshot",
+        cta: "View Case",
+      },
+      zh: {
+        title: "Rena Labs",
+        tagline: "默认让 AI 可信、安全",
+        year: "2024",
+        snapshot: "快照",
+        cta: "查看案例",
+      },
+    };
+
+    const bannerLocale = params.get("lang") === "zh" ? "zh" : "en";
+    document.documentElement.lang = bannerLocale;
+    const bannerStrings = BANNER_I18N[bannerLocale];
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.dataset.i18n;
+      if (bannerStrings[key]) el.textContent = bannerStrings[key];
+    });
+    const cta = document.querySelector(".logo-cta");
+    if (cta) cta.textContent = bannerStrings.cta;
+
+    /**
+     * Recreated from Vic Ding / Framer "Shader Lines" (Framer University)
+     * with the exact Rena Labs card parameters from vic-ding.com
+     */
+    const CONFIG = {
+      speed: 0.1,
+      bandWidth: 0.95,
+      flow: "in-out",
+      colorMode: "spectrum",
+      blendMode: "additive",
+      backgroundColor: "rgb(10, 0, 4)",
+      color: "rgb(255, 255, 255)",
+      color1: "rgb(255, 41, 130)",
+      color2: "rgb(0, 0, 0)",
+      color3: "rgb(28, 0, 12)",
+    };
+
+    function remap(value, inMin, inMax, outMin, outMax) {
+      if (inMax === inMin) return outMin;
+      return outMin + ((value - inMin) / (inMax - inMin)) * (outMax - outMin);
+    }
+
+    function mapSpeed(v) {
+      return remap(Math.max(0.1, Math.min(1, v)), 0.1, 1, 1, 10);
+    }
+
+    function mapBandWidth(v) {
+      return remap(Math.max(0.1, Math.min(1, v)), 0.1, 1, 2, 60);
+    }
+
+    function parseColor(input) {
+      if (!input) return { r: 0, g: 0, b: 0, a: 0 };
+      const t = String(input).trim();
+      const rgba = t.match(/rgba?\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)\s*(?:,\s*([\d.]+)\s*)?\)/i);
+      if (rgba) {
+        return {
+          r: Math.max(0, Math.min(255, parseFloat(rgba[1]))) / 255,
+          g: Math.max(0, Math.min(255, parseFloat(rgba[2]))) / 255,
+          b: Math.max(0, Math.min(255, parseFloat(rgba[3]))) / 255,
+          a: rgba[4] === undefined ? 1 : Math.max(0, Math.min(1, parseFloat(rgba[4]))),
+        };
+      }
+      let hex = t.replace(/^#/, "");
+      if (hex.length === 8) {
+        return {
+          r: parseInt(hex.slice(0, 2), 16) / 255,
+          g: parseInt(hex.slice(2, 4), 16) / 255,
+          b: parseInt(hex.slice(4, 6), 16) / 255,
+          a: parseInt(hex.slice(6, 8), 16) / 255,
+        };
+      }
+      if (hex.length === 6) {
+        return {
+          r: parseInt(hex.slice(0, 2), 16) / 255,
+          g: parseInt(hex.slice(2, 4), 16) / 255,
+          b: parseInt(hex.slice(4, 6), 16) / 255,
+          a: 1,
+        };
+      }
+      if (hex.length === 3) {
+        return {
+          r: parseInt(hex[0] + hex[0], 16) / 255,
+          g: parseInt(hex[1] + hex[1], 16) / 255,
+          b: parseInt(hex[2] + hex[2], 16) / 255,
+          a: 1,
+        };
+      }
+      return { r: 0, g: 0, b: 0, a: 1 };
+    }
+
+    const VERTEX = `
+      void main() {
+        gl_Position = vec4(position, 1.0);
+      }
+    `;
+
+    const FRAGMENT = `
+      #define TWO_PI 6.2831853072
+      #define PI 3.14159265359
+
+      precision highp float;
+      uniform vec2 resolution;
+      uniform float time;
+      uniform float bandWidthPx;
+      uniform vec4 backgroundColor;
+      uniform vec4 color;
+      uniform vec4 color1;
+      uniform vec4 color2;
+      uniform vec4 color3;
+      uniform float colorMode;
+      uniform float blendMode;
+
+      float random (in float x) {
+          return fract(sin(x)*1e4);
+      }
+      float random (vec2 st) {
+          return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+      }
+
+      void main(void) {
+        vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
+
+        float bandCenterPx = floor(gl_FragCoord.x / bandWidthPx) * bandWidthPx + bandWidthPx * 0.5;
+        uv.x = (bandCenterPx * 2.0 - resolution.x) / min(resolution.x, resolution.y);
+
+        float t = time*0.06+random(uv.x)*0.4;
+        float lineWidth = 0.0008;
+
+        vec3 colorIntensity = vec3(0.0);
+        for(int j = 0; j < 3; j++){
+          for(int i=0; i < 5; i++){
+            colorIntensity[j] += lineWidth*float(i*i) / abs(fract(t - 0.01*float(j)+float(i)*0.01)*1.0 - length(uv));
+          }
+        }
+
+        vec3 finalColor;
+        float finalAlpha;
+
+        if (colorMode < 0.5) {
+          finalColor = colorIntensity * color.rgb;
+          finalAlpha = color.a;
+        } else {
+          finalColor = vec3(0.0);
+          finalColor += colorIntensity.r * color1.rgb;
+          finalColor += colorIntensity.g * color2.rgb;
+          finalColor += colorIntensity.b * color3.rgb;
+          finalAlpha = (color1.a + color2.a + color3.a) / 3.0;
+        }
+
+        float rayIntensity = max(max(finalColor.r, finalColor.g), finalColor.b);
+
+        if (rayIntensity < 0.01) {
+          finalColor = color.rgb * 0.1;
+          rayIntensity = 0.1;
+        }
+
+        vec3 bgColor = backgroundColor.rgb;
+        float bgAlpha = backgroundColor.a;
+
+        vec3 blendedColor;
+        float outputAlpha;
+
+        if (blendMode < 0.5) {
+          blendedColor = finalColor.rgb * rayIntensity + bgColor * bgAlpha * (1.0 - rayIntensity);
+          outputAlpha = rayIntensity + bgAlpha * (1.0 - rayIntensity);
+        } else {
+          blendedColor = finalColor.rgb + bgColor * bgAlpha;
+          outputAlpha = 1.0;
+        }
+
+        gl_FragColor = vec4(blendedColor, outputAlpha);
+      }
+    `;
+
+    function boot(THREE) {
+      const mount = document.getElementById("shader");
+      const bg = parseColor(CONFIG.backgroundColor);
+      const c = parseColor(CONFIG.color);
+      const c1 = parseColor(CONFIG.color1);
+      const c2 = parseColor(CONFIG.color2);
+      const c3 = parseColor(CONFIG.color3);
+
+      const speed = mapSpeed(CONFIG.speed);
+      const bandWidth = mapBandWidth(CONFIG.bandWidth);
+      const flow = CONFIG.flow === "out-in" ? -1 : 1;
+
+      const camera = new THREE.Camera();
+      camera.position.z = 1;
+      const scene = new THREE.Scene();
+
+      const uniforms = {
+        resolution: { value: new THREE.Vector2(1, 1) },
+        time: { value: 0 },
+        bandWidthPx: { value: bandWidth },
+        backgroundColor: { value: new THREE.Vector4(bg.r, bg.g, bg.b, bg.a) },
+        color: { value: new THREE.Vector4(c.r, c.g, c.b, c.a) },
+        color1: { value: new THREE.Vector4(c1.r, c1.g, c1.b, c1.a) },
+        color2: { value: new THREE.Vector4(c2.r, c2.g, c2.b, c2.a) },
+        color3: { value: new THREE.Vector4(c3.r, c3.g, c3.b, c3.a) },
+        colorMode: { value: CONFIG.colorMode === "single" ? 0 : 1 },
+        blendMode: { value: CONFIG.blendMode === "alpha" ? 0 : 1 },
+      };
+
+      const material = new THREE.ShaderMaterial({
+        uniforms,
+        vertexShader: VERTEX,
+        fragmentShader: FRAGMENT,
+      });
+      const mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(2, 2), material);
+      scene.add(mesh);
+
+      const renderer = new THREE.WebGLRenderer({ alpha: true });
+      renderer.setPixelRatio(window.devicePixelRatio || 1);
+      renderer.setClearColor(0x000000, 0);
+      const canvas = renderer.domElement;
+      canvas.style.position = "absolute";
+      canvas.style.inset = "0";
+      canvas.style.width = "100%";
+      canvas.style.height = "100%";
+      canvas.style.display = "block";
+      mount.appendChild(canvas);
+
+      function resize() {
+        const w = mount.clientWidth || 1;
+        const h = mount.clientHeight || 1;
+        renderer.setSize(w, h, false);
+        uniforms.resolution.value.x = renderer.domElement.width;
+        uniforms.resolution.value.y = renderer.domElement.height;
+        const pr = renderer.getPixelRatio ? renderer.getPixelRatio() : (window.devicePixelRatio || 1);
+        uniforms.bandWidthPx.value = bandWidth * pr;
+      }
+
+      resize();
+      window.addEventListener("resize", resize);
+
+      let last = 0;
+      function tick(now) {
+        requestAnimationFrame(tick);
+        const dt = last ? (now - last) / 1000 : 0.016;
+        last = now;
+        uniforms.time.value += dt * speed * flow;
+        renderer.render(scene, camera);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js";
+    script.onload = () => boot(window.THREE);
+    script.onerror = () => {
+      document.querySelector(".note").textContent = "Three.js failed to load — check network";
+    };
+    document.head.appendChild(script);
+  </script>
+</body>
+</html>

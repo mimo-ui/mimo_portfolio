@@ -598,6 +598,91 @@
       visibility: visible;
       pointer-events: auto;
     }
+    #cases {
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 120px 0;
+      justify-content: center;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+
+    #mm-entry {
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: 72px 24px;
+      justify-content: center;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+    .mm-entry-wrap {
+      width: min(1180px, calc(100vw - 48px));
+      height: min(640px, calc(100dvh - 144px));
+      display: flex;
+    }
+    .mm-entry-card {
+      position: relative;
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.14);
+      background: #0a0004;
+      cursor: pointer;
+      transition: border-color .25s ease, transform .35s var(--ease);
+    }
+    .mm-entry-card:hover {
+      border-color: rgba(255,255,255,.3);
+      transform: translateY(-2px);
+    }
+    .mm-entry-preview {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .mm-entry-preview iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      pointer-events: none;
+      background: #0a0004;
+    }
+    .mm-entry-hit {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+    .mm-entry-chip {
+      position: absolute;
+      z-index: 4;
+      pointer-events: none;
+      font: 11px/1.2 "Cartograph Mono CF", "SFMono-Regular", Consolas, monospace;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.72);
+    }
+    .mm-entry-chip.is-tl { top: 18px; left: 20px; }
+    .mm-entry-chip.is-tr { top: 18px; right: 20px; }
+    .mm-entry-card .corner {
+      z-index: 5;
+    }
+
+    @media (max-width: 900px) {
+      #mm-entry { padding: 56px 16px; }
+      .mm-entry-wrap {
+        width: min(100%, calc(100vw - 32px));
+        height: min(520px, calc(100dvh - 120px));
+      }
+      .mm-entry-chip.is-tl { top: 14px; left: 14px; }
+      .mm-entry-chip.is-tr { top: 14px; right: 14px; }
+    }
+
+    #case-work {
+      min-height: auto;
+      padding: 80px 0 16px;
+      justify-content: flex-start;
+    }
+
     .section {
       position: relative;
       z-index: 9;
@@ -608,7 +693,6 @@
       min-height: 80vh;
       padding: 200px 0;
     }
-    #cases { padding-bottom: 16px; }
     .container {
       display: flex;
       flex-direction: column;
@@ -3210,7 +3294,31 @@
           <li class="client-logo" data-i18n="cases.logo1">CoinW</li><li class="client-logo" data-i18n="cases.logo2">OTC</li><li class="client-logo" data-i18n="cases.logo3">KYC</li><li class="client-logo" data-i18n="cases.logo4">CRYPTO</li><li class="client-logo" data-i18n="cases.logo5">Landing Page</li><li class="client-logo" data-i18n="cases.logo6">UIUX / AI</li>
         </ul>
       </div>
+    </section>
 
+    <section class="section" id="mm-entry" aria-label="MM Dashboard featured entry">
+      <div class="mm-entry-wrap reveal">
+        <a
+          class="mm-entry-card"
+          id="mmCaseLink"
+          href="mm-dashboard-layout.html"
+          data-open-mm-case
+          data-i18n-aria="mmEntry.aria"
+          data-i18n-cursor="mmEntry.cursor"
+          aria-label="Open MM Dashboard case"
+        >
+          <div class="mm-entry-preview">
+            <iframe id="mmEntryBanner" src="rena-shader-demo.html?embed=1&amp;lang=en" title="Rena Labs shader banner" loading="lazy" tabindex="-1" aria-hidden="true"></iframe>
+          </div>
+          <span class="mm-entry-chip is-tl mono" data-i18n="mmEntry.index">Featured / Snapshot</span>
+          <span class="mm-entry-chip is-tr mono" data-i18n="mmEntry.label">MM Dashboard</span>
+          <span class="mm-entry-hit" aria-hidden="true"></span>
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section" id="case-work">
       <div class="case-list">
         <article class="case reveal" id="case-design-system">
           <div class="image-mask design-system-mask"><div class="design-system-preview"><iframe src="deploy-site/design-system-layout-spotlight.html?preview=1" title="Design System preview" loading="lazy"></iframe><iframe class="glitch-layer glitch-red" src="deploy-site/design-system-layout-spotlight.html?preview=1" title="" aria-hidden="true" tabindex="-1" loading="lazy"></iframe><iframe class="glitch-layer glitch-blue" src="deploy-site/design-system-layout-spotlight.html?preview=1" title="" aria-hidden="true" tabindex="-1" loading="lazy"></iframe></div><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></div>
@@ -3316,8 +3424,9 @@
           <h3 class="small" data-i18n="experience.heading">Experience</h3>
           <ul class="list experience-list">
             <li class="reveal"><span class="date" data-i18n="experience.1.meta">2025.07-2026.07 · CoinW / Legend Tech</span><h4 data-i18n="experience.1.role">Product Designer</h4><p data-i18n="experience.1.desc">Designing exchange product systems across OTC, copy trading, community, campaigns, and reusable components.</p></li>
-            <li class="reveal"><span class="date" data-i18n="experience.2.meta">2020-2025 · Fintech / Web3 Products</span><h4 data-i18n="experience.2.role">UI/UX Designer</h4><p data-i18n="experience.2.desc">Shaped trading, SaaS, B2B finance, Web3, H5, app, and operational product experiences.</p></li>
-            <li class="reveal"><span class="date" data-i18n="experience.3.meta">2017-2020 · Consumer & Interactive Products</span><h4 data-i18n="experience.3.role">UI/UED Designer</h4><p data-i18n="experience.3.desc">Built interface systems for social, entertainment, gaming, tools, and growth-oriented products.</p></li>
+            <li class="reveal"><span class="date" data-i18n="experience.2.meta">2024-2025.06 · Rena Labs</span><h4 data-i18n="experience.2.role">Product &amp; Branding Designer</h4><p data-i18n="experience.2.desc">Led the Rena Labs rebrand around privacy-preserving compute and TEE, building a scalable brand system across mark, typography, color, and product surfaces for trustless AI infrastructure.</p></li>
+            <li class="reveal"><span class="date" data-i18n="experience.3.meta">2020-2023 · Fintech / Web3 Products</span><h4 data-i18n="experience.3.role">UI/UX Designer</h4><p data-i18n="experience.3.desc">Shaped trading, SaaS, B2B finance, Web3, H5, app, and operational product experiences.</p></li>
+            <li class="reveal"><span class="date" data-i18n="experience.4.meta">2017-2020 · Consumer &amp; Interactive Products</span><h4 data-i18n="experience.4.role">UI/UED Designer</h4><p data-i18n="experience.4.desc">Built interface systems for social, entertainment, gaming, tools, and growth-oriented products.</p></li>
           </ul>
         </div>
         <div class="block">
@@ -3489,6 +3598,17 @@
     </div>
   </div>
 
+  <div class="otc-case-modal" id="mmCaseModal" role="dialog" aria-modal="true" aria-labelledby="mmCaseModalTitle" aria-hidden="true">
+    <header class="otc-case-header">
+      <span class="otc-case-index" data-i18n="mmEntry.modalIndex">Featured / Snapshot</span>
+      <span class="otc-case-label" id="mmCaseModalTitle" data-i18n="mmEntry.modalTitle">MM Dashboard</span>
+      <button class="otc-case-close" id="mmCaseClose" type="button" data-i18n-aria="mmEntry.closeAria" aria-label="Close MM Dashboard case">×</button>
+    </header>
+    <div class="otc-case-progress" aria-hidden="true"><span id="mmCaseProgress"></span></div>
+    <iframe class="otc-case-frame" id="mmCaseFrame" title="MM Dashboard case study" data-src="mm-dashboard-layout.html" data-i18n-aria="mmEntry.frameAria"></iframe>
+    <span class="otc-case-corner tl"></span><span class="otc-case-corner tr"></span><span class="otc-case-corner bl"></span><span class="otc-case-corner br"></span>
+  </div>
+
   <div class="otc-case-modal" id="otcCaseModal" role="dialog" aria-modal="true" aria-labelledby="otcCaseModalTitle" aria-hidden="true">
     <header class="otc-case-header">
       <span class="otc-case-index">02 / Selected Case</span>
@@ -3600,6 +3720,14 @@
         "hero.contactAria": "Email Mimo",
         "hero.contactCursor": "SEND EMAIL",
         "hero.contactLabel": "CONTACT",
+        "mmEntry.index": "Featured / Snapshot",
+        "mmEntry.label": "MM Dashboard",
+        "mmEntry.aria": "Open MM Dashboard case",
+        "mmEntry.cursor": "VIEW CASE",
+        "mmEntry.modalIndex": "Featured / Snapshot",
+        "mmEntry.modalTitle": "MM Dashboard",
+        "mmEntry.closeAria": "Close MM Dashboard case",
+        "mmEntry.frameAria": "MM Dashboard case study",
         "telegram.aria": "Write to Mimo on Telegram",
         "telegram.cursor": "WRITE TO TELEGRAM",
         "telegram.label": "WRITE TO TELEGRAM",
@@ -3667,12 +3795,15 @@
         "experience.1.meta": "2025.07-2026.07 · CoinW / Legend Tech",
         "experience.1.role": "Product Designer",
         "experience.1.desc": "Designing exchange product systems across OTC, copy trading, community, campaigns, and reusable components.",
-        "experience.2.meta": "2020-2025 · Fintech / Web3 Products",
-        "experience.2.role": "UI/UX Designer",
-        "experience.2.desc": "Shaped trading, SaaS, B2B finance, Web3, H5, app, and operational product experiences.",
-        "experience.3.meta": "2017-2020 · Consumer & Interactive Products",
-        "experience.3.role": "UI/UED Designer",
-        "experience.3.desc": "Built interface systems for social, entertainment, gaming, tools, and growth-oriented products.",
+        "experience.2.meta": "2024-2025.06 · Rena Labs",
+        "experience.2.role": "Product & Branding Designer",
+        "experience.2.desc": "Led the Rena Labs rebrand around privacy-preserving compute and TEE, building a scalable brand system across mark, typography, color, and product surfaces for trustless AI infrastructure.",
+        "experience.3.meta": "2020-2023 · Fintech / Web3 Products",
+        "experience.3.role": "UI/UX Designer",
+        "experience.3.desc": "Shaped trading, SaaS, B2B finance, Web3, H5, app, and operational product experiences.",
+        "experience.4.meta": "2017-2020 · Consumer & Interactive Products",
+        "experience.4.role": "UI/UED Designer",
+        "experience.4.desc": "Built interface systems for social, entertainment, gaming, tools, and growth-oriented products.",
         "skills.heading": "Skills",
         "skills.1.title": "UI & UX",
         "skills.1.desc": "Modern interface design with a focus on information clarity, hierarchy, and product value.",
@@ -3739,6 +3870,14 @@
         "hero.contactAria": "通过邮件联系 Mimo",
         "hero.contactCursor": "发送邮件",
         "hero.contactLabel": "联系我",
+        "mmEntry.index": "精选 / 快照",
+        "mmEntry.label": "MM Dashboard",
+        "mmEntry.aria": "打开 MM Dashboard 案例",
+        "mmEntry.cursor": "查看案例",
+        "mmEntry.modalIndex": "精选 / 快照",
+        "mmEntry.modalTitle": "MM Dashboard",
+        "mmEntry.closeAria": "关闭 MM Dashboard 案例",
+        "mmEntry.frameAria": "MM Dashboard 案例详情",
         "telegram.aria": "通过 Telegram 联系 Mimo",
         "telegram.cursor": "联系 TELEGRAM",
         "telegram.label": "联系 TELEGRAM",
@@ -3806,12 +3945,15 @@
         "experience.1.meta": "2025.07-2026.07 · CoinW / Legend Tech",
         "experience.1.role": "产品设计师",
         "experience.1.desc": "负责交易所产品系统设计，覆盖 OTC、跟单、社区、活动与可复用组件。",
-        "experience.2.meta": "2020-2025 · 金融科技 / Web3 产品",
-        "experience.2.role": "UI/UX 设计师",
-        "experience.2.desc": "设计交易、SaaS、B2B 金融、Web3、H5、App 与运营产品体验。",
-        "experience.3.meta": "2017-2020 · 消费与互动产品",
-        "experience.3.role": "UI/UED 设计师",
-        "experience.3.desc": "搭建社交、娱乐、游戏、工具与增长型产品的界面体验。",
+        "experience.2.meta": "2024-2025.06 · Rena Labs",
+        "experience.2.role": "产品与品牌设计师",
+        "experience.2.desc": "主导 Rena Labs 品牌重塑，围绕隐私计算与 TEE 构建可扩展视觉系统，覆盖标识、字体、色彩与产品界面，服务可信 AI 基础设施。",
+        "experience.3.meta": "2020-2023 · 金融科技 / Web3 产品",
+        "experience.3.role": "UI/UX 设计师",
+        "experience.3.desc": "设计交易、SaaS、B2B 金融、Web3、H5、App 与运营产品体验。",
+        "experience.4.meta": "2017-2020 · 消费与互动产品",
+        "experience.4.role": "UI/UED 设计师",
+        "experience.4.desc": "搭建社交、娱乐、游戏、工具与增长型产品的界面体验。",
         "skills.heading": "能力",
         "skills.1.title": "UI & UX",
         "skills.1.desc": "以信息清晰、层级明确和产品价值为重点的现代界面设计。",
@@ -4125,6 +4267,17 @@
       setSoundEnabled(soundEnabled);
       bindCursorLabels();
       prepareSplitTitles();
+      const mmBanner = document.getElementById("mmEntryBanner");
+      if (mmBanner) {
+        const nextBanner = `rena-shader-demo.html?embed=1&lang=${currentLocale}`;
+        if (!mmBanner.src.includes(`lang=${currentLocale}`)) mmBanner.src = nextBanner;
+      }
+      const mmFrame = document.getElementById("mmCaseFrame");
+      if (mmFrame?.getAttribute("src")) {
+        const nextCase = `mm-dashboard-layout.html?lang=${currentLocale}`;
+        if (!mmFrame.src.includes(`lang=${currentLocale}`)) mmFrame.src = nextCase;
+      }
+      if (mmFrame && strings["mmEntry.frameAria"]) mmFrame.title = strings["mmEntry.frameAria"];
       try { localStorage.setItem("mimo-lang-v2", currentLocale); } catch {}
     }
 
@@ -4764,6 +4917,67 @@
       coinsRoot.classList.add("is-static");
       console.warn("Hero coins could not be initialized.", error);
     }
+  </script>
+  <script>
+    (() => {
+      const links = [...document.querySelectorAll("[data-open-mm-case]")];
+      const modal = document.getElementById("mmCaseModal");
+      const closeButton = document.getElementById("mmCaseClose");
+      const frame = document.getElementById("mmCaseFrame");
+      const progress = document.getElementById("mmCaseProgress");
+      let trigger = null;
+
+      const close = () => {
+        if (!modal.classList.contains("is-open")) return;
+        modal.classList.remove("is-open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        progress.style.width = "0";
+        trigger?.focus();
+        trigger = null;
+      };
+
+      const open = (source = links[0]) => {
+        trigger = source;
+        const targetSrc = `mm-dashboard-layout.html?lang=${currentLocale === "en" ? "en" : "zh"}`;
+        if (frame.src.split("/").pop() !== targetSrc && !frame.src.endsWith(targetSrc)) frame.src = targetSrc;
+        modal.classList.add("is-open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        closeButton.focus();
+      };
+
+      window.openMmCaseModal = open;
+      window.closeMmCaseModal = close;
+
+      links.forEach((caseLink) => {
+        caseLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          open(caseLink);
+        });
+      });
+      closeButton.addEventListener("click", close);
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && modal.classList.contains("is-open")) close();
+      });
+      frame.addEventListener("load", () => {
+        try {
+          const frameWindow = frame.contentWindow;
+          const frameDocument = frame.contentDocument;
+          const update = () => {
+            const distance = Math.max(1, frameDocument.documentElement.scrollHeight - frameWindow.innerHeight);
+            progress.style.width = `${Math.min(100, frameWindow.scrollY / distance * 100)}%`;
+          };
+          frameWindow.addEventListener("scroll", update, { passive: true });
+          frameDocument.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") close();
+          });
+          update();
+        } catch {
+          progress.style.width = "0";
+        }
+      });
+    })();
   </script>
   <script>
     (() => {
