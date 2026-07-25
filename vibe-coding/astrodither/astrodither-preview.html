@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Astro Dither Preview</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #050505;
+    }
+    video {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body>
+  <video
+    id="preview"
+    src="astrodither-home-hover-demo.raw.webm"
+    autoplay
+    muted
+    playsinline
+    preload="auto"
+    aria-label="Astro Dither motion experiment"
+  ></video>
+  <script>
+    (() => {
+      const video = document.getElementById("preview");
+      const startAt = 4.2;
+      const restartBeforeEnd = 0.15;
+
+      const playFromStart = () => {
+        if (video.currentTime < startAt) video.currentTime = startAt;
+        video.play().catch(() => {});
+      };
+
+      video.addEventListener("loadedmetadata", playFromStart, { once: true });
+      video.addEventListener("timeupdate", () => {
+        if (video.duration && video.currentTime >= video.duration - restartBeforeEnd) {
+          video.currentTime = startAt;
+          video.play().catch(() => {});
+        }
+      });
+      window.addEventListener("message", (event) => {
+        if (event.data?.type !== "vibe-frame-active") return;
+        if (event.data.active) playFromStart();
+        else video.pause();
+      });
+    })();
+  </script>
+</body>
+</html>

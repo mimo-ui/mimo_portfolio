@@ -45,17 +45,17 @@
       min-width: 118px;
       height: 40px;
       padding: 0 16px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,.018);
+      border: 0;
+      background: transparent;
       color: var(--muted);
       font: 700 10px/1 "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
       letter-spacing: .13em;
       text-transform: uppercase;
       cursor: pointer;
-      transition: color .2s ease, background .2s ease, border-color .2s ease;
+      transition: color .2s ease, background .2s ease;
     }
-    .vibe-tab:hover { color: rgba(255,255,255,.82); border-color: rgba(255,255,255,.28); }
-    .vibe-tab[aria-selected="true"] { color: #070809; background: #fff; border-color: #fff; }
+    .vibe-tab:hover { color: rgba(255,255,255,.82); background: rgba(255,255,255,.04); }
+    .vibe-tab[aria-selected="true"] { color: #070809; background: #fff; }
     .vibe-tab:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
     .vibe-panel {
       position: fixed;
@@ -126,46 +126,121 @@
     </div>
   </section>
 
-  <nav class="vibe-tabs" role="tablist" aria-label="Vibe Coding experiments">
+  <nav class="vibe-tabs" role="tablist" aria-label="Vibe Coding experiments" data-i18n-aria="navAria">
+    <button class="vibe-tab" id="tab-aiworkflow" type="button" role="tab" aria-controls="panel-aiworkflow" aria-selected="true" data-screen="aiworkflow" data-i18n="tab.aiworkflow">AI Workflow</button>
     <button class="vibe-tab" id="tab-liquid" type="button" role="tab" aria-controls="panel-liquid" aria-selected="false" data-screen="liquid">Liquid</button>
-    <button class="vibe-tab" id="tab-astrodither" type="button" role="tab" aria-controls="panel-astrodither" aria-selected="true" data-screen="astrodither">Astro Dither</button>
+    <button class="vibe-tab" id="tab-astrodither" type="button" role="tab" aria-controls="panel-astrodither" aria-selected="false" data-screen="astrodither">Astro Dither</button>
     <button class="vibe-tab" id="tab-utopia" type="button" role="tab" aria-controls="panel-utopia" aria-selected="false" data-screen="utopia">Utopia</button>
-    <button class="vibe-tab" id="tab-widgets" type="button" role="tab" aria-controls="panel-widgets" aria-selected="false" data-screen="widgets">Widgets</button>
   </nav>
 
+  <section class="vibe-panel is-active" id="panel-aiworkflow" role="tabpanel" aria-labelledby="tab-aiworkflow" aria-hidden="false">
+    <iframe data-src="vibe-coding/ai-workflow.html" title="AI Workflow" data-i18n-title="frame.aiworkflow" loading="lazy"></iframe>
+  </section>
   <section class="vibe-panel" id="panel-liquid" role="tabpanel" aria-labelledby="tab-liquid" aria-hidden="true">
     <iframe data-src="vibe-coding/liquid/index.html" title="Liquid Vibe Coding experiment" loading="lazy"></iframe>
   </section>
-  <section class="vibe-panel is-active" id="panel-astrodither" role="tabpanel" aria-labelledby="tab-astrodither" aria-hidden="false">
-    <iframe data-src="vibe-coding/astrodither/index.html" title="Astro Dither Vibe Coding experiment" allow="autoplay; fullscreen; xr-spatial-tracking"></iframe>
+  <section class="vibe-panel" id="panel-astrodither" role="tabpanel" aria-labelledby="tab-astrodither" aria-hidden="true">
+    <iframe data-src="vibe-coding/astrodither/astrodither-preview.html" title="Astro Dither Vibe Coding experiment" allow="autoplay"></iframe>
   </section>
   <section class="vibe-panel" id="panel-utopia" role="tabpanel" aria-labelledby="tab-utopia" aria-hidden="true">
     <iframe data-src="vibe-coding/utopia/index.html" title="Utopia Vibe Coding experiment" loading="lazy"></iframe>
   </section>
-  <section class="vibe-panel" id="panel-widgets" role="tabpanel" aria-labelledby="tab-widgets" aria-hidden="true">
-    <iframe data-src="vibe-coding/widgets/index.html" title="Widgets Vibe Coding experiment" loading="lazy"></iframe>
-  </section>
-  <div class="vibe-status" aria-hidden="true">SCROLL / SWIPE / ARROW KEYS</div>
+  <div class="vibe-status" aria-hidden="true" data-i18n="status">SCROLL / SWIPE / ARROW KEYS</div>
 
   <script>
     (() => {
+      const SHELL_I18N = {
+        en: {
+          navAria: "Vibe Coding experiments",
+          "tab.aiworkflow": "AI Workflow",
+          "frame.aiworkflow": "AI Workflow",
+          status: "SCROLL / SWIPE / ARROW KEYS",
+        },
+        zh: {
+          navAria: "Vibe Coding 实验",
+          "tab.aiworkflow": "AI 工作流",
+          "frame.aiworkflow": "AI 工作流",
+          status: "滚动 / 滑动 / 方向键",
+        },
+      };
+
+      function resolveLocale() {
+        const q = new URLSearchParams(window.location.search).get("lang");
+        if (q === "zh" || q === "en") return q;
+        try {
+          const saved = localStorage.getItem("mimo-lang-v2");
+          if (saved === "zh" || saved === "en") return saved;
+        } catch {}
+        return "en";
+      }
+
+      function resolveScreen() {
+        const q = new URLSearchParams(window.location.search).get("screen");
+        if (q === "aiworkflow" || q === "liquid" || q === "astrodither" || q === "utopia") return q;
+        return "aiworkflow";
+      }
+
+      let currentLocale = resolveLocale();
+
+      function applyShellLocale(locale) {
+        currentLocale = locale === "zh" ? "zh" : "en";
+        const strings = SHELL_I18N[currentLocale];
+        document.documentElement.lang = currentLocale === "zh" ? "zh-CN" : "en";
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.dataset.i18n;
+          if (strings[key]) el.textContent = strings[key];
+        });
+        document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+          const key = el.dataset.i18nAria;
+          if (strings[key]) el.setAttribute("aria-label", strings[key]);
+        });
+        document.querySelectorAll("[data-i18n-title]").forEach((el) => {
+          const key = el.dataset.i18nTitle;
+          if (strings[key]) el.setAttribute("title", strings[key]);
+        });
+      }
+
+      applyShellLocale(currentLocale);
+
       if (window.location.protocol === "file:") {
         document.body.classList.add("is-file-protocol");
         return;
       }
-      const order = ["liquid", "astrodither", "utopia", "widgets"];
-      const internallyControlled = new Set(["utopia", "widgets"]);
+      const order = ["aiworkflow", "liquid", "astrodither", "utopia"];
+      const internallyControlled = new Set(["utopia", "aiworkflow"]);
       const tabs = new Map([...document.querySelectorAll(".vibe-tab")].map((tab) => [tab.dataset.screen, tab]));
       const panels = new Map(order.map((name) => [name, document.getElementById(`panel-${name}`)]));
       const frames = new Map(order.map((name) => [name, panels.get(name).querySelector("iframe")]));
-      let active = "astrodither";
+      let active = resolveScreen();
       let inputLocked = false;
       let touchStartY = 0;
+
+      function withLang(src) {
+        const base = String(src).split("?")[0];
+        return `${base}?lang=${currentLocale}`;
+      }
+
+      function syncAiWorkflowLocale() {
+        const frame = frames.get("aiworkflow");
+        if (!frame) return;
+        const nextSrc = withLang(frame.dataset.src);
+        if (frame.getAttribute("src")) {
+          if (!frame.src.includes(`lang=${currentLocale}`)) frame.src = nextSrc;
+          else {
+            try {
+              frame.contentWindow?.postMessage({ type: "vibe-lang", lang: currentLocale }, "*");
+            } catch {}
+          }
+        }
+      }
 
       function syncFrameActivity() {
         frames.forEach((frame, name) => {
           if (!frame.getAttribute("src") || !frame.contentWindow) return;
           frame.contentWindow.postMessage({ type: "vibe-frame-active", active: name === active }, "*");
+          if (name === "aiworkflow") {
+            frame.contentWindow.postMessage({ type: "vibe-lang", lang: currentLocale }, "*");
+          }
         });
       }
 
@@ -183,7 +258,11 @@
           panel.setAttribute("aria-hidden", String(!selected));
         });
         const frame = frames.get(name);
-        if (!frame.getAttribute("src")) frame.src = frame.dataset.src;
+        if (!frame.getAttribute("src")) {
+          frame.src = name === "aiworkflow" ? withLang(frame.dataset.src) : frame.dataset.src;
+        } else if (name === "aiworkflow") {
+          syncAiWorkflowLocale();
+        }
         if (focusTab) tabs.get(name).focus();
         tabs.get(name).scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
         syncFrameActivity();
@@ -250,11 +329,27 @@
       });
       frames.forEach((frame, name) => frame.addEventListener("load", () => bindFrame(name, frame)));
       window.addEventListener("message", (event) => {
-        if (!event.data || event.data.type !== "vibe-screen-step") return;
+        if (!event.data) return;
+        if (event.data.type === "vibe-lang" && (event.data.lang === "zh" || event.data.lang === "en")) {
+          applyShellLocale(event.data.lang);
+          syncAiWorkflowLocale();
+          return;
+        }
+        if (event.data.type === "vibe-set-screen") {
+          activate(event.data.screen);
+          return;
+        }
+        if (event.data.type !== "vibe-screen-step") return;
         if (event.data.source !== active) return;
         const activeFrame = frames.get(active);
         if (!activeFrame || event.source !== activeFrame.contentWindow) return;
         step(Number(event.data.direction) > 0 ? 1 : -1);
+      });
+      window.addEventListener("storage", (event) => {
+        if (event.key !== "mimo-lang-v2") return;
+        if (event.newValue !== "zh" && event.newValue !== "en") return;
+        applyShellLocale(event.newValue);
+        syncAiWorkflowLocale();
       });
       window.addEventListener("keydown", handleKey);
       window.addEventListener("wheel", handleWheel, { passive: false });
@@ -267,6 +362,10 @@
         set: activate,
         next: () => step(1),
         previous: () => step(-1),
+        setLang: (lang) => {
+          applyShellLocale(lang);
+          syncAiWorkflowLocale();
+        },
       };
     })();
   </script>

@@ -30,19 +30,6 @@
       padding: 24px;
     }
 
-    html.is-embed,
-    html.is-embed body {
-      min-height: 100%;
-      height: 100%;
-      background: transparent;
-    }
-
-    html.is-embed body {
-      display: block;
-      padding: 0;
-      overflow: hidden;
-    }
-
     .card {
       position: relative;
       width: min(920px, 100%);
@@ -52,16 +39,6 @@
       background: var(--bg);
       box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
     }
-
-    html.is-embed .card {
-      width: 100%;
-      height: 100%;
-      aspect-ratio: auto;
-      border-radius: 0;
-      box-shadow: none;
-    }
-
-    html.is-embed .note { display: none; }
 
     #shader {
       position: absolute;
@@ -74,11 +51,7 @@
       position: absolute;
       left: 50%;
       top: 42.6%;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      width: max-content;
-      max-width: calc(100% - 48px);
+      width: min(245px, 42%);
       height: auto;
       transform: translate(-50%, -50%);
       pointer-events: none;
@@ -88,32 +61,9 @@
 
     .logo svg {
       display: block;
-      width: min(245px, 42vw);
+      width: 100%;
       height: auto;
     }
-
-    .logo-cta {
-      display: none;
-      position: relative;
-      padding: 10px 12px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(12,12,14,.55);
-      color: rgba(255,255,255,.78);
-      font: 10px/1 "SF Mono", "Fragment Mono", ui-monospace, monospace;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      white-space: nowrap;
-      backdrop-filter: blur(10px);
-    }
-    .logo-cta::before {
-      content: "+";
-      position: absolute;
-      top: 2px;
-      left: 4px;
-      font-size: 9px;
-      opacity: .7;
-    }
-    html.is-embed .logo-cta { display: inline-flex; }
 
     .meta {
       position: absolute;
@@ -183,48 +133,17 @@
           <path d="M 0 26.317 L 0 9.135 C 0.001 7.562 0.626 6.052 1.741 4.931 C 4.128 2.526 8.056 2.501 10.474 4.875 L 26.61 20.717 C 26.85 20.952 26.985 21.272 26.985 21.606 C 26.985 21.94 26.85 22.259 26.61 22.494 L 22.341 26.685 C 21.841 27.176 21.031 27.176 20.531 26.685 L 9.731 16.082 C 9.328 15.686 8.638 15.966 8.638 16.526 L 8.638 26.317 C 8.638 27.011 8.065 27.574 7.359 27.574 L 1.28 27.574 C 0.573 27.574 0 27.011 0 26.317 Z M 13.703 2.705 C 12.896 1.913 13.467 0.56 14.607 0.56 L 26.235 0.56 C 26.942 0.56 27.515 1.122 27.515 1.816 L 27.515 7.785 C 27.515 8.478 26.942 9.041 26.235 9.041 L 20.686 9.041 C 20.347 9.041 20.021 8.908 19.781 8.673 Z" fill="rgb(251,64,141)"></path>
         </g>
       </svg>
-      <span class="logo-cta">View Case</span>
     </div>
     <footer class="meta">
       <div>
-        <h1 data-i18n="title">Rena Labs</h1>
-        <p data-i18n="tagline">Make AI trustless and secure by default</p>
+        <h1>Rena Labs</h1>
+        <p>Make AI trustless and secure by default</p>
       </div>
-      <div class="right"><span data-i18n="year">2024</span><br><span data-i18n="snapshot">Snapshot</span></div>
+      <div class="right">2024<br>Snapshot</div>
     </footer>
   </article>
 
   <script>
-    const params = new URLSearchParams(location.search);
-    if (params.has("embed")) document.documentElement.classList.add("is-embed");
-
-    const BANNER_I18N = {
-      en: {
-        title: "Rena Labs",
-        tagline: "Make AI trustless and secure by default",
-        year: "2024",
-        snapshot: "Snapshot",
-        cta: "View Case",
-      },
-      zh: {
-        title: "Rena Labs",
-        tagline: "默认让 AI 可信、安全",
-        year: "2024",
-        snapshot: "快照",
-        cta: "查看案例",
-      },
-    };
-
-    const bannerLocale = params.get("lang") === "zh" ? "zh" : "en";
-    document.documentElement.lang = bannerLocale;
-    const bannerStrings = BANNER_I18N[bannerLocale];
-    document.querySelectorAll("[data-i18n]").forEach((el) => {
-      const key = el.dataset.i18n;
-      if (bannerStrings[key]) el.textContent = bannerStrings[key];
-    });
-    const cta = document.querySelector(".logo-cta");
-    if (cta) cta.textContent = bannerStrings.cta;
-
     /**
      * Recreated from Vic Ding / Framer "Shader Lines" (Framer University)
      * with the exact Rena Labs card parameters from vic-ding.com

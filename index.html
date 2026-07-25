@@ -1,10 +1,11 @@
 <!doctype html>
+<!-- Variant: Senior UI + AI positioning. Copy of mimo-matveyan-full-v4.html — original file untouched. -->
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="data:,">
-  <title data-i18n="meta.title">Mimo — Product Designer for Fintech &amp; Trading</title>
+  <title data-i18n="meta.title">Mimo — Senior UI Designer · AI-augmented</title>
   <style>
     :root {
       color-scheme: dark;
@@ -113,6 +114,12 @@
     }
     .cursor-label.is-visible { opacity: 1; }
     .cursor-label:before { content: ""; position: absolute; top: 0; left: 0; width: 2px; height: 2px; background: #fff; }
+    .cursor-label.is-dark {
+      color: #fff;
+      background: #050505;
+      box-shadow: 0 0 0 1px rgba(255,255,255,.12);
+    }
+    .cursor-label.is-dark:before { background: #fff; }
 
     .noise {
       position: fixed;
@@ -388,6 +395,127 @@
     }
     .main-menu a:hover,
     .main-menu button:hover { color: rgba(255,255,255,.6); }
+    .nav-ai {
+      position: relative;
+      z-index: 2;
+      flex: none;
+    }
+    .nav-ai__trigger {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 4px;
+      padding-inline: 12px !important;
+    }
+    .nav-ai__fuzzy {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+    .nav-ai__fuzzy canvas {
+      display: block;
+      width: auto;
+      height: auto;
+      vertical-align: middle;
+    }
+    .nav-ai__sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .nav-ai__fuzzy { display: none; }
+      .nav-ai__sr {
+        position: static;
+        width: auto;
+        height: auto;
+        margin: 0;
+        clip: auto;
+        overflow: visible;
+        white-space: nowrap;
+      }
+    }
+    .nav-ai__chevron {
+      width: 7px;
+      height: 7px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: translateY(-1px) rotate(45deg);
+      opacity: .72;
+      transition: transform .2s var(--ease);
+    }
+    .nav-ai.is-open .nav-ai__chevron,
+    .nav-ai:hover .nav-ai__chevron,
+    .nav-ai:focus-within .nav-ai__chevron {
+      transform: translateY(1px) rotate(225deg);
+    }
+    .nav-ai__menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      z-index: 40;
+      min-width: max-content;
+      padding: 6px;
+      border: 1px solid var(--line);
+      background: rgba(8,9,10,.97);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 18px 40px rgba(0,0,0,.42);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(-4px);
+      transition: opacity .18s ease, transform .2s var(--ease), visibility .18s ease;
+    }
+    /* Invisible hit-area bridge across the visual gap */
+    .nav-ai__menu::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 100%;
+      height: 12px;
+    }
+    .nav-ai:hover .nav-ai__menu,
+    .nav-ai.is-open .nav-ai__menu,
+    .nav-ai:focus-within .nav-ai__menu {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: none;
+    }
+    .nav-ai__item {
+      display: block !important;
+      width: 100%;
+      min-height: 38px;
+      padding: 0 12px !important;
+      border: 0;
+      background: transparent;
+      color: rgba(255,255,255,.58) !important;
+      font-size: 10px !important;
+      letter-spacing: .08em;
+      text-transform: none;
+      text-align: left;
+      white-space: nowrap;
+      transition: color .16s ease, background .16s ease;
+    }
+    .nav-ai__item:hover,
+    .nav-ai__item:focus-visible {
+      color: #fff !important;
+      background: rgba(255,255,255,.06);
+      outline: none;
+    }
+    .nav-ai__item.is-active {
+      color: #070809 !important;
+      background: #fff;
+    }
     .download-label-short { display: none; }
     .lang-toggle { min-width: 30px; text-align: center; appearance: none; }
     .file-warning {
@@ -1851,7 +1979,7 @@
     }
     .kinetic-band.b3:hover,
     .kinetic-band.b3:focus-within {
-      background: rgb(204 255 0 / .58);
+      background: #fff;
     }
     .kinetic-stage:has(.kinetic-band.b3:hover) .kinetic-micro,
     .kinetic-stage:has(.kinetic-band.b3:focus-within) .kinetic-micro {
@@ -3214,6 +3342,25 @@
       <nav class="main-menu" id="mainMenu">
         <a class="mono" href="#top" data-i18n="nav.home" data-i18n-cursor="nav.homeCursor">HOME</a>
         <a class="mono" href="#cases" data-i18n="nav.cases" data-i18n-cursor="nav.casesCursor">CASES</a>
+        <div class="nav-ai" id="navAiMenu">
+          <button
+            class="mono nav-ai__trigger"
+            id="navAiTrigger"
+            type="button"
+            aria-haspopup="menu"
+            aria-expanded="false"
+            aria-controls="navAiDropdown"
+            data-i18n-cursor="nav.aiCursor"
+            data-i18n-aria="nav.aiAria"
+            aria-label="Open AI lab"
+          ><span class="nav-ai__fuzzy" aria-hidden="true"><canvas id="navAiFuzzy" width="32" height="14"></canvas></span><span class="nav-ai__sr" data-i18n="nav.ai">AI</span><span class="nav-ai__chevron" aria-hidden="true"></span></button>
+          <div class="nav-ai__menu" id="navAiDropdown" role="menu" aria-labelledby="navAiTrigger">
+            <button class="mono nav-ai__item" type="button" role="menuitem" data-vibe-screen="aiworkflow" data-i18n="nav.ai.item1" data-i18n-cursor="nav.ai.item1Cursor">AI Workflow</button>
+            <button class="mono nav-ai__item" type="button" role="menuitem" data-vibe-screen="liquid" data-i18n="nav.ai.item2" data-i18n-cursor="nav.ai.item2Cursor">Liquid vibe test</button>
+            <button class="mono nav-ai__item" type="button" role="menuitem" data-vibe-screen="astrodither" data-i18n="nav.ai.item3" data-i18n-cursor="nav.ai.item3Cursor">Astro Dither vibe test</button>
+            <button class="mono nav-ai__item" type="button" role="menuitem" data-vibe-screen="utopia" data-i18n="nav.ai.item4" data-i18n-cursor="nav.ai.item4Cursor">web vibe test</button>
+          </div>
+        </div>
         <a class="mono" href="#exp" data-i18n="nav.experience" data-i18n-cursor="nav.experienceCursor">EXPERIENCE</a>
         <a class="mono" href="mailto:mokusama001@gmail.com" data-i18n="nav.mail" data-i18n-cursor="nav.mailCursor">MAIL</a>
         <a class="mono download-link" href="output/pdf/MIMO-Resume-and-Portfolio.zip" download="MIMO-Resume-and-Portfolio.zip" data-i18n-aria="download.aria" data-i18n-cursor="download.cursor"><span class="download-label-full" data-i18n="download.label">DOWNLOAD</span><span class="download-label-short">ZIP</span></a>
@@ -3226,7 +3373,7 @@
       <div class="footer-left">
         <div class="quote">
           <div class="avatar"><span class="pixel-cat" aria-hidden="true"></span></div>
-          <p data-i18n="footer.quote">I make complex product systems simple for users</p>
+          <p data-i18n="footer.quote">I craft clear interfaces for complex products—and use AI to ship them faster</p>
         </div>
         <div class="fin" aria-label="Live cryptocurrency market" aria-live="polite" data-i18n-aria="market.aria">
           <div class="fin-card" data-symbol="BTCUSDT"><img class="coin" src="deploy-site/assets/crypto-logos/bitcoin.svg" alt="Bitcoin"><div class="fin-text mono"><span class="fin-title">BTC</span><span><span class="fin-price">--</span> <span class="fin-change neutral">--</span></span></div></div>
@@ -3255,10 +3402,10 @@
     <div class="hero-inner">
       <div class="logo-title">
         <span class="pixel-cat hero-brand" role="img" aria-label="Mimo"></span>
-        <span class="hero-name mono" data-i18n="hero.eyebrow">MIMO / PRODUCT DESIGNER</span>
-        <h1 data-i18n="hero.heading">Product designer for fintech, trading and complex systems</h1>
+        <span class="hero-name mono" data-i18n="hero.eyebrow">MIMO / SENIOR UI DESIGNER</span>
+        <h1 data-i18n="hero.heading">Senior UI designer for complex products, with AI-augmented craft</h1>
       </div>
-      <p data-i18n="hero.body">With 7+ years of experience, I turn complex financial and data-heavy workflows into clear product systems, reusable design foundations and testable high-fidelity prototypes.</p>
+      <p data-i18n="hero.body">With 7+ years of UI craft across fintech and trading, I design clear interfaces, design systems, and high-fidelity prototypes—using AI to accelerate exploration while keeping final visual quality under human control.</p>
       <div class="hero-actions">
         <a href="otc-case-detail.html" class="btn mono" id="heroFlagshipLink" data-open-otc-case data-i18n-aria="hero.flagshipAria" data-i18n-cursor="hero.flagshipCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="hero.flagshipLabel">OTC CASE</span></a>
         <a href="output/pdf/MIMO-Resume.pdf" target="_blank" rel="noopener" class="btn mono" data-i18n-aria="hero.resumeAria" data-i18n-cursor="hero.resumeCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="hero.resumeLabel">RESUME</span></a>
@@ -3273,10 +3420,10 @@
     <section class="section" id="spec">
       <div class="container reveal">
         <ul class="tags mono">
-          <li data-i18n="spec.tag1">product strategy</li><li data-i18n="spec.tag2">portfolio</li><li data-i18n="spec.tag3">interaction</li><li data-i18n="spec.tag4">prototype</li><li data-i18n="spec.tag5">design system</li>
+          <li data-i18n="spec.tag1">senior UI</li><li data-i18n="spec.tag2">design system</li><li data-i18n="spec.tag3">interaction</li><li data-i18n="spec.tag4">AI-assisted</li><li data-i18n="spec.tag5">prototype</li>
         </ul>
-        <h2><b data-i18n="spec.headingLead">I specialize in</b> <span data-i18n="spec.headingRest">mobile product design, design-system development, and complex web interfaces for product validation</span></h2>
-        <p class="bio" data-i18n="spec.body">I am currently shaping a portfolio around product thinking, high-fidelity interaction, and AI-assisted prototypes that make ideas testable faster.</p>
+        <h2><b data-i18n="spec.headingLead">I specialize in</b> <span data-i18n="spec.headingRest">senior UI craft, design-system development, and AI-assisted high-fidelity prototypes for complex products</span></h2>
+        <p class="bio" data-i18n="spec.body">I build interfaces that stay clear under density—then use AI to explore motion, variants, and testable prototypes faster without lowering the craft bar.</p>
         <ul class="btn-group">
           <li><a href="https://t.me/Mimomo1" target="_blank" rel="noopener" class="btn mono" data-i18n-aria="telegram.aria" data-i18n-cursor="telegram.cursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="telegram.label">WRITE TO TELEGRAM</span></a></li>
           <li><a href="#cases" class="btn mono" data-i18n-cursor="cases.viewCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="cases.viewLabel">VIEW CASES</span></a></li>
@@ -3287,7 +3434,7 @@
     <section class="section" id="cases">
       <div class="container reveal">
         <div class="title-group">
-          <h2><b data-i18n="cases.headingLead">Selected product cases</b><br><span data-i18n="cases.headingPrefix">Built from</span> <b data-i18n="cases.headingYears">7+ years of product design practice</b></h2>
+          <h2><b data-i18n="cases.headingLead">Selected UI cases</b><br><span data-i18n="cases.headingPrefix">Built from</span> <b data-i18n="cases.headingYears">7+ years of UI design practice</b></h2>
         </div>
         <ul class="tags mono"><li data-i18n="cases.introTag">freelance, office, remote work, personal projects...</li></ul>
         <ul class="logo-group mono">
@@ -3392,7 +3539,7 @@
               <span class="kinetic-micro arrow-b">(←)</span>
               <span class="kinetic-band b1"><span class="kinetic-word think">THINK</span></span>
               <span class="kinetic-band b2"><span class="kinetic-word ui">UI</span><span class="kinetic-word ux">UX</span></span>
-              <a class="kinetic-band b3" id="vibeCodingTrigger" href="vibe-coding.html" data-i18n-cursor="kinetic.cursor" aria-label="Open Vibe Coding motion lab"><span class="kinetic-word vibe">VIBE</span><span class="kinetic-word code">CODE</span><span class="kinetic-arrow" aria-hidden="true"><svg viewBox="0 0 1024 1024"><path d="M430.121 232.336h111.545v111.549h111.542v111.549h111.545v111.548H653.208v111.55H541.666V790.08H430.121v111.549H207.033V790.08h111.544V678.532h111.544V566.983h111.545V455.434H430.121V343.885H318.577V232.336H207.033V120.787h223.088z"/></svg></span></a>
+              <a class="kinetic-band b3" id="vibeCodingTrigger" href="vibe-coding.html" data-i18n-cursor="kinetic.cursor" data-cursor-theme="dark" aria-label="Open AI-assisted Vibe Coding lab" data-i18n-aria="kinetic.aria"><span class="kinetic-word vibe">VIBE</span><span class="kinetic-word code">CODE</span><span class="kinetic-arrow" aria-hidden="true"><svg viewBox="0 0 1024 1024"><path d="M430.121 232.336h111.545v111.549h111.542v111.549h111.545v111.548H653.208v111.55H541.666V790.08H430.121v111.549H207.033V790.08h111.544V678.532h111.544V566.983h111.545V455.434H430.121V343.885H318.577V232.336H207.033V120.787h223.088z"/></svg></span></a>
               <span class="kinetic-band b4"><span class="kinetic-word ship">SHIP</span></span>
             </div>
           </div>
@@ -3423,8 +3570,8 @@
         <div class="block">
           <h3 class="small" data-i18n="experience.heading">Experience</h3>
           <ul class="list experience-list">
-            <li class="reveal"><span class="date" data-i18n="experience.1.meta">2025.07-2026.07 · CoinW / Legend Tech</span><h4 data-i18n="experience.1.role">Product Designer</h4><p data-i18n="experience.1.desc">Designing exchange product systems across OTC, copy trading, community, campaigns, and reusable components.</p></li>
-            <li class="reveal"><span class="date" data-i18n="experience.2.meta">2024-2025.06 · Rena Labs</span><h4 data-i18n="experience.2.role">Product &amp; Branding Designer</h4><p data-i18n="experience.2.desc">Led the Rena Labs rebrand around privacy-preserving compute and TEE, building a scalable brand system across mark, typography, color, and product surfaces for trustless AI infrastructure.</p></li>
+            <li class="reveal"><span class="date" data-i18n="experience.1.meta">2025.07-2026.07 · CoinW / Legend Tech</span><h4 data-i18n="experience.1.role">Senior UI Designer</h4><p data-i18n="experience.1.desc">Led UI systems for exchange products across OTC, copy trading, community, campaigns, and reusable components—balancing density, hierarchy, and consistency.</p></li>
+            <li class="reveal"><span class="date" data-i18n="experience.2.meta">2024-2025.06 · Rena Labs</span><h4 data-i18n="experience.2.role">UI &amp; Branding Designer</h4><p data-i18n="experience.2.desc">Led the Rena Labs rebrand around privacy-preserving compute and TEE, building a scalable brand system across mark, typography, color, and product UI for trustless AI infrastructure.</p></li>
             <li class="reveal"><span class="date" data-i18n="experience.3.meta">2020-2023 · Fintech / Web3 Products</span><h4 data-i18n="experience.3.role">UI/UX Designer</h4><p data-i18n="experience.3.desc">Shaped trading, SaaS, B2B finance, Web3, H5, app, and operational product experiences.</p></li>
             <li class="reveal"><span class="date" data-i18n="experience.4.meta">2017-2020 · Consumer &amp; Interactive Products</span><h4 data-i18n="experience.4.role">UI/UED Designer</h4><p data-i18n="experience.4.desc">Built interface systems for social, entertainment, gaming, tools, and growth-oriented products.</p></li>
           </ul>
@@ -3432,11 +3579,11 @@
         <div class="block">
           <h3 class="small" data-i18n="skills.heading">Skills</h3>
           <ul class="list">
-            <li><h4 data-i18n="skills.1.title">UI & UX</h4><p data-i18n="skills.1.desc">Modern interface design with a focus on information clarity, hierarchy, and product value.</p></li>
+            <li><h4 data-i18n="skills.1.title">Senior UI</h4><p data-i18n="skills.1.desc">Senior interface craft focused on hierarchy, density control, and visual clarity in complex products.</p></li>
             <li><h4 data-i18n="skills.2.title">Design System</h4><p data-i18n="skills.2.desc">Reusable component logic, documentation, tokens, and consistency across product surfaces.</p></li>
-            <li><h4 data-i18n="skills.3.title">AI tools</h4><p data-i18n="skills.3.desc">Uses AI to speed up research, copy iteration, prototype exploration, and repetitive production tasks.</p></li>
+            <li><h4 data-i18n="skills.3.title">AI-augmented workflow</h4><p data-i18n="skills.3.desc">Uses AI to accelerate research, variant exploration, motion experiments, and prototype production—while owning final UI decisions.</p></li>
             <li><h4 data-i18n="skills.4.title">Motion & Prototype</h4><p data-i18n="skills.4.desc">Interface animation, scroll rhythm, and high-fidelity interaction prototypes.</p></li>
-            <li><h4 data-i18n="skills.5.title">Presentation</h4><p data-i18n="skills.5.desc">Case-study storytelling, product rationale, and stakeholder-ready narrative framing.</p></li>
+            <li><h4 data-i18n="skills.5.title">Presentation</h4><p data-i18n="skills.5.desc">Case-study storytelling that explains UI decisions, system logic, and craft rationale to stakeholders.</p></li>
           </ul>
         </div>
         <div class="block">
@@ -3444,7 +3591,7 @@
           <ul class="list">
             <li><span class="pixel-cat project-brand-logo" aria-hidden="true"></span><h4 data-i18n="projects.1.title">Design System Components</h4><p data-i18n="projects.1.desc">A reusable component library for trading, assets, forms, and product states.</p><a class="btn mono" href="#case-design-system" data-i18n-cursor="projects.viewCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="projects.viewLabel">View project</span></a></li>
             <li><span class="pixel-cat project-brand-logo" aria-hidden="true"></span><h4 data-i18n="projects.2.title">OTC Trading Product</h4><p data-i18n="projects.2.desc">An OTC experience covering buy and sell flows, merchants, orders, payments, and disputes.</p><a class="btn mono" href="#case-otc" data-i18n-cursor="projects.viewCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="projects.viewLabel">View project</span></a></li>
-            <li><span class="pixel-cat project-brand-logo" aria-hidden="true"></span><h4 data-i18n="projects.3.title">Open to collaboration</h4><p data-i18n="projects.3.desc">Available for Web3, fintech product design, and high-fidelity prototype collaborations.</p><a class="btn mono" href="https://t.me/Mimomo1" target="_blank" rel="noopener" data-i18n-cursor="projects.collabCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="projects.collabLabel">Contact me</span></a></li>
+            <li><span class="pixel-cat project-brand-logo" aria-hidden="true"></span><h4 data-i18n="projects.3.title">Open to collaboration</h4><p data-i18n="projects.3.desc">Available for senior UI, fintech/Web3 interfaces, design systems, and AI-assisted prototype collaborations.</p><a class="btn mono" href="https://t.me/Mimomo1" target="_blank" rel="noopener" data-i18n-cursor="projects.collabCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="projects.collabLabel">Contact me</span></a></li>
           </ul>
         </div>
       </div>
@@ -3655,11 +3802,11 @@
 
   <div class="otc-case-modal" id="vibeCodingModal" role="dialog" aria-modal="true" aria-labelledby="vibeCodingModalTitle" aria-hidden="true">
     <header class="otc-case-header">
-      <span class="otc-case-index">MOTION / EXPERIMENTS</span>
-      <span class="otc-case-label" id="vibeCodingModalTitle">VIBE CODING / MOTION LAB</span>
-      <button class="otc-case-close" id="vibeCodingClose" type="button" aria-label="Close Vibe Coding motion lab">×</button>
+      <span class="otc-case-index" data-i18n="vibe.modalIndex">AI / MOTION LAB</span>
+      <span class="otc-case-label" id="vibeCodingModalTitle" data-i18n="vibe.modalTitle">VIBE CODING · AI-ASSISTED</span>
+      <button class="otc-case-close" id="vibeCodingClose" type="button" data-i18n-aria="vibe.closeAria" aria-label="Close AI-assisted Vibe Coding lab">×</button>
     </header>
-    <iframe class="otc-case-frame" id="vibeCodingFrame" title="Vibe Coding motion experiments" data-src="vibe-coding.html"></iframe>
+    <iframe class="otc-case-frame" id="vibeCodingFrame" title="AI-assisted Vibe Coding lab" data-src="vibe-coding.html" data-i18n-aria="vibe.frameAria"></iframe>
     <span class="otc-case-corner tl"></span><span class="otc-case-corner tr"></span><span class="otc-case-corner bl"></span><span class="otc-case-corner br"></span>
   </div>
 
@@ -3678,7 +3825,7 @@
 
     const I18N = {
       en: {
-        "meta.title": "Mimo — Product Designer for Fintech & Trading",
+        "meta.title": "Mimo — Senior UI Designer · AI-augmented",
         "cursor.default": "VIEW",
         "fileWarning.before": "3D COINS NEED LOCAL SERVER PREVIEW. OPEN",
         "fileWarning.after": "INSTEAD OF FILE://",
@@ -3691,6 +3838,17 @@
         "nav.homeCursor": "HOME",
         "nav.cases": "CASES",
         "nav.casesCursor": "VIEW CASES",
+        "nav.ai": "AI",
+        "nav.aiAria": "Open AI lab menu",
+        "nav.aiCursor": "AI LAB",
+        "nav.ai.item1": "AI Workflow",
+        "nav.ai.item1Cursor": "AI WORKFLOW",
+        "nav.ai.item2": "Liquid vibe test",
+        "nav.ai.item2Cursor": "LIQUID VIBE TEST",
+        "nav.ai.item3": "Astro Dither vibe test",
+        "nav.ai.item3Cursor": "ASTRO DITHER VIBE TEST",
+        "nav.ai.item4": "web vibe test",
+        "nav.ai.item4Cursor": "web vibe test",
         "nav.experience": "EXPERIENCE",
         "nav.experienceCursor": "VIEW EXPERIENCE",
         "nav.mail": "MAIL",
@@ -3701,16 +3859,16 @@
         "language.toggle": "中",
         "language.aria": "Switch language to Chinese",
         "language.cursor": "中文",
-        "footer.quote": "I make complex product systems simple for users",
+        "footer.quote": "I craft clear interfaces for complex products—and use AI to ship them faster",
         "market.aria": "Live cryptocurrency market",
         "footer.scroll": "scroll down",
         "metrics.cursorX": "Cursor X",
         "metrics.cursorY": "Cursor Y",
         "metrics.scroll": "Scroll",
         "metrics.time": "Time",
-        "hero.eyebrow": "MIMO / PRODUCT DESIGNER",
-        "hero.heading": "Product designer for fintech, trading and complex systems",
-        "hero.body": "With 7+ years of experience, I turn complex financial and data-heavy workflows into clear product systems, reusable design foundations and testable high-fidelity prototypes.",
+        "hero.eyebrow": "MIMO / SENIOR UI DESIGNER",
+        "hero.heading": "Senior UI designer for complex products, with AI-augmented craft",
+        "hero.body": "With 7+ years of UI craft across fintech and trading, I design clear interfaces, design systems, and high-fidelity prototypes—using AI to accelerate exploration while keeping final visual quality under human control.",
         "hero.flagshipAria": "View Mimo's OTC case",
         "hero.flagshipCursor": "VIEW OTC CASE",
         "hero.flagshipLabel": "OTC CASE",
@@ -3731,19 +3889,19 @@
         "telegram.aria": "Write to Mimo on Telegram",
         "telegram.cursor": "WRITE TO TELEGRAM",
         "telegram.label": "WRITE TO TELEGRAM",
-        "spec.tag1": "product strategy",
-        "spec.tag2": "portfolio",
+        "spec.tag1": "senior UI",
+        "spec.tag2": "design system",
         "spec.tag3": "interaction",
-        "spec.tag4": "prototype",
-        "spec.tag5": "design system",
+        "spec.tag4": "AI-assisted",
+        "spec.tag5": "prototype",
         "spec.headingLead": "I specialize in",
-        "spec.headingRest": "mobile product design, design-system development, and complex web interfaces for product validation",
-        "spec.body": "I am currently shaping a portfolio around product thinking, high-fidelity interaction, and AI-assisted prototypes that make ideas testable faster.",
+        "spec.headingRest": "senior UI craft, design-system development, and AI-assisted high-fidelity prototypes for complex products",
+        "spec.body": "I build interfaces that stay clear under density—then use AI to explore motion, variants, and testable prototypes faster without lowering the craft bar.",
         "cases.viewCursor": "VIEW CASES",
         "cases.viewLabel": "VIEW CASES",
-        "cases.headingLead": "Selected product cases",
+        "cases.headingLead": "Selected UI cases",
         "cases.headingPrefix": "Built from",
-        "cases.headingYears": "7+ years of product design practice",
+        "cases.headingYears": "7+ years of UI design practice",
         "cases.introTag": "freelance, office, remote work, personal projects...",
         "cases.logo1": "CoinW",
         "cases.logo2": "OTC",
@@ -3786,18 +3944,23 @@
         "case5.tag3": "Multilingual",
         "case5.title": "Landing Page Matrix",
         "case5.desc": "A reusable landing-page framework for acquisition, campaigns, product education, and multilingual conversion experiments.",
-        "kinetic.cursor": "VIEW MOTION",
-        "kinetic.tag1": "Motion System",
-        "kinetic.tag2": "Type Prototype",
-        "kinetic.title": "Kinetic Typography",
-        "kinetic.desc": "A type-led interaction block for campaign pages, used to turn landing-page logic into a stronger scroll moment.",
+        "kinetic.cursor": "VIEW AI LAB",
+        "kinetic.tag1": "AI × Motion",
+        "kinetic.tag2": "Vibe Coding",
+        "kinetic.title": "AI-assisted Motion Lab",
+        "kinetic.desc": "An AI-assisted UI and motion experiment space—used to turn design direction into scrollable, testable interaction faster.",
+        "kinetic.aria": "Open AI-assisted Vibe Coding lab",
+        "vibe.modalIndex": "AI / MOTION LAB",
+        "vibe.modalTitle": "VIBE CODING · AI-ASSISTED",
+        "vibe.closeAria": "Close AI-assisted Vibe Coding lab",
+        "vibe.frameAria": "AI-assisted Vibe Coding lab",
         "experience.heading": "Experience",
         "experience.1.meta": "2025.07-2026.07 · CoinW / Legend Tech",
-        "experience.1.role": "Product Designer",
-        "experience.1.desc": "Designing exchange product systems across OTC, copy trading, community, campaigns, and reusable components.",
+        "experience.1.role": "Senior UI Designer",
+        "experience.1.desc": "Led UI systems for exchange products across OTC, copy trading, community, campaigns, and reusable components—balancing density, hierarchy, and consistency.",
         "experience.2.meta": "2024-2025.06 · Rena Labs",
-        "experience.2.role": "Product & Branding Designer",
-        "experience.2.desc": "Led the Rena Labs rebrand around privacy-preserving compute and TEE, building a scalable brand system across mark, typography, color, and product surfaces for trustless AI infrastructure.",
+        "experience.2.role": "UI & Branding Designer",
+        "experience.2.desc": "Led the Rena Labs rebrand around privacy-preserving compute and TEE, building a scalable brand system across mark, typography, color, and product UI for trustless AI infrastructure.",
         "experience.3.meta": "2020-2023 · Fintech / Web3 Products",
         "experience.3.role": "UI/UX Designer",
         "experience.3.desc": "Shaped trading, SaaS, B2B finance, Web3, H5, app, and operational product experiences.",
@@ -3805,30 +3968,30 @@
         "experience.4.role": "UI/UED Designer",
         "experience.4.desc": "Built interface systems for social, entertainment, gaming, tools, and growth-oriented products.",
         "skills.heading": "Skills",
-        "skills.1.title": "UI & UX",
-        "skills.1.desc": "Modern interface design with a focus on information clarity, hierarchy, and product value.",
+        "skills.1.title": "Senior UI",
+        "skills.1.desc": "Senior interface craft focused on hierarchy, density control, and visual clarity in complex products.",
         "skills.2.title": "Design System",
         "skills.2.desc": "Reusable component logic, documentation, tokens, and consistency across product surfaces.",
-        "skills.3.title": "AI tools",
-        "skills.3.desc": "Uses AI to speed up research, copy iteration, prototype exploration, and repetitive production tasks.",
+        "skills.3.title": "AI-augmented workflow",
+        "skills.3.desc": "Uses AI to accelerate research, variant exploration, motion experiments, and prototype production—while owning final UI decisions.",
         "skills.4.title": "Motion & Prototype",
         "skills.4.desc": "Interface animation, scroll rhythm, and high-fidelity interaction prototypes.",
         "skills.5.title": "Presentation",
-        "skills.5.desc": "Case-study storytelling, product rationale, and stakeholder-ready narrative framing.",
+        "skills.5.desc": "Case-study storytelling that explains UI decisions, system logic, and craft rationale to stakeholders.",
         "projects.heading": "Personal projects",
         "projects.1.title": "Design System Components",
         "projects.1.desc": "A reusable component library for trading, assets, forms, and product states.",
         "projects.2.title": "OTC Trading Product",
         "projects.2.desc": "An OTC experience covering buy and sell flows, merchants, orders, payments, and disputes.",
         "projects.3.title": "Open to collaboration",
-        "projects.3.desc": "Available for Web3, fintech product design, and high-fidelity prototype collaborations.",
+        "projects.3.desc": "Available for senior UI, fintech/Web3 interfaces, design systems, and AI-assisted prototype collaborations.",
         "projects.collabCursor": "START A CONVERSATION",
         "projects.collabLabel": "Contact me",
         "projects.viewCursor": "VIEW PROJECT",
         "projects.viewLabel": "View project"
       },
       zh: {
-        "meta.title": "Mimo — 金融科技与交易产品设计师",
+        "meta.title": "Mimo — 高级 UI 设计师 · 兼顾 AI",
         "cursor.default": "查看",
         "fileWarning.before": "3D COINS 需要通过本地服务器预览。打开",
         "fileWarning.after": "不要使用 FILE://",
@@ -3841,6 +4004,17 @@
         "nav.homeCursor": "首页",
         "nav.cases": "案例",
         "nav.casesCursor": "查看案例",
+        "nav.ai": "AI",
+        "nav.aiAria": "打开 AI 实验菜单",
+        "nav.aiCursor": "AI 实验",
+        "nav.ai.item1": "AI 工作流",
+        "nav.ai.item1Cursor": "AI 工作流",
+        "nav.ai.item2": "流体 vibe test",
+        "nav.ai.item2Cursor": "流体 vibe test",
+        "nav.ai.item3": "星尘抖动 vibe test",
+        "nav.ai.item3Cursor": "星尘抖动 vibe test",
+        "nav.ai.item4": "web vibe test",
+        "nav.ai.item4Cursor": "web vibe test",
         "nav.experience": "经历",
         "nav.experienceCursor": "查看经历",
         "nav.mail": "邮件",
@@ -3851,16 +4025,16 @@
         "language.toggle": "EN",
         "language.aria": "切换为英文",
         "language.cursor": "ENGLISH",
-        "footer.quote": "让复杂的产品系统更易被用户理解",
+        "footer.quote": "把复杂产品做成清晰界面，并用 AI 更快交付",
         "market.aria": "实时加密货币行情",
         "footer.scroll": "向下滚动",
         "metrics.cursorX": "光标 X",
         "metrics.cursorY": "光标 Y",
         "metrics.scroll": "滚动",
         "metrics.time": "时间",
-        "hero.eyebrow": "MIMO / 产品设计师",
-        "hero.heading": "专注金融科技、交易产品与复杂系统的产品设计师",
-        "hero.body": "拥有 7+ 年产品设计经验，将复杂的金融与数据流程转化为清晰的产品系统、可复用的设计基础和可验证的高保真原型。",
+        "hero.eyebrow": "MIMO / 高级 UI 设计师",
+        "hero.heading": "面向复杂产品的高级 UI 设计师，兼顾 AI 辅助创作",
+        "hero.body": "拥有 7+ 年金融与交易领域的 UI 经验，擅长清晰界面、设计系统与高保真原型；用 AI 加速探索，同时坚持人工把控最终视觉质量。",
         "hero.flagshipAria": "查看 Mimo 的 OTC 案例",
         "hero.flagshipCursor": "查看 OTC 案例",
         "hero.flagshipLabel": "OTC 案例",
@@ -3881,19 +4055,19 @@
         "telegram.aria": "通过 Telegram 联系 Mimo",
         "telegram.cursor": "联系 TELEGRAM",
         "telegram.label": "联系 TELEGRAM",
-        "spec.tag1": "产品策略",
-        "spec.tag2": "作品集",
+        "spec.tag1": "高级 UI",
+        "spec.tag2": "设计系统",
         "spec.tag3": "交互",
-        "spec.tag4": "原型",
-        "spec.tag5": "设计系统",
+        "spec.tag4": "AI 辅助",
+        "spec.tag5": "原型",
         "spec.headingLead": "专注于",
-        "spec.headingRest": "移动端产品设计、设计系统建设，以及用于产品验证的复杂 Web 界面",
-        "spec.body": "目前围绕产品思维、高保真交互与 AI 辅助原型构建作品集，让想法更快得到验证。",
+        "spec.headingRest": "高级 UI 打磨、设计系统建设，以及 AI 辅助的高保真原型，服务复杂产品界面",
+        "spec.body": "我先把高密度界面做得清晰可读，再用 AI 加速动效探索、方案变体与可验证原型，但不降低最终 UI 质量标准。",
         "cases.viewCursor": "查看案例",
         "cases.viewLabel": "查看案例",
-        "cases.headingLead": "精选产品案例",
+        "cases.headingLead": "精选 UI 案例",
         "cases.headingPrefix": "沉淀自",
-        "cases.headingYears": "7+ 年产品设计实践",
+        "cases.headingYears": "7+ 年 UI 设计实践",
         "cases.introTag": "自由职业、坐班、远程协作、个人项目...",
         "cases.logo1": "CoinW",
         "cases.logo2": "OTC",
@@ -3936,18 +4110,23 @@
         "case5.tag3": "多语言",
         "case5.title": "落地页矩阵",
         "case5.desc": "建立可复用的落地页框架，覆盖注册引流、活动营销、产品介绍与多语言转化实验。",
-        "kinetic.cursor": "查看动效",
-        "kinetic.tag1": "动效系统",
-        "kinetic.tag2": "字体原型",
-        "kinetic.title": "动态字体模块",
-        "kinetic.desc": "为活动落地页设计的字体驱动交互模块，把页面逻辑转化为更强的滚动记忆点。",
+        "kinetic.cursor": "查看 AI 实验",
+        "kinetic.tag1": "AI × 动效",
+        "kinetic.tag2": "Vibe Coding",
+        "kinetic.title": "AI 辅助动效实验",
+        "kinetic.desc": "AI 辅助的 UI 与动效实验空间——把设计方向更快变成可滚动、可验证的交互体验。",
+        "kinetic.aria": "打开 AI 辅助的 Vibe Coding 实验",
+        "vibe.modalIndex": "AI / 动效实验",
+        "vibe.modalTitle": "VIBE CODING · AI 辅助",
+        "vibe.closeAria": "关闭 AI 辅助 Vibe Coding 实验",
+        "vibe.frameAria": "AI 辅助 Vibe Coding 实验",
         "experience.heading": "经历",
         "experience.1.meta": "2025.07-2026.07 · CoinW / Legend Tech",
-        "experience.1.role": "产品设计师",
-        "experience.1.desc": "负责交易所产品系统设计，覆盖 OTC、跟单、社区、活动与可复用组件。",
+        "experience.1.role": "高级 UI 设计师",
+        "experience.1.desc": "主导交易所产品 UI 体系，覆盖 OTC、跟单、社区、活动与可复用组件，平衡信息密度、层级与一致性。",
         "experience.2.meta": "2024-2025.06 · Rena Labs",
-        "experience.2.role": "产品与品牌设计师",
-        "experience.2.desc": "主导 Rena Labs 品牌重塑，围绕隐私计算与 TEE 构建可扩展视觉系统，覆盖标识、字体、色彩与产品界面，服务可信 AI 基础设施。",
+        "experience.2.role": "UI 与品牌设计师",
+        "experience.2.desc": "主导 Rena Labs 品牌重塑，围绕隐私计算与 TEE 构建可扩展视觉系统，覆盖标识、字体、色彩与产品 UI，服务可信 AI 基础设施。",
         "experience.3.meta": "2020-2023 · 金融科技 / Web3 产品",
         "experience.3.role": "UI/UX 设计师",
         "experience.3.desc": "设计交易、SaaS、B2B 金融、Web3、H5、App 与运营产品体验。",
@@ -3955,23 +4134,23 @@
         "experience.4.role": "UI/UED 设计师",
         "experience.4.desc": "搭建社交、娱乐、游戏、工具与增长型产品的界面体验。",
         "skills.heading": "能力",
-        "skills.1.title": "UI & UX",
-        "skills.1.desc": "以信息清晰、层级明确和产品价值为重点的现代界面设计。",
+        "skills.1.title": "高级 UI",
+        "skills.1.desc": "面向复杂产品的高级界面打磨，强调层级、密度控制与视觉清晰度。",
         "skills.2.title": "设计系统",
         "skills.2.desc": "可复用的组件逻辑、文档、Token 与跨产品界面一致性。",
-        "skills.3.title": "AI 工具",
-        "skills.3.desc": "用 AI 加速调研、文案迭代、原型探索与重复性生产任务。",
+        "skills.3.title": "AI 辅助工作流",
+        "skills.3.desc": "用 AI 加速调研、方案变体、动效实验与原型生产，同时由我把控最终 UI 决策。",
         "skills.4.title": "动效与原型",
         "skills.4.desc": "界面动效、滚动节奏和高保真交互原型。",
         "skills.5.title": "方案表达",
-        "skills.5.desc": "案例叙事、产品逻辑与面向利益相关者的方案表达。",
+        "skills.5.desc": "用案例叙事讲清 UI 决策、系统逻辑与工艺标准，方便向相关方对齐。",
         "projects.heading": "个人项目",
         "projects.1.title": "设计系统组件",
         "projects.1.desc": "覆盖交易、资产、表单与产品状态的可复用组件库。",
         "projects.2.title": "OTC 交易产品",
         "projects.2.desc": "覆盖买卖币、商家、订单、支付与申诉流程的场外交易体验。",
         "projects.3.title": "期待合作",
-        "projects.3.desc": "期待参与 Web3、金融科技产品设计与高保真原型合作。",
+        "projects.3.desc": "期待参与高级 UI、金融科技/Web3 界面、设计系统与 AI 辅助原型合作。",
         "projects.collabCursor": "开始沟通",
         "projects.collabLabel": "联系我",
         "projects.viewCursor": "查看项目",
@@ -4127,9 +4306,12 @@
         item.dataset.cursorBound = "true";
         item.addEventListener("mouseenter", () => {
           cursorLabel.textContent = item.dataset.cursorText;
+          cursorLabel.classList.toggle("is-dark", item.dataset.cursorTheme === "dark");
           cursorLabel.classList.add("is-visible");
         });
-        item.addEventListener("mouseleave", () => cursorLabel.classList.remove("is-visible"));
+        item.addEventListener("mouseleave", () => {
+          cursorLabel.classList.remove("is-visible", "is-dark");
+        });
       });
     }
 
@@ -4278,7 +4460,23 @@
         if (!mmFrame.src.includes(`lang=${currentLocale}`)) mmFrame.src = nextCase;
       }
       if (mmFrame && strings["mmEntry.frameAria"]) mmFrame.title = strings["mmEntry.frameAria"];
+      const vibeFrame = document.getElementById("vibeCodingFrame");
+      const vibeModal = document.getElementById("vibeCodingModal");
+      if (vibeFrame) {
+        const nextVibe = `vibe-coding.html?lang=${currentLocale}`;
+        if (vibeModal?.classList.contains("is-open")) {
+          if (!vibeFrame.src.includes(`lang=${currentLocale}`)) vibeFrame.src = nextVibe;
+          else {
+            try {
+              vibeFrame.contentWindow?.postMessage({ type: "vibe-lang", lang: currentLocale }, "*");
+            } catch {}
+          }
+        } else if (vibeFrame.getAttribute("src")) {
+          vibeFrame.removeAttribute("src");
+        }
+      }
       try { localStorage.setItem("mimo-lang-v2", currentLocale); } catch {}
+      window.refreshNavAiFuzzy?.();
     }
 
     function toggleLanguage() {
@@ -4292,6 +4490,124 @@
       } catch {}
       return "en";
     }
+
+    (() => {
+      const canvas = document.getElementById("navAiFuzzy");
+      const label = document.querySelector(".nav-ai__sr");
+      const host = document.getElementById("navAiMenu");
+      if (!canvas || !label || !host) return;
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      let cleanup = null;
+      let isHovering = false;
+
+      const mount = async () => {
+        cleanup?.();
+        cleanup = null;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        const text = (label.textContent || "AI").trim() || "AI";
+        const styles = window.getComputedStyle(host.querySelector(".nav-ai__trigger") || host);
+        const fontFamily = styles.fontFamily || "SFMono-Regular, Consolas, Menlo, monospace";
+        const fontWeight = 700;
+        const fontSize = Math.max(10, Math.round(parseFloat(styles.fontSize) || 12));
+        const fontSizeStr = `${fontSize}px`;
+        const color = "#ffffff";
+        const baseIntensity = 0.06;
+        const hoverIntensity = 0.22;
+        const fuzzRange = 3;
+        const fps = 30;
+        const frameDuration = 1000 / fps;
+        const fontString = `${fontWeight} ${fontSizeStr} ${fontFamily}`;
+
+        try {
+          await document.fonts.load(fontString);
+        } catch {
+          try { await document.fonts.ready; } catch {}
+        }
+
+        const offscreen = document.createElement("canvas");
+        const offCtx = offscreen.getContext("2d");
+        if (!offCtx) return;
+
+        offCtx.font = fontString;
+        offCtx.textBaseline = "alphabetic";
+        const metrics = offCtx.measureText(text);
+        const actualLeft = metrics.actualBoundingBoxLeft ?? 0;
+        const actualRight = metrics.actualBoundingBoxRight ?? metrics.width;
+        const actualAscent = metrics.actualBoundingBoxAscent ?? fontSize;
+        const actualDescent = metrics.actualBoundingBoxDescent ?? fontSize * 0.2;
+        const textBoundingWidth = Math.max(1, Math.ceil(actualLeft + actualRight));
+        const tightHeight = Math.max(1, Math.ceil(actualAscent + actualDescent));
+        const bleed = fuzzRange;
+        const logicalWidth = textBoundingWidth + bleed * 2;
+        const logicalHeight = tightHeight;
+        const dpr = Math.min(2, window.devicePixelRatio || 1);
+
+        offscreen.width = Math.ceil(textBoundingWidth * dpr);
+        offscreen.height = Math.ceil(tightHeight * dpr);
+        offCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        offCtx.font = fontString;
+        offCtx.textBaseline = "alphabetic";
+        offCtx.fillStyle = color;
+        offCtx.clearRect(0, 0, textBoundingWidth, tightHeight);
+        offCtx.fillText(text, -actualLeft, actualAscent);
+
+        // Keep CSS size 1:1 with glyph metrics — no forced aspect remapping.
+        canvas.width = Math.ceil(logicalWidth * dpr);
+        canvas.height = Math.ceil(logicalHeight * dpr);
+        canvas.style.width = `${logicalWidth}px`;
+        canvas.style.height = `${logicalHeight}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        let animationFrameId = 0;
+        let lastFrameTime = 0;
+        let cancelled = false;
+
+        const run = (timestamp) => {
+          if (cancelled) return;
+          if (timestamp - lastFrameTime < frameDuration) {
+            animationFrameId = window.requestAnimationFrame(run);
+            return;
+          }
+          lastFrameTime = timestamp;
+
+          const intensity = isHovering || host.matches(":hover") || host.classList.contains("is-open")
+            ? hoverIntensity
+            : baseIntensity;
+
+          ctx.clearRect(0, 0, logicalWidth, logicalHeight);
+
+          for (let j = 0; j < tightHeight; j += 1) {
+            const dx = bleed + Math.floor(intensity * (Math.random() - 0.5) * fuzzRange);
+            ctx.drawImage(
+              offscreen,
+              0, Math.floor(j * dpr), Math.ceil(textBoundingWidth * dpr), Math.max(1, Math.ceil(dpr)),
+              dx, j, textBoundingWidth, 1
+            );
+          }
+          animationFrameId = window.requestAnimationFrame(run);
+        };
+
+        const onEnter = () => { isHovering = true; };
+        const onLeave = () => { isHovering = false; };
+        host.addEventListener("pointerenter", onEnter);
+        host.addEventListener("pointerleave", onLeave);
+        animationFrameId = window.requestAnimationFrame(run);
+
+        cleanup = () => {
+          cancelled = true;
+          window.cancelAnimationFrame(animationFrameId);
+          host.removeEventListener("pointerenter", onEnter);
+          host.removeEventListener("pointerleave", onLeave);
+        };
+      };
+
+      window.refreshNavAiFuzzy = () => { mount(); };
+      mount();
+    })();
 
     function playButtonHover() {
       if (!soundEnabled) return;
@@ -4671,14 +4987,15 @@
       navHover.classList.add("is-visible");
     }
 
-    nav.querySelectorAll("a, button").forEach((control) => {
+    nav.querySelectorAll(":scope > a, :scope > button, :scope > .nav-ai > .nav-ai__trigger").forEach((control) => {
       control.addEventListener("mouseenter", () => moveNavHover(control));
       control.addEventListener("focus", () => moveNavHover(control));
     });
     nav.addEventListener("mouseleave", () => navHover.classList.remove("is-visible"));
 
     function scrambleText(target) {
-      const label = target.querySelector("span:last-child") || target;
+      if (target.classList.contains("nav-ai__item") || target.classList.contains("nav-ai__trigger")) return;
+      const label = target.querySelector("[data-i18n]") || target.querySelector("span:last-child") || target;
       const original = label.dataset.originalText || label.textContent.trim();
       if (!original) return;
       const rect = target.getBoundingClientRect();
@@ -4704,7 +5021,7 @@
       }, 400);
     }
 
-    document.querySelectorAll(".main-menu a, .main-menu button, .btn").forEach((item) => {
+    document.querySelectorAll(".main-menu > a, .main-menu > button, .main-menu > .nav-ai > .nav-ai__trigger, .btn").forEach((item) => {
       item.addEventListener("mouseenter", () => scrambleText(item));
       item.addEventListener("focus", () => scrambleText(item));
     });
@@ -5214,10 +5531,34 @@
       const modal = document.getElementById("vibeCodingModal");
       const closeButton = document.getElementById("vibeCodingClose");
       const frame = document.getElementById("vibeCodingFrame");
-      if (!trigger || !modal || !closeButton || !frame) return;
+      const navAiMenu = document.getElementById("navAiMenu");
+      const navAiTrigger = document.getElementById("navAiTrigger");
+      const navAiItems = [...document.querySelectorAll("[data-vibe-screen]")];
+      if (!modal || !closeButton || !frame) return;
 
       let savedScrollY = 0;
       let previousOverflow = "";
+      let pendingScreen = "aiworkflow";
+
+      const setNavAiOpen = (open) => {
+        if (!navAiMenu || !navAiTrigger) return;
+        navAiMenu.classList.toggle("is-open", open);
+        navAiTrigger.setAttribute("aria-expanded", String(open));
+      };
+
+      const markActiveItem = (screen) => {
+        navAiItems.forEach((item) => {
+          item.classList.toggle("is-active", item.dataset.vibeScreen === screen);
+        });
+      };
+
+      const applyScreenToFrame = (screen) => {
+        const next = screen || "aiworkflow";
+        try {
+          frame.contentWindow?.__vibeCoding?.set?.(next);
+          frame.contentWindow?.postMessage({ type: "vibe-set-screen", screen: next }, "*");
+        } catch {}
+      };
 
       const close = () => {
         if (!modal.classList.contains("is-open")) return;
@@ -5225,31 +5566,51 @@
         modal.setAttribute("aria-hidden", "true");
         document.body.style.overflow = previousOverflow;
         window.scrollTo(0, savedScrollY);
-        trigger.focus({ preventScroll: true });
+        (trigger || navAiTrigger)?.focus({ preventScroll: true });
       };
 
-      const open = () => {
+      const open = (screen = "aiworkflow") => {
         savedScrollY = window.scrollY;
         previousOverflow = document.body.style.overflow;
-        if (!frame.getAttribute("src")) frame.src = frame.dataset.src;
+        pendingScreen = screen || "aiworkflow";
+        markActiveItem(pendingScreen);
+        const lang = (typeof currentLocale === "string" && currentLocale === "zh") ? "zh" : "en";
+        const nextSrc = `vibe-coding.html?lang=${lang}&screen=${encodeURIComponent(pendingScreen)}&v=${Date.now()}`;
+        frame.src = nextSrc;
         modal.classList.add("is-open");
         modal.setAttribute("aria-hidden", "false");
         document.body.style.overflow = "hidden";
         closeButton.focus({ preventScroll: true });
+        setNavAiOpen(false);
       };
 
-      trigger.addEventListener("click", (event) => {
+      trigger?.addEventListener("click", (event) => {
         event.preventDefault();
-        open();
+        open("aiworkflow");
+      });
+      navAiTrigger?.addEventListener("click", (event) => {
+        event.preventDefault();
+        setNavAiOpen(!navAiMenu.classList.contains("is-open"));
+      });
+      navAiItems.forEach((item) => {
+        item.addEventListener("click", (event) => {
+          event.preventDefault();
+          open(item.dataset.vibeScreen || "aiworkflow");
+        });
+      });
+      document.addEventListener("pointerdown", (event) => {
+        if (navAiMenu && !navAiMenu.contains(event.target)) setNavAiOpen(false);
       });
       closeButton.addEventListener("click", close);
       window.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && modal.classList.contains("is-open")) close();
+        if (event.key === "Escape") setNavAiOpen(false);
       });
       window.addEventListener("message", (event) => {
         if (event.source === frame.contentWindow && event.data?.type === "vibe-coding-close") close();
       });
       frame.addEventListener("load", () => {
+        applyScreenToFrame(pendingScreen);
         try {
           frame.contentDocument.addEventListener("keydown", (event) => {
             if (event.key === "Escape") close();
