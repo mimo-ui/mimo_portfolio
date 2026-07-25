@@ -4125,7 +4125,7 @@
       setSoundEnabled(soundEnabled);
       bindCursorLabels();
       prepareSplitTitles();
-      try { localStorage.setItem("mimo-lang", currentLocale); } catch {}
+      try { localStorage.setItem("mimo-lang-v2", currentLocale); } catch {}
     }
 
     function toggleLanguage() {
@@ -4134,10 +4134,10 @@
 
     function getInitialLocale() {
       try {
-        const saved = localStorage.getItem("mimo-lang");
+        const saved = localStorage.getItem("mimo-lang-v2");
         if (saved === "zh" || saved === "en") return saved;
       } catch {}
-      return navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en";
+      return "en";
     }
 
     function playButtonHover() {
