@@ -558,21 +558,6 @@
     }
     .footer-left,
     .scroll-down { opacity: var(--footer-opacity); }
-    .quote {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      max-width: 360px;
-      padding: 12px;
-    }
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border: 1px solid rgba(255,255,255,.1);
-      overflow: hidden;
-    }
-    .avatar .pixel-cat { width: 100%; height: 100%; }
-    .quote p { color: var(--muted); font-size: 13px; line-height: 1.2; margin: 0; }
     .fin {
       position: relative;
       display: flex;
@@ -3256,7 +3241,6 @@
       .download-label-full { display: none; }
       .download-label-short { display: inline; }
       .lang-toggle { min-width: 18px; }
-      .quote { max-width: 230px; }
       h1 { font-size: 25px; max-width: 320px; }
       h2 { font-size: 23px; }
       .hero-inner { width: min(340px, calc(100vw - 40px)); max-width: 340px; gap: 14px; }
@@ -3371,10 +3355,6 @@
 
     <footer class="footer">
       <div class="footer-left">
-        <div class="quote">
-          <div class="avatar"><span class="pixel-cat" aria-hidden="true"></span></div>
-          <p data-i18n="footer.quote">I craft clear interfaces for complex products—and use AI to ship them faster</p>
-        </div>
         <div class="fin" aria-label="Live cryptocurrency market" aria-live="polite" data-i18n-aria="market.aria">
           <div class="fin-card" data-symbol="BTCUSDT"><img class="coin" src="deploy-site/assets/crypto-logos/bitcoin.svg" alt="Bitcoin"><div class="fin-text mono"><span class="fin-title">BTC</span><span><span class="fin-price">--</span> <span class="fin-change neutral">--</span></span></div></div>
           <span class="divider"></span>
@@ -3403,9 +3383,9 @@
       <div class="logo-title">
         <span class="pixel-cat hero-brand" role="img" aria-label="Mimo"></span>
         <span class="hero-name mono" data-i18n="hero.eyebrow">MIMO / SENIOR UI DESIGNER</span>
-        <h1 data-i18n="hero.heading">Senior UI designer for complex products, with AI-augmented craft</h1>
+        <h1 data-i18n="hero.heading">Clarity for complex products</h1>
       </div>
-      <p data-i18n="hero.body">With 7+ years of UI craft across fintech and trading, I design clear interfaces, design systems, and high-fidelity prototypes—using AI to accelerate exploration while keeping final visual quality under human control.</p>
+      <p data-i18n="hero.body">7+ years in fintech UI, design systems, and AI-accelerated prototyping.</p>
       <div class="hero-actions">
         <a href="otc-case-detail.html" class="btn mono" id="heroFlagshipLink" data-open-otc-case data-i18n-aria="hero.flagshipAria" data-i18n-cursor="hero.flagshipCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="hero.flagshipLabel">OTC CASE</span></a>
         <a href="output/pdf/MIMO-Resume.pdf" target="_blank" rel="noopener" class="btn mono" data-i18n-aria="hero.resumeAria" data-i18n-cursor="hero.resumeCursor"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><span data-i18n="hero.resumeLabel">RESUME</span></a>
@@ -3859,7 +3839,6 @@
         "language.toggle": "中",
         "language.aria": "Switch language to Chinese",
         "language.cursor": "中文",
-        "footer.quote": "I craft clear interfaces for complex products—and use AI to ship them faster",
         "market.aria": "Live cryptocurrency market",
         "footer.scroll": "scroll down",
         "metrics.cursorX": "Cursor X",
@@ -3867,8 +3846,8 @@
         "metrics.scroll": "Scroll",
         "metrics.time": "Time",
         "hero.eyebrow": "MIMO / SENIOR UI DESIGNER",
-        "hero.heading": "Senior UI designer for complex products, with AI-augmented craft",
-        "hero.body": "With 7+ years of UI craft across fintech and trading, I design clear interfaces, design systems, and high-fidelity prototypes—using AI to accelerate exploration while keeping final visual quality under human control.",
+        "hero.heading": "Clarity for complex products",
+        "hero.body": "7+ years in fintech UI, design systems, and AI-accelerated prototyping.",
         "hero.flagshipAria": "View Mimo's OTC case",
         "hero.flagshipCursor": "VIEW OTC CASE",
         "hero.flagshipLabel": "OTC CASE",
@@ -4025,7 +4004,6 @@
         "language.toggle": "EN",
         "language.aria": "切换为英文",
         "language.cursor": "ENGLISH",
-        "footer.quote": "把复杂产品做成清晰界面，并用 AI 更快交付",
         "market.aria": "实时加密货币行情",
         "footer.scroll": "向下滚动",
         "metrics.cursorX": "光标 X",
@@ -4033,8 +4011,8 @@
         "metrics.scroll": "滚动",
         "metrics.time": "时间",
         "hero.eyebrow": "MIMO / 高级 UI 设计师",
-        "hero.heading": "面向复杂产品的高级 UI 设计师，兼顾 AI 辅助创作",
-        "hero.body": "拥有 7+ 年金融与交易领域的 UI 经验，擅长清晰界面、设计系统与高保真原型；用 AI 加速探索，同时坚持人工把控最终视觉质量。",
+        "hero.heading": "让复杂产品更清晰",
+        "hero.body": "7+ 年金融 UI，专注设计系统与 AI 加速原型。",
         "hero.flagshipAria": "查看 Mimo 的 OTC 案例",
         "hero.flagshipCursor": "查看 OTC 案例",
         "hero.flagshipLabel": "OTC 案例",
