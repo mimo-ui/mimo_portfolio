@@ -12,12 +12,12 @@
         height: 100%;
         overflow: hidden;
         background: #0d0d0d;
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;
+        scrollbar-width: none;
       }
 
       body::-webkit-scrollbar {
-        display: none; /* Chrome, Safari and Opera */
+        display: none;
       }
 
       section {
@@ -33,6 +33,7 @@
 
       .iphone {
         position: absolute;
+        z-index: 2;
         height: min(72vh, 600px);
         will-change: transform;
       }
@@ -42,10 +43,6 @@
         z-index: 1;
         scale: 0;
         will-change: transform, opacity;
-      }
-
-      .iphone {
-        z-index: 2;
       }
 
       #socials {
@@ -76,17 +73,17 @@
   </head>
   <body>
     <section class="animation">
-      <img class="iphone" src="https://assets.codepen.io/8292695/iphone-14.svg" alt="" />
-      <img id="app-store" class="widgets" src="https://assets.codepen.io/8292695/appstore-widget.svg" alt="" />
-      <img id="screen-time" class="widgets" src="https://assets.codepen.io/8292695/screen-time-widget.svg" alt="" />
-      <img id="weather" class="widgets" src="https://assets.codepen.io/8292695/weather-widget.svg" alt="" />
-      <img id="stocks" class="widgets" src="https://assets.codepen.io/8292695/stocks-widget.svg" alt="" />
-      <img id="calendar" class="widgets" src="https://assets.codepen.io/8292695/calendar-widget.svg" alt="" />
-      <img id="fitness" class="widgets" src="https://assets.codepen.io/8292695/fitness-widget.svg" alt="" />
-      <img id="find-my" class="widgets" src="https://assets.codepen.io/8292695/find-my-widget.svg" alt="" />
-      <img id="sleep" class="widgets" src="https://assets.codepen.io/8292695/sleep-widget.svg" alt="" />
-      <img id="apple-tv" class="widgets" src="https://assets.codepen.io/8292695/apple-tv.svg" alt="" />
-      <img id="wallet" class="widgets" src="https://assets.codepen.io/8292695/wallet.svg" alt="" />
+      <img class="iphone" src="assets/iphone-14.svg" alt="" />
+      <img id="app-store" class="widgets" src="assets/appstore-widget.svg" alt="" />
+      <img id="screen-time" class="widgets" src="assets/screen-time-widget.svg" alt="" />
+      <img id="weather" class="widgets" src="assets/weather-widget.svg" alt="" />
+      <img id="stocks" class="widgets" src="assets/stocks-widget.svg" alt="" />
+      <img id="calendar" class="widgets" src="assets/calendar-widget.svg" alt="" />
+      <img id="fitness" class="widgets" src="assets/fitness-widget.svg" alt="" />
+      <img id="find-my" class="widgets" src="assets/find-my-widget.svg" alt="" />
+      <img id="sleep" class="widgets" src="assets/sleep-widget.svg" alt="" />
+      <img id="apple-tv" class="widgets" src="assets/apple-tv.svg" alt="" />
+      <img id="wallet" class="widgets" src="assets/wallet.svg" alt="" />
       <div id="socials" class="widgets">
         <a href="https://twitter.com/GibsonSMurray" target="_blank" title="𝕏 account">
           <span>𝕏</span>
@@ -105,95 +102,17 @@
       let wheelLocked = false;
 
       const animations = [
-        {
-          selector: "#app-store",
-          duration: 3,
-          scale: 0.9,
-          x: 500,
-          y: 100,
-          ease: "power4.out"
-        },
-        {
-          selector: "#screen-time",
-          duration: 3,
-          scale: 0.9,
-          x: -500,
-          y: -300,
-          ease: "power2.out"
-        },
-        {
-          selector: "#weather",
-          duration: 3,
-          scale: 1.1,
-          x: -400,
-          y: 350,
-          ease: "power4.out"
-        },
-        {
-          selector: "#stocks",
-          duration: 3,
-          scale: 0.9,
-          x: 530,
-          y: -170,
-          ease: "power4.out"
-        },
-        {
-          selector: "#fitness",
-          duration: 3,
-          scale: 1.1,
-          x: -350,
-          y: -100,
-          ease: "power2.out"
-        },
-        {
-          selector: "#find-my",
-          duration: 3,
-          scale: 1.1,
-          x: 400,
-          y: -360,
-          ease: "power4.out"
-        },
-        {
-          selector: "#calendar",
-          duration: 3,
-          scale: 0.9,
-          x: -630,
-          y: 0,
-          ease: "power2.out"
-        },
-
-        {
-          selector: "#wallet",
-          duration: 3,
-          scale: 1,
-          x: -280,
-          y: 100,
-          ease: "power4.out"
-        },
-        {
-          selector: "#apple-tv",
-          duration: 3,
-          scale: 1,
-          x: 500,
-          y: 300,
-          ease: "power4.out"
-        },
-        {
-          selector: "#sleep",
-          duration: 3,
-          scale: 0.9,
-          x: 270,
-          y: -50,
-          ease: "power2.out"
-        },
-        {
-          selector: "#socials",
-          duration: 3,
-          scale: 1,
-          x: 330,
-          y: 120,
-          ease: "power2.out"
-        }
+        { selector: "#app-store", duration: 3, scale: 0.9, x: 500, y: 100, ease: "power4.out" },
+        { selector: "#screen-time", duration: 3, scale: 0.9, x: -500, y: -300, ease: "power2.out" },
+        { selector: "#weather", duration: 3, scale: 1.1, x: -400, y: 350, ease: "power4.out" },
+        { selector: "#stocks", duration: 3, scale: 0.9, x: 530, y: -170, ease: "power4.out" },
+        { selector: "#fitness", duration: 3, scale: 1.1, x: -350, y: -100, ease: "power2.out" },
+        { selector: "#find-my", duration: 3, scale: 1.1, x: 400, y: -360, ease: "power4.out" },
+        { selector: "#calendar", duration: 3, scale: 0.9, x: -630, y: 0, ease: "power2.out" },
+        { selector: "#wallet", duration: 3, scale: 1, x: -280, y: 100, ease: "power4.out" },
+        { selector: "#apple-tv", duration: 3, scale: 1, x: 500, y: 300, ease: "power4.out" },
+        { selector: "#sleep", duration: 3, scale: 0.9, x: 270, y: -50, ease: "power2.out" },
+        { selector: "#socials", duration: 3, scale: 1, x: 330, y: 120, ease: "power2.out" }
       ];
       const startTime = 2;
       const maxTimelineTime = startTime + 4;
@@ -231,12 +150,7 @@
             const eased = easeOut(localTime);
             const opacity = time >= startTime ? 1 : 0;
             element.style.opacity = String(opacity);
-            setTransform(
-              element,
-              animation.x * eased,
-              animation.y * eased,
-              animation.scale * eased
-            );
+            setTransform(element, animation.x * eased, animation.y * eased, animation.scale * eased);
           });
         }
 
