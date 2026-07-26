@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -123,9 +123,9 @@
   </style>
 </head>
 <body>
-  <article class="card" aria-label="Rena Labs dynamic cover">
+  <article class="card" data-i18n-aria="coverAria" aria-label="Rena Labs dynamic cover">
     <div id="shader" role="presentation"></div>
-    <div class="note">Shader Lines · dynamic</div>
+    <div class="note" data-i18n="note">Shader Lines · dynamic</div>
     <div class="logo" aria-hidden="true">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 193 28" overflow="visible">
         <g>
@@ -137,13 +137,41 @@
     <footer class="meta">
       <div>
         <h1>Rena Labs</h1>
-        <p>Make AI trustless and secure by default</p>
+        <p data-i18n="tagline">Make AI trustless and secure by default</p>
       </div>
-      <div class="right">2024<br>Snapshot</div>
+      <div class="right"><span>2024</span><br><span data-i18n="snapshot">Snapshot</span></div>
     </footer>
   </article>
 
   <script>
+    const locale = new URLSearchParams(location.search).get("lang") === "zh" ? "zh" : "en";
+    const copy = {
+      en: {
+        coverAria: "Rena Labs dynamic cover",
+        note: "Shader Lines · dynamic",
+        tagline: "Make AI trustless and secure by default",
+        snapshot: "Snapshot",
+        loadError: "Three.js failed to load — check network"
+      },
+      zh: {
+        coverAria: "Rena Labs 动态封面",
+        note: "Shader Lines · 动态",
+        tagline: "让 AI 默认可信且安全",
+        snapshot: "快照",
+        loadError: "Three.js 加载失败，请检查网络"
+      }
+    }[locale];
+
+    document.documentElement.lang = locale;
+    document.querySelectorAll("[data-i18n]").forEach((element) => {
+      const value = copy[element.dataset.i18n];
+      if (value) element.textContent = value;
+    });
+    document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+      const value = copy[element.dataset.i18nAria];
+      if (value) element.setAttribute("aria-label", value);
+    });
+
     /**
      * Recreated from Vic Ding / Framer "Shader Lines" (Framer University)
      * with the exact Rena Labs card parameters from vic-ding.com
@@ -374,7 +402,7 @@
     script.src = "https://cdnjs.cloudflare.com/ajax/libs/three.js/89/three.min.js";
     script.onload = () => boot(window.THREE);
     script.onerror = () => {
-      document.querySelector(".note").textContent = "Three.js failed to load — check network";
+      document.querySelector(".note").textContent = copy.loadError;
     };
     document.head.appendChild(script);
   </script>
